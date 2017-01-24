@@ -3,7 +3,7 @@
 local addonName, addonTable = ... -- Pull back the AddOn-Local Variables and store them locally.
 -- addonName = "ravMounts"
 -- addonTable = {}
-addonTable.Version = "1.5.0"
+addonTable.Version = "1.5.1"
 
 
 -- Special formatting for 'Ravenous' messages
@@ -104,9 +104,9 @@ function mountListHandler(force, announce)
                 end
                 -- Swimming Mounts
                 -- Come in a variety of swimming types, like turtles!
-                -- Includes Azure Water Strider and Crimson Water Strider
+                -- Includes Azure Water Strider, Crimson Water Strider, Brinedeep Bottom-Feeder
                 if mountType == 231 or mountType == 254
-                or spellID == 118089 or spellID == 127271 then
+                or spellID == 118089 or spellID == 127271 or spellID == 214791 then
                     table.insert(RAV_swimmingMounts, i)
                 end
                 -- Vendor Mounts
