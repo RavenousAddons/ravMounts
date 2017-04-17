@@ -1,9 +1,9 @@
-## Interface: 70105
+## Interface: 70200
 ## Title: |cff5f8aa6Ravenous Mounts
 ## Name: Ravenous Mounts
 ## Author: Spontyman
 ## Notes: "Chooses the best mount for the job, with simple preferences based on your Favourites."
-## Version: 1.5.1
+## Version: 1.6.0
 ## SavedVariables: RAV_version
 ## SavedVariablesPerCharacter: RAV_location, RAV_numMountsCollected, RAV_mountsFavorited, RAV_groundMounts, RAV_flyingMounts, RAV_swimmingMounts, RAV_vendorMounts, RAV_multiGroundMounts, RAV_multiFlyingMounts, RAV_vashjirMounts, RAV_aqMounts, RAV_lowbieMounts
 ## X-Website: http://www.wowinterface.com/downloads/info24005-RavenousMounts.html

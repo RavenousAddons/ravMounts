@@ -3,7 +3,7 @@
 local addonName, addonTable = ... -- Pull back the AddOn-Local Variables and store them locally.
 -- addonName = "ravMounts"
 -- addonTable = {}
-addonTable.Version = "1.5.1"
+addonTable.Version = "1.6.0"
 
 
 -- Special formatting for 'Ravenous' messages
@@ -13,7 +13,7 @@ local function prettyPrint(message, full)
     else
         message = message..":"
     end
-    local prefix = "\124cff5f8aa6Ravenous Mounts"..(RAV_version ~= nil and " v"..RAV_version or "")..(full and " " or ":\124r ")
+    local prefix = "\124cff5f8aa6ravMounts"..(RAV_version ~= nil and " v"..RAV_version or "")..(full and " " or ":\124r ")
 
     DEFAULT_CHAT_FRAME:AddMessage(prefix..message)
 end
@@ -28,8 +28,8 @@ function mountListHandler(force, announce)
     -- Compare list of cached Favorites to Current list of Favorites
     -- If they differ, then force a recache
     local mountsFavorited = {}
-    for i = 1, C_MountJournal.GetNumMounts(), 1 do
-        local _, id, _, _, _, _, isFavorite = C_MountJournal.GetMountInfoByID(i)
+    for mountIndex, mountID in pairs(C_MountJournal.GetMountIDs()) do
+        local _, id, _, _, _, _, isFavorite = C_MountJournal.GetMountInfoByID(mountID)
         if isFavorite == true then
             table.insert(mountsFavorited, id)
         end
@@ -75,83 +75,79 @@ function mountListHandler(force, announce)
         RAV_aqMounts = {}
         RAV_lowbieMounts = {}
 
-        -- We'll need these later for the Traveler's Tundra Mammoths
-        -- Let's also not assume the player has a faction, and if they don't,
-        -- make sure it doesn't match a faction-less mount (value of nil).
-        local playerFaction, _ = UnitFactionGroup("player")
-        if playerFaction == "Alliance" then
-            playerFaction = 1
-        elseif playerFaction == "Horde" then
-            playerFaction = 0
-        else
-            playerFaction = 2
-        end
-        -- Transform it to 1,0,nil
+        -- Also set a check we'll reuse for the Special Ground/Water Mounts,
+        -- which includes the following: Azure Water Strider,
+        -- Crimson Water Strider, Brinedeep Bottom-Feeder
+        local isSpecialGroundWaterType = (spellID == 118089 or spellID == 127271 or spellID == 214791)
         -- Let's start looping over our Mount Journal and collecting data about
         -- each Mount as we iterate over it.
-        for i = 1, C_MountJournal.GetNumMounts(), 1 do
-            local _, spellID, _, _, isUsable, _, isFavorite, _, faction, hideOnChar, isCollected = C_MountJournal.GetMountInfoByID(i)
-            local _, _, _, _, mountType = C_MountJournal.GetMountInfoExtraByID(i)
+        for mountIndex, mountID in pairs(C_MountJournal.GetMountIDs()) do
+            local name, spellID, _, _, isUsable, _, isFavorite, _, _, hideOnChar, isCollected = C_MountJournal.GetMountInfoByID(mountID)
+            local _, _, _, _, mountType = C_MountJournal.GetMountInfoExtraByID(mountID)
             if isCollected and isUsable and not hideOnChar then
                 -- Ground Mounts
-                if mountType == 230 and isFavorite then
-                    table.insert(RAV_groundMounts, i)
+                -- Includes Special Ground/Water Type
+                if (mountType == 230 or isSpecialGroundWaterType) and isFavorite then
+                    table.insert(RAV_groundMounts, mountID)
                 end
                 -- Flying Mounts
                 -- Come in "slow" and "fast" types
-                if (mountType == 248 or mountType == 247) and isFavorite then
-                    table.insert(RAV_flyingMounts, i)
+                if (mountType == 247 or mountType == 248) and isFavorite then
+                    table.insert(RAV_flyingMounts, mountID)
                 end
                 -- Swimming Mounts
+                -- Added regardless of Favorite status
                 -- Come in a variety of swimming types, like turtles!
-                -- Includes Azure Water Strider, Crimson Water Strider, Brinedeep Bottom-Feeder
+                -- Includes Special Ground/Water Type
                 if mountType == 231 or mountType == 254
-                or spellID == 118089 or spellID == 127271 or spellID == 214791 then
-                    table.insert(RAV_swimmingMounts, i)
+                or isSpecialGroundWaterType then
+                    table.insert(RAV_swimmingMounts, mountID)
                 end
                 -- Vendor Mounts
+                -- Added regardless of Favorite status
                 -- Traveler's Tundra Mammoth (A/H),  Grand Expedition Yak
                 if spellID == 61425 or spellID == 61447
                 or spellID == 122708 then
                     if (spellID == 61425 or spellID == 61447) and #RAV_vendorMounts == 0 then
-                        table.insert(RAV_vendorMounts, i)
+                        table.insert(RAV_vendorMounts, mountID)
                     elseif spellID == 122708 then
                         table.remove(RAV_vendorMounts)
-                        table.insert(RAV_vendorMounts, i)
+                        table.insert(RAV_vendorMounts, mountID)
                     end
                 end
                 -- Two-Person Flying Mounts
+                -- Added regardless of Favorite status
                 -- Sandstone Drake, Obsidian Nightwing, X-53 Touring Rocket
                 if spellID == 93326
                 or spellID == 121820
                 or spellID == 75973 then
-                    table.insert(RAV_multiFlyingMounts, i)
+                    table.insert(RAV_multiFlyingMounts, mountID)
                 end
                 -- Two-Person Ground Mounts
+                -- Added regardless of Favorite status
                 -- Mekgineer's Chopper (A), Mechano-hog (H), Grand Black War
-                -- Mammoth (A/H), Grand Ice Mammoth (A/H), Traveler's Tundra
-                -- Mammoth (A/H), Grand Expedition Yak
+                -- Mammoth (A/H), Grand Ice Mammoth (A/H)
                 if spellID == 60424
                 or spellID == 55531
                 or spellID == 61465 or spellID == 61467
-                or spellID == 61469 or spellID == 61470
-                -- or spellID == 61425 or spellID == 61447
-                -- or spellID == 122708
-                then
-                    table.insert(RAV_multiGroundMounts, i)
+                or spellID == 61469 or spellID == 61470 then
+                    table.insert(RAV_multiGroundMounts, mountID)
                 end
                 -- Vashj'ir Mounts
+                -- Added regardless of Favorite status
                 if mountType == 232 then
-                    table.insert(RAV_vashjirMounts, i)
+                    table.insert(RAV_vashjirMounts, mountID)
                 end
                 -- Ahn'Qiraj Mounts
+                -- Added regardless of Favorite status
                 if mountType == 241 then
-                    table.insert(RAV_aqMounts, i)
+                    table.insert(RAV_aqMounts, mountID)
                 end
                 -- Lowbie Mounts
+                -- Added regardless of Favorite status
                 -- Chauffeured Mekgineer's Chopper (A), Chauffeured Mechano Hog (H)
                 if spellID == 179245 or spellID == 179244 then
-                    table.insert(RAV_lowbieMounts, i)
+                    table.insert(RAV_lowbieMounts, mountID)
                 end
             end
         end
@@ -197,7 +193,7 @@ function mountUpHandler()
     local haveLowbieMounts = (next(RAV_lowbieMounts) ~= nil and true or false)
 
     -- Mount Special
-    if shiftKey and altKey and (mounted or inVehicle) then
+    if ((shiftKey and altKey) or (shiftKey and controlKey) or (altKey and controlKey))  and (mounted or inVehicle) then
         DoEmote(EMOTE171_TOKEN)
     -- Dismount / Exit Vehicle
     elseif mounted or inVehicle then
@@ -253,10 +249,8 @@ function mountUpHandler()
         end
     -- Ground Mounts
     else
-        if altKey and flyable and haveFlyingMounts then
+        if altKey and haveFlyingMounts then
             mountSummon(RAV_flyingMounts)
-        elseif altKey and haveGroundMounts then
-            mountSummon(RAV_groundMounts)
         elseif inAQ and haveAqMounts then
             mountSummon(RAV_aqMounts)
         elseif haveGroundMounts then
