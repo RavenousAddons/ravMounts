@@ -3,7 +3,7 @@
 local addonName, addonTable = ... -- Pull back the AddOn-Local Variables and store them locally.
 -- addonName = "ravMounts"
 -- addonTable = {}
-addonTable.Version = "1.6.0"
+addonTable.Version = "1.6.1"
 
 
 -- Special formatting for 'Ravenous' messages
@@ -75,10 +75,6 @@ function mountListHandler(force, announce)
         RAV_aqMounts = {}
         RAV_lowbieMounts = {}
 
-        -- Also set a check we'll reuse for the Special Ground/Water Mounts,
-        -- which includes the following: Azure Water Strider,
-        -- Crimson Water Strider, Brinedeep Bottom-Feeder
-        local isSpecialGroundWaterType = (spellID == 118089 or spellID == 127271 or spellID == 214791)
         -- Let's start looping over our Mount Journal and collecting data about
         -- each Mount as we iterate over it.
         for mountIndex, mountID in pairs(C_MountJournal.GetMountIDs()) do
@@ -87,7 +83,8 @@ function mountListHandler(force, announce)
             if isCollected and isUsable and not hideOnChar then
                 -- Ground Mounts
                 -- Includes Special Ground/Water Type
-                if (mountType == 230 or isSpecialGroundWaterType) and isFavorite then
+                if (mountType == 230 or spellID == 118089
+                or spellID == 127271 or spellID == 214791) and isFavorite then
                     table.insert(RAV_groundMounts, mountID)
                 end
                 -- Flying Mounts
@@ -100,7 +97,7 @@ function mountListHandler(force, announce)
                 -- Come in a variety of swimming types, like turtles!
                 -- Includes Special Ground/Water Type
                 if mountType == 231 or mountType == 254
-                or isSpecialGroundWaterType then
+                or spellID == 118089 or spellID == 127271 or spellID == 214791 then
                     table.insert(RAV_swimmingMounts, mountID)
                 end
                 -- Vendor Mounts
