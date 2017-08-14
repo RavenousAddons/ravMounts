@@ -3,7 +3,7 @@
 local addonName, addonTable = ... -- Pull back the AddOn-Local Variables and store them locally.
 -- addonName = "ravMounts"
 -- addonTable = {}
-addonTable.Version = "1.6.1"
+addonTable.Version = "1.6.4"
 
 
 -- Special formatting for 'Ravenous' messages
@@ -22,7 +22,7 @@ end
 ---
 -- Collect Data and Sort it
 -- Can be forced to re-collect, though default is false
--- Cache data and only update cache if any new mounts or Favorites change
+-- Cache data and only update cache if any new Mounts or Favorites change
 ---
 function mountListHandler(force, announce)
     -- Compare list of cached Favorites to Current list of Favorites
@@ -53,7 +53,7 @@ function mountListHandler(force, announce)
     -- or if we have a new mount!
     if RAV_numMountsCollected ~= GetNumCompanions("MOUNT") or favoritesMatch == false or force == true or RAV_location ~= mapID then
 
-        if announce ~= false then
+        if announce == true then
             prettyPrint("Mount Journal data collected, sorted, and ready to rock.")
         end
 
@@ -67,24 +67,26 @@ function mountListHandler(force, announce)
         RAV_mountsFavorited = mountsFavorited
         RAV_groundMounts = {}
         RAV_flyingMounts = {}
-        RAV_swimmingMounts = {}
-        RAV_vendorMounts = {}
         RAV_multiGroundMounts = {}
         RAV_multiFlyingMounts = {}
+        RAV_swimmingMounts = {}
+        RAV_waterwalkingMounts = {}
+        RAV_vendorMounts = {}
         RAV_vashjirMounts = {}
         RAV_aqMounts = {}
         RAV_lowbieMounts = {}
 
-        -- Let's start looping over our Mount Journal and collecting data about
-        -- each Mount as we iterate over it.
+        -- Let's start looping over our Mount Journal adding Mounts to
+        -- their respective groups. Basic Ground and Flying Mounts are checked
+        -- to be Favorites, making them 'required' and the other types not.
         for mountIndex, mountID in pairs(C_MountJournal.GetMountIDs()) do
-            local name, spellID, _, _, isUsable, _, isFavorite, _, _, hideOnChar, isCollected = C_MountJournal.GetMountInfoByID(mountID)
+            local _, spellID, _, _, isUsable, _, isFavorite, _, _, hideOnChar, isCollected = C_MountJournal.GetMountInfoByID(mountID)
             local _, _, _, _, mountType = C_MountJournal.GetMountInfoExtraByID(mountID)
             if isCollected and isUsable and not hideOnChar then
                 -- Ground Mounts
                 -- Includes Special Ground/Water Type
-                if (mountType == 230 or spellID == 118089
-                or spellID == 127271 or spellID == 214791) and isFavorite then
+                if (mountType == 230
+                or spellID == 118089 or spellID == 127271) and isFavorite then
                     table.insert(RAV_groundMounts, mountID)
                 end
                 -- Flying Mounts
@@ -97,8 +99,12 @@ function mountListHandler(force, announce)
                 -- Come in a variety of swimming types, like turtles!
                 -- Includes Special Ground/Water Type
                 if mountType == 231 or mountType == 254
-                or spellID == 118089 or spellID == 127271 or spellID == 214791 then
+                or spellID == 214791 or spellID == 228919 then
                     table.insert(RAV_swimmingMounts, mountID)
+                end
+                -- Waterwalking Mounts
+                if spellID == 118089 or spellID == 127271 then
+                    table.insert(RAV_waterwalkingMounts, mountID)
                 end
                 -- Vendor Mounts
                 -- Added regardless of Favorite status
@@ -161,7 +167,7 @@ end
 
 
 ---
--- Check a plethora of conditions and choose the appropriate mount from the
+-- Check a plethora of conditions and choose the appropriate Mount from the
 -- Mount Journal, and do nothing if conditions are not met.
 ---
 function mountUpHandler()
@@ -182,6 +188,7 @@ function mountUpHandler()
     local haveGroundMounts = (next(RAV_groundMounts) ~= nil and true or false)
     local haveFlyingMounts = (next(RAV_flyingMounts) ~= nil and true or false)
     local haveSwimmingMounts = (next(RAV_swimmingMounts) ~= nil and true or false)
+    local haveWaterwalkingMounts = (next(RAV_waterwalkingMounts) ~= nil and true or false)
     local haveVendorMounts = (next(RAV_vendorMounts) ~= nil and true or false)
     local haveMultiGroundMounts = (next(RAV_multiGroundMounts) ~= nil and true or false)
     local haveMultiFlyingMounts = (next(RAV_multiFlyingMounts) ~= nil and true or false)
@@ -206,10 +213,12 @@ function mountUpHandler()
     -- Two-Person Ground Mounts
     elseif controlKey and haveMultiGroundMounts then
         mountSummon(RAV_multiGroundMounts)
-    -- Swimming Mounts
-    elseif submerged and (haveVashjirMounts or haveSwimmingMounts) then
+    -- Swimming and Waterwalking Mounts
+    elseif submerged and (haveVashjirMounts or haveSwimmingMounts or haveWaterwalkingMounts) then
         if altKey then
-            if flyable and haveFlyingMounts then
+            if haveWaterwalkingMounts then
+                mountSummon(RAV_waterwalkingMounts)
+            elseif flyable and haveFlyingMounts then
                 mountSummon(RAV_flyingMounts)
             elseif inAQ and haveAqMounts then
                 mountSummon(RAV_aqMounts)
@@ -267,12 +276,12 @@ function events:ADDON_LOADED(name)
     if name == "ravMounts" then
         if not RAV_version then
             RAV_version = addonTable.Version
-            prettyPrint("Thanks for installing Ravenous Mounts! Appreciate ya!")
-            mountListHandler(true, false)
+            prettyPrint("Thanks for installing Ravenous Mounts! Appreciate ya! Check out Ravenous Mounts on WoWInterface.com for info and support.")
+            mountListHandler(true, false) -- force recache, do not announce recache
         elseif RAV_version ~= nil and RAV_version ~= addonTable.Version and addonTable.Version > RAV_version then
             RAV_version = addonTable.Version
-            prettyPrint("Thanks for updating Ravenous Mounts! Appreciate ya!")
-            mountListHandler(true, false)
+            prettyPrint("Thanks for updating Ravenous Mounts! Appreciate ya! Check out Ravenous Mounts on WoWInterface.com for info and support.")
+            mountListHandler(true, false) -- force recache, do not announce recache
         end
     end
 end

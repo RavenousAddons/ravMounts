@@ -10,9 +10,9 @@ SLASH_RAVMOUNTS1 = "/ravmounts"
 
 local function slashHandler(message, editbox)
     if string.match(message, "force") or message == "f" then
-        mountListHandler(true, true)
+        mountListHandler(true, true) -- force recache, announce recache
     else
-        mountListHandler(false, false)
+        mountListHandler(false, false) -- do not force recache, do not announce recache
         mountUpHandler()
     end
 end
