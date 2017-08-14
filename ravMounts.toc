@@ -1,7 +1,7 @@
 ## Interface: 70300
 ## Title: |cff5f8aa6Ravenous Mounts
 ## Name: Ravenous Mounts
-## Author: Spontyman
+## Author: waldenp0nd
 ## Notes: "Chooses the best mount for the job, with simple preferences based on your Favourites."
 ## Version: 1.6.4
 ## SavedVariables: RAV_version
