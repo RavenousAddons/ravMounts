@@ -3,7 +3,7 @@
 local addonName, addonTable = ... -- Pull back the AddOn-Local Variables and store them locally.
 -- addonName = "ravMounts"
 -- addonTable = {}
-addonTable.Version = "1.6.4"
+addonTable.Version = "1.6.5"
 
 
 -- Special formatting for 'Ravenous' messages
@@ -121,9 +121,12 @@ function mountListHandler(force, announce)
                 -- Two-Person Flying Mounts
                 -- Added regardless of Favorite status
                 -- Sandstone Drake, Obsidian Nightwing, X-53 Touring Rocket
+                -- Stormwind Skychaser, Orgrimmar Interceptor
                 if spellID == 93326
                 or spellID == 121820
-                or spellID == 75973 then
+                or spellID == 75973
+                or spellID == 245723
+                or spellID == 245725 then
                     table.insert(RAV_multiFlyingMounts, mountID)
                 end
                 -- Two-Person Ground Mounts
