@@ -3,7 +3,7 @@
 local addonName, addonTable = ... -- Pull back the AddOn-Local Variables and store them locally.
 -- addonName = "ravMounts"
 -- addonTable = {}
-addonTable.Version = "1.6.5"
+addonTable.Version = "1.7.0"
 
 
 -- Special formatting for 'Ravenous' messages
@@ -47,6 +47,8 @@ function mountListHandler(force, announce)
         end
     end
 
+    local includeSpecials = (RAV_includeSpecials and RAV_includeSpecials or true)
+
     local mapID = GetCurrentMapAreaID()
 
     -- Only if we haven't set our lists yet should we build out our variables,
@@ -67,14 +69,15 @@ function mountListHandler(force, announce)
         RAV_mountsFavorited = mountsFavorited
         RAV_groundMounts = {}
         RAV_flyingMounts = {}
-        RAV_multiGroundMounts = {}
-        RAV_multiFlyingMounts = {}
-        RAV_swimmingMounts = {}
         RAV_waterwalkingMounts = {}
+        RAV_swimmingMounts = {}
         RAV_vendorMounts = {}
+        RAV_multiFlyingMounts = {}
+        RAV_multiGroundMounts = {}
         RAV_vashjirMounts = {}
         RAV_aqMounts = {}
         RAV_lowbieMounts = {}
+        RAV_includeSpecials = includeSpecials
 
         -- Let's start looping over our Mount Journal adding Mounts to
         -- their respective groups. Basic Ground and Flying Mounts are checked
@@ -83,38 +86,50 @@ function mountListHandler(force, announce)
             local _, spellID, _, _, isUsable, _, isFavorite, _, _, hideOnChar, isCollected = C_MountJournal.GetMountInfoByID(mountID)
             local _, _, _, _, mountType = C_MountJournal.GetMountInfoExtraByID(mountID)
             if isCollected and isUsable and not hideOnChar then
+                local isGroundMount = (mountType == 230 or spellID == 118089 or spellID == 127271)
+                local isFlyingMount = (mountType == 247 or mountType == 248)
+                local isWaterwalkingMount = (spellID == 118089 or spellID == 127271)
+                local isSwimmingMount = (mountType == 231 or mountType == 254 or spellID == 214791 or spellID == 228919)
+                local isVendorMount = (spellID == 61425 or spellID == 61447 or spellID == 122708)
+                local isTwoPersonFlyingMount = (spellID == 93326 or spellID == 121820 or spellID == 75973 or spellID == 245723 or spellID == 245725)
+                local isTwoPersonGroundMount = (spellID == 60424 or spellID == 55531 or spellID == 61465 or spellID == 61467 or spellID == 61469 or spellID == 61470)
+                local isVashjirMount = (mountType == 232)
+                local isAhnQirajMount = (mountType == 241)
+                local isLowbieMount = (spellID == 179245 or spellID == 179244)
+                local isSpecialMount = (isVendorMount or isTwoPersonFlyingMount or isTwoPersonGroundMount)
                 -- Ground Mounts
                 -- Includes Special Ground/Water Type
-                if (mountType == 230
-                or spellID == 118089 or spellID == 127271) and isFavorite then
-                    table.insert(RAV_groundMounts, mountID)
+                if isGroundMount and isFavorite then
+                    if includeSpecials
+                    or (not includeSpecials and not isSpecialMount) then
+                        table.insert(RAV_groundMounts, mountID)
+                    end
                 end
                 -- Flying Mounts
                 -- Come in "slow" and "fast" types
-                if (mountType == 247 or mountType == 248) and isFavorite then
-                    table.insert(RAV_flyingMounts, mountID)
+                if isFlyingMount and isFavorite then
+                    if includeSpecials
+                    or (not includeSpecials and not isSpecialMount) then
+                        table.insert(RAV_flyingMounts, mountID)
+                    end
+                end
+                -- Waterwalking Mounts
+                if isWaterwalkingMount then
+                    table.insert(RAV_waterwalkingMounts, mountID)
                 end
                 -- Swimming Mounts
                 -- Added regardless of Favorite status
                 -- Come in a variety of swimming types, like turtles!
                 -- Includes Special Ground/Water Type
-                if mountType == 231 or mountType == 254
-                or spellID == 214791 or spellID == 228919 then
+                if isSwimmingMount then
                     table.insert(RAV_swimmingMounts, mountID)
-                end
-                -- Waterwalking Mounts
-                if spellID == 118089 or spellID == 127271 then
-                    table.insert(RAV_waterwalkingMounts, mountID)
                 end
                 -- Vendor Mounts
                 -- Added regardless of Favorite status
-                -- Traveler's Tundra Mammoth (A/H),  Grand Expedition Yak
-                if spellID == 61425 or spellID == 61447
-                or spellID == 122708 then
-                    if (spellID == 61425 or spellID == 61447) and #RAV_vendorMounts == 0 then
-                        table.insert(RAV_vendorMounts, mountID)
-                    elseif spellID == 122708 then
-                        table.remove(RAV_vendorMounts)
+                -- Traveler's Tundra Mammoth (A/H), Grand Expedition Yak
+                if isVendorMount then
+                    if includeSpecials
+                    or (not includeSpecials and isFavorite) then
                         table.insert(RAV_vendorMounts, mountID)
                     end
                 end
@@ -122,37 +137,36 @@ function mountListHandler(force, announce)
                 -- Added regardless of Favorite status
                 -- Sandstone Drake, Obsidian Nightwing, X-53 Touring Rocket
                 -- Stormwind Skychaser, Orgrimmar Interceptor
-                if spellID == 93326
-                or spellID == 121820
-                or spellID == 75973
-                or spellID == 245723
-                or spellID == 245725 then
-                    table.insert(RAV_multiFlyingMounts, mountID)
+                if isTwoPersonFlyingMount then
+                    if includeSpecials
+                    or (not includeSpecials and isFavorite) then
+                        table.insert(RAV_multiFlyingMounts, mountID)
+                    end
                 end
                 -- Two-Person Ground Mounts
                 -- Added regardless of Favorite status
                 -- Mekgineer's Chopper (A), Mechano-hog (H), Grand Black War
                 -- Mammoth (A/H), Grand Ice Mammoth (A/H)
-                if spellID == 60424
-                or spellID == 55531
-                or spellID == 61465 or spellID == 61467
-                or spellID == 61469 or spellID == 61470 then
-                    table.insert(RAV_multiGroundMounts, mountID)
+                if isTwoPersonGroundMount then
+                    if includeSpecials
+                    or (not includeSpecials and isFavorite) then
+                        table.insert(RAV_multiGroundMounts, mountID)
+                    end
                 end
                 -- Vashj'ir Mounts
                 -- Added regardless of Favorite status
-                if mountType == 232 then
+                if isVashjirMount then
                     table.insert(RAV_vashjirMounts, mountID)
                 end
                 -- Ahn'Qiraj Mounts
                 -- Added regardless of Favorite status
-                if mountType == 241 then
+                if isAhnQirajMount then
                     table.insert(RAV_aqMounts, mountID)
                 end
                 -- Lowbie Mounts
                 -- Added regardless of Favorite status
                 -- Chauffeured Mekgineer's Chopper (A), Chauffeured Mechano Hog (H)
-                if spellID == 179245 or spellID == 179244 then
+                if isLowbieMount then
                     table.insert(RAV_lowbieMounts, mountID)
                 end
             end
@@ -190,8 +204,8 @@ function mountUpHandler()
     local altKey = IsAltKeyDown()
     local haveGroundMounts = (next(RAV_groundMounts) ~= nil and true or false)
     local haveFlyingMounts = (next(RAV_flyingMounts) ~= nil and true or false)
-    local haveSwimmingMounts = (next(RAV_swimmingMounts) ~= nil and true or false)
     local haveWaterwalkingMounts = (next(RAV_waterwalkingMounts) ~= nil and true or false)
+    local haveSwimmingMounts = (next(RAV_swimmingMounts) ~= nil and true or false)
     local haveVendorMounts = (next(RAV_vendorMounts) ~= nil and true or false)
     local haveMultiGroundMounts = (next(RAV_multiGroundMounts) ~= nil and true or false)
     local haveMultiFlyingMounts = (next(RAV_multiFlyingMounts) ~= nil and true or false)
@@ -200,7 +214,7 @@ function mountUpHandler()
     local haveLowbieMounts = (next(RAV_lowbieMounts) ~= nil and true or false)
 
     -- Mount Special
-    if ((shiftKey and altKey) or (shiftKey and controlKey) or (altKey and controlKey))  and (mounted or inVehicle) then
+    if ((shiftKey and altKey) or (shiftKey and controlKey) or (altKey and controlKey)) and (mounted or inVehicle) then
         DoEmote(EMOTE171_TOKEN)
     -- Dismount / Exit Vehicle
     elseif mounted or inVehicle then
