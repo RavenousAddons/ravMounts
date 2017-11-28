@@ -3,7 +3,7 @@
 local addonName, addonTable = ... -- Pull back the AddOn-Local Variables and store them locally.
 -- addonName = "ravMounts"
 -- addonTable = {}
-addonTable.Version = "1.7.0"
+addonTable.Version = "1.7.1"
 
 
 -- Special formatting for 'Ravenous' messages
@@ -47,8 +47,6 @@ function mountListHandler(force, announce)
         end
     end
 
-    local includeSpecials = (RAV_includeSpecials and RAV_includeSpecials or true)
-
     local mapID = GetCurrentMapAreaID()
 
     -- Only if we haven't set our lists yet should we build out our variables,
@@ -77,7 +75,7 @@ function mountListHandler(force, announce)
         RAV_vashjirMounts = {}
         RAV_aqMounts = {}
         RAV_lowbieMounts = {}
-        RAV_includeSpecials = includeSpecials
+        RAV_includeSpecials = (RAV_includeSpecials == nil and true or RAV_includeSpecials)
 
         -- Let's start looping over our Mount Journal adding Mounts to
         -- their respective groups. Basic Ground and Flying Mounts are checked
@@ -100,16 +98,18 @@ function mountListHandler(force, announce)
                 -- Ground Mounts
                 -- Includes Special Ground/Water Type
                 if isGroundMount and isFavorite then
-                    if includeSpecials
-                    or (not includeSpecials and not isSpecialMount) then
+                    if RAV_includeSpecials then
+                        table.insert(RAV_groundMounts, mountID)
+                    elseif (not RAV_includeSpecials and not isSpecialMount) then
                         table.insert(RAV_groundMounts, mountID)
                     end
                 end
                 -- Flying Mounts
                 -- Come in "slow" and "fast" types
                 if isFlyingMount and isFavorite then
-                    if includeSpecials
-                    or (not includeSpecials and not isSpecialMount) then
+                    if RAV_includeSpecials then
+                        table.insert(RAV_flyingMounts, mountID)
+                    elseif (not RAV_includeSpecials and not isSpecialMount) then
                         table.insert(RAV_flyingMounts, mountID)
                     end
                 end
@@ -128,8 +128,9 @@ function mountListHandler(force, announce)
                 -- Added regardless of Favorite status
                 -- Traveler's Tundra Mammoth (A/H), Grand Expedition Yak
                 if isVendorMount then
-                    if includeSpecials
-                    or (not includeSpecials and isFavorite) then
+                    if RAV_includeSpecials then
+                        table.insert(RAV_vendorMounts, mountID)
+                    elseif (not RAV_includeSpecials and isFavorite) then
                         table.insert(RAV_vendorMounts, mountID)
                     end
                 end
@@ -138,8 +139,9 @@ function mountListHandler(force, announce)
                 -- Sandstone Drake, Obsidian Nightwing, X-53 Touring Rocket
                 -- Stormwind Skychaser, Orgrimmar Interceptor
                 if isTwoPersonFlyingMount then
-                    if includeSpecials
-                    or (not includeSpecials and isFavorite) then
+                    if RAV_includeSpecials then
+                        table.insert(RAV_multiFlyingMounts, mountID)
+                    elseif (not RAV_includeSpecials and isFavorite) then
                         table.insert(RAV_multiFlyingMounts, mountID)
                     end
                 end
@@ -148,8 +150,9 @@ function mountListHandler(force, announce)
                 -- Mekgineer's Chopper (A), Mechano-hog (H), Grand Black War
                 -- Mammoth (A/H), Grand Ice Mammoth (A/H)
                 if isTwoPersonGroundMount then
-                    if includeSpecials
-                    or (not includeSpecials and isFavorite) then
+                    if RAV_includeSpecials then
+                        table.insert(RAV_multiGroundMounts, mountID)
+                    elseif (not RAV_includeSpecials and isFavorite) then
                         table.insert(RAV_multiGroundMounts, mountID)
                     end
                 end
