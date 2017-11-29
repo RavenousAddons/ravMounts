@@ -3,7 +3,7 @@
 local addonName, addonTable = ... -- Pull back the AddOn-Local Variables and store them locally.
 -- addonName = "ravMounts"
 -- addonTable = {}
-addonTable.Version = "1.7.1"
+addonTable.Version = "1.7.2"
 
 
 -- Special formatting for 'Ravenous' messages
@@ -240,8 +240,6 @@ function mountUpHandler()
                 mountSummon(RAV_waterwalkingMounts)
             elseif flyable and haveFlyingMounts then
                 mountSummon(RAV_flyingMounts)
-            elseif inAQ and haveAqMounts then
-                mountSummon(RAV_aqMounts)
             elseif haveGroundMounts then
                 mountSummon(RAV_groundMounts)
             elseif haveLowbieMounts then
@@ -253,8 +251,6 @@ function mountUpHandler()
             mountSummon(RAV_swimmingMounts)
         elseif flyable and haveFlyingMounts then
             mountSummon(RAV_flyingMounts)
-        elseif inAQ and haveAqMounts then
-            mountSummon(RAV_aqMounts)
         elseif haveGroundMounts then
             mountSummon(RAV_groundMounts)
         elseif haveLowbieMounts then
@@ -263,9 +259,7 @@ function mountUpHandler()
     -- Flying Mounts
     elseif flyable and haveFlyingMounts then
         if altKey then
-            if inAq and haveAqMounts then
-                mountSummon(RAV_aqMounts)
-            elseif haveGroundMounts then
+            if haveGroundMounts then
                 mountSummon(RAV_groundMounts)
             elseif haveLowbieMounts then
                 mountSummon(RAV_lowbieMounts)
@@ -296,11 +290,11 @@ function events:ADDON_LOADED(name)
     if name == "ravMounts" then
         if not RAV_version then
             RAV_version = addonTable.Version
-            prettyPrint("Thanks for installing Ravenous Mounts! Appreciate ya! Check out Ravenous Mounts on WoWInterface.com for info and support.")
+            prettyPrint("Thanks for installing Ravenous Mounts! Appreciate ya! Check out Ravenous Mounts on WoWInterface or GitHub for info and support.")
             mountListHandler(true, false) -- force recache, do not announce recache
         elseif RAV_version ~= nil and RAV_version ~= addonTable.Version and addonTable.Version > RAV_version then
             RAV_version = addonTable.Version
-            prettyPrint("Thanks for updating Ravenous Mounts! Appreciate ya! Check out Ravenous Mounts on WoWInterface.com for info and support.")
+            prettyPrint("Thanks for updating Ravenous Mounts! Appreciate ya! Check out Ravenous Mounts on WoWInterface or GitHub for info and support.")
             mountListHandler(true, false) -- force recache, do not announce recache
         end
     end
