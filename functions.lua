@@ -3,7 +3,7 @@
 local addonName, addonTable = ... -- Pull back the AddOn-Local Variables and store them locally.
 -- addonName = "ravMounts"
 -- addonTable = {}
-addonTable.Version = "1.7.2"
+addonTable.Version = "1.7.3"
 
 
 -- Special formatting for 'Ravenous' messages
@@ -74,7 +74,7 @@ function mountListHandler(force, announce)
         RAV_multiGroundMounts = {}
         RAV_vashjirMounts = {}
         RAV_aqMounts = {}
-        RAV_lowbieMounts = {}
+        RAV_chauffeurMounts = {}
         RAV_includeSpecials = (RAV_includeSpecials == nil and true or RAV_includeSpecials)
 
         -- Let's start looping over our Mount Journal adding Mounts to
@@ -93,7 +93,7 @@ function mountListHandler(force, announce)
                 local isTwoPersonGroundMount = (spellID == 60424 or spellID == 55531 or spellID == 61465 or spellID == 61467 or spellID == 61469 or spellID == 61470)
                 local isVashjirMount = (mountType == 232)
                 local isAhnQirajMount = (mountType == 241)
-                local isLowbieMount = (spellID == 179245 or spellID == 179244)
+                local isChauffeurMount = (spellID == 179245 or spellID == 179244)
                 local isSpecialMount = (isVendorMount or isTwoPersonFlyingMount or isTwoPersonGroundMount)
                 -- Ground Mounts
                 -- Includes Special Ground/Water Type
@@ -166,11 +166,11 @@ function mountListHandler(force, announce)
                 if isAhnQirajMount then
                     table.insert(RAV_aqMounts, mountID)
                 end
-                -- Lowbie Mounts
+                -- Chauffeur Mounts
                 -- Added regardless of Favorite status
                 -- Chauffeured Mekgineer's Chopper (A), Chauffeured Mechano Hog (H)
-                if isLowbieMount then
-                    table.insert(RAV_lowbieMounts, mountID)
+                if isChauffeurMount then
+                    table.insert(RAV_chauffeurMounts, mountID)
                 end
             end
         end
@@ -190,7 +190,7 @@ end
 -- Check a plethora of conditions and choose the appropriate Mount from the
 -- Mount Journal, and do nothing if conditions are not met.
 ---
-function mountUpHandler()
+function mountUpHandler(specificType)
     -- Simplify the appearance of the logic later by casting our checks to
     -- simple variables.
     local mounted = IsMounted()
@@ -214,10 +214,31 @@ function mountUpHandler()
     local haveMultiFlyingMounts = (next(RAV_multiFlyingMounts) ~= nil and true or false)
     local haveVashjirMounts = (next(RAV_vashjirMounts) ~= nil and true or false)
     local haveAqMounts = (next(RAV_aqMounts) ~= nil and true or false)
-    local haveLowbieMounts = (next(RAV_lowbieMounts) ~= nil and true or false)
+    local haveChauffeurMounts = (next(RAV_chauffeurMounts) ~= nil and true or false)
 
+    -- Summon Specific Mount Types
+    if specificType == "vendor" and haveVendorMounts then
+        mountSummon(RAV_vendorMounts)
+    elseif string.match(specificType, "flying") and (string.match(specificType, "2") or string.match(specificType, "two") or string.match(specificType, "passenger")) and haveMultiFlyingMounts then
+        mountSummon(RAV_multiFlyingMounts)
+    elseif (string.match(specificType, "2") or string.match(specificType, "two") or string.match(specificType, "passenger")) and haveMultiGroundMounts then
+        mountSummon(RAV_multiGroundMounts)
+    elseif specificType == "swimming" and haveSwimmingMounts then
+        mountSummon(RAV_swimmingMounts)
+    elseif specificType == "waterwalking" and haveWaterwalkingMounts then
+        mountSummon(RAV_waterwalkingMounts)
+    elseif specificType == "flying" and haveFlyingMounts then
+        mountSummon(RAV_flyingMounts)
+    elseif specificType == "ground" and haveGroundMounts then
+        mountSummon(RAV_groundMounts)
+    elseif specificType == "chauffeur" and haveChauffeurMounts then
+        mountSummon(RAV_chauffeurMounts)
+    elseif (specificType == "aq" or string.match(specificType, "ahn") or string.match(specificType, "qiraj")) and haveAqMounts then
+        mountSummon(RAV_aqMounts)
+    elseif (specificType == "vj" or string.match(specificType, "vash") or string.match(specificType, "jir")) and haveVashjirMounts then
+        mountSummon(RAV_vashjirMounts)
     -- Mount Special
-    if ((shiftKey and altKey) or (shiftKey and controlKey) or (altKey and controlKey)) and (mounted or inVehicle) then
+    elseif ((shiftKey and altKey) or (shiftKey and controlKey) or (altKey and controlKey)) and (mounted or inVehicle) then
         DoEmote(EMOTE171_TOKEN)
     -- Dismount / Exit Vehicle
     elseif mounted or inVehicle then
@@ -242,8 +263,8 @@ function mountUpHandler()
                 mountSummon(RAV_flyingMounts)
             elseif haveGroundMounts then
                 mountSummon(RAV_groundMounts)
-            elseif haveLowbieMounts then
-                mountSummon(RAV_lowbieMounts)
+            elseif haveChauffeurMounts then
+                mountSummon(RAV_chauffeurMounts)
             end
         elseif inVashjir and haveVashjirMounts then
             mountSummon(RAV_vashjirMounts)
@@ -253,16 +274,16 @@ function mountUpHandler()
             mountSummon(RAV_flyingMounts)
         elseif haveGroundMounts then
             mountSummon(RAV_groundMounts)
-        elseif haveLowbieMounts then
-            mountSummon(RAV_lowbieMounts)
+        elseif haveChauffeurMounts then
+            mountSummon(RAV_chauffeurMounts)
         end
     -- Flying Mounts
     elseif flyable and haveFlyingMounts then
         if altKey then
             if haveGroundMounts then
                 mountSummon(RAV_groundMounts)
-            elseif haveLowbieMounts then
-                mountSummon(RAV_lowbieMounts)
+            elseif haveChauffeurMounts then
+                mountSummon(RAV_chauffeurMounts)
             end
         else
             mountSummon(RAV_flyingMounts)
@@ -275,8 +296,8 @@ function mountUpHandler()
             mountSummon(RAV_aqMounts)
         elseif haveGroundMounts then
             mountSummon(RAV_groundMounts)
-        elseif haveLowbieMounts then
-            mountSummon(RAV_lowbieMounts)
+        elseif haveChauffeurMounts then
+            mountSummon(RAV_chauffeurMounts)
         end
     end
 end

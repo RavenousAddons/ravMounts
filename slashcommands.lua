@@ -3,7 +3,7 @@
 local addonName, addonTable = ... -- Pull back the AddOn-Local Variables and store them locally.
 -- addonName = "ravMounts"
 -- addonTable = {}
-addonTable.Version = "1.7.2"
+addonTable.Version = "1.7.3"
 
 
 -- Special formatting for 'Ravenous' messages
@@ -37,7 +37,7 @@ local function slashHandler(message, editbox)
         mountListHandler(true, true) -- force recache, announce recache
     else
         mountListHandler(false, false) -- do not force recache, do not announce recache
-        mountUpHandler()
+        mountUpHandler(message)
     end
 end
 
