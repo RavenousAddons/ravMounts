@@ -217,7 +217,7 @@ function mountUpHandler(specificType)
     local haveChauffeurMounts = (next(RAV_chauffeurMounts) ~= nil and true or false)
 
     -- Summon Specific Mount Types
-    if specificType == "vendor" and haveVendorMounts then
+     if (specificType == "vendor" or SecureCmdOptionParse("[btn:2]")) and haveVendorMounts then
         mountSummon(RAV_vendorMounts)
     elseif string.match(specificType, "flying") and (string.match(specificType, "2") or string.match(specificType, "two") or string.match(specificType, "passenger")) and haveMultiFlyingMounts then
         mountSummon(RAV_multiFlyingMounts)
