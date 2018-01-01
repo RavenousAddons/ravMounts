@@ -6,7 +6,7 @@
 -- This is free and unencumbered software released into the public domain.
 -- Feel free to include this file or code from it in your own addons.
 
-local _, ns = ...
+local _, ravMounts = ...
 -- TODO: Find out when Wintergrasp isn't flyable? Or too old to bother with?
 
 local flyingSpells = {
@@ -33,7 +33,7 @@ local IsOnGarrisonMap = C_Garrison.IsOnGarrisonMap
 local IsOnShipyardMap = C_Garrison.IsOnShipyardMap
 local IsPlayerInGarrison = C_Garrison.IsPlayerInGarrison
 
-function CanFly()
+function ravMounts.CanFly()
     if not IsFlyableArea()
     or IsPlayerInGarrison(LE_GARRISON_TYPE_7_0) -- Legion class order hall
     or IsOnGarrisonMap() or IsOnShipyardMap() -- Warlords garrison
