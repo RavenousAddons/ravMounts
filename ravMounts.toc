@@ -1,5 +1,5 @@
 ## Interface: 70300
-## Version: 1.8.0
+## Version: 1.8.1
 
 ## Name: Ravenous Mounts
 ## Title: |cff5f8aa6Ravenous Mounts
@@ -7,12 +7,11 @@
 ## Author: waldenp0nd
 
 ## SavedVariables: RAV_version
-## SavedVariablesPerCharacter: RAV_location, RAV_numMountsCollected, RAV_mountsFavorited, RAV_groundMounts, RAV_flyingMounts, RAV_swimmingMounts, RAV_waterwalkingMounts, RAV_vendorMounts, RAV_multiGroundMounts, RAV_multiFlyingMounts, RAV_vashjirMounts, RAV_aqMounts, RAV_chauffeurMounts, RAV_includeSpecials
+## SavedVariablesPerCharacter: RAV_groundMounts, RAV_flyingMounts, RAV_swimmingMounts, RAV_waterwalkingMounts, RAV_vendorMounts, RAV_multiGroundMounts, RAV_multiFlyingMounts, RAV_vashjirMounts, RAV_aqMounts, RAV_chauffeurMounts, RAV_includeSpecials
 
-## X-Copyright: Copyright 2017 waldenp0nd.
+## X-Copyright: Copyright 2016–2018 waldenp0nd.
 ## X-Website: http://www.wowinterface.com/downloads/info24005-RavenousMounts.html
 
 
 API_CanFly.lua
-functions.lua
-slashcommands.lua
+Addon.lua
