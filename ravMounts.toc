@@ -1,5 +1,5 @@
 ## Interface: 70300
-## Version: 1.8.2
+## Version: 1.8.3
 
 ## Name: Ravenous Mounts
 ## Title: |cff5f8aa6Ravenous Mounts
@@ -7,7 +7,7 @@
 ## Author: waldenp0nd
 
 ## SavedVariables: RAV_version
-## SavedVariablesPerCharacter: RAV_groundMounts, RAV_flyingMounts, RAV_swimmingMounts, RAV_waterwalkingMounts, RAV_vendorMounts, RAV_multiGroundMounts, RAV_multiFlyingMounts, RAV_vashjirMounts, RAV_aqMounts, RAV_chauffeurMounts, RAV_includeSpecials
+## SavedVariablesPerCharacter: RAV_includeVendorMounts, RAV_includePassengerMounts, RAV_includeWaterwalkingMounts, RAV_includeClassMounts, RAV_includeSwimmingMounts, RAV_flyingMounts, RAV_groundMounts, RAV_vendorMounts, RAV_passengerFlyingMounts, RAV_passengerGroundMounts, RAV_waterwalkingMounts, RAV_swimmingMounts, RAV_vashjirMounts, RAV_aqMounts, RAV_chauffeurMounts
 
 ## X-Copyright: Copyright 2016–2018 waldenp0nd.
 ## X-Website: http://www.wowinterface.com/downloads/info24005-RavenousMounts.html
