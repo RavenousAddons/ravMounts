@@ -9,11 +9,11 @@
 --  https://mods.curse.com/addons/wow/ravmounts
 ---
 local _, ravMounts = ...
-ravMounts.version = "1.8.3"
+ravMounts.version = "1.8.4"
 
--- Defaults
+-- DEFAULTS
 -- These are only applied when the AddOn is first loaded.
--- From there values are loaded from RAV_* values.
+-- From there values are loaded from RAV_ values stored in your WTF folder.
 local defaults = {
     INCLUDE_VENDOR_MOUNTS =       true,
     INCLUDE_PASSENGER_MOUNTS =    true,
