@@ -10,9 +10,6 @@ local _, ravMounts = ...
 -- TODO: Find out when Wintergrasp isn't flyable? Or too old to bother with?
 
 local flyingSpell = {
-    [0]    =  90267, -- Eastern Kingdoms = Flight Master's License
-    [1]    =  90267, -- Kalimdor         = Flight Master's License
-    [646]  =  90267, -- Deepholm         = Flight Master's License
     [1116] = 191645, -- Draenor          = Draenor Pathfinder
     [1464] = 191645, -- Tanaan Jungle    = Draenor Pathfinder
     [1191] = -1, -- Ashran - World PvP
