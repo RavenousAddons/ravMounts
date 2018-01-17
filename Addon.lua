@@ -9,7 +9,7 @@
 --  https://mods.curse.com/addons/wow/ravmounts
 ---
 local _, ravMounts = ...
-ravMounts.version = "1.8.4"
+ravMounts.version = "1.8.5"
 
 -- DEFAULTS
 -- These are only applied when the AddOn is first loaded.
@@ -360,9 +360,10 @@ SlashCmdList["RAVMOUNTS"] = slashHandler
 ---
 -- Check Installation and Updates on AddOn Load, Cache Mounts
 ---
-local frame, events = CreateFrame("Frame"), {}
-function events:ADDON_LOADED(name)
-    if name == "ravMounts" then
+local frame = CreateFrame("Frame")
+frame:RegisterEvent("ADDON_LOADED")
+frame:SetScript("OnEvent", function(self, event, arg)
+    if arg == "ravMounts" then
         if not RAV_version then
             ravMounts.prettyPrint("Thanks for installing Ravenous Mounts! Type \124cff5f8aa6/ravmounts help\124r to familiarize yourself with the AddOn!")
         elseif RAV_version ~= ravMounts.version then
@@ -371,10 +372,4 @@ function events:ADDON_LOADED(name)
         RAV_version = ravMounts.version
         ravMounts.mountListHandler()
     end
-end
-frame:SetScript("OnEvent", function(self, event, ...)
-    events[event](self, ...) -- call the event functions above
 end)
-for k, v in pairs(events) do
-    frame:RegisterEvent(k) -- Register all events for which handlers have been defined
-end
