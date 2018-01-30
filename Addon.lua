@@ -9,7 +9,7 @@
 --  https://mods.curse.com/addons/wow/ravmounts
 ---
 local _, ravMounts = ...
-ravMounts.version = "1.8.6"
+ravMounts.version = "1.8.7"
 
 -- DEFAULTS
 -- These are only applied when the AddOn is first loaded.
