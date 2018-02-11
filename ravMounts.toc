@@ -1,16 +1,16 @@
 ## Interface: 70305
-## Version: 1.8.7
+## Version: 1.8.8
 
 ## Name: Ravenous Mounts
-## Title: |cff5f8aa6Ravenous Mounts
+## Title: |cff759ab3Ravenous Mounts
 ## Notes: "Chooses the best mount for the job, with simple preferences based on your Favourites."
 ## Author: waldenp0nd
 
 ## SavedVariables: RAV_version
-## SavedVariablesPerCharacter: RAV_includeVendorMounts, RAV_includePassengerMounts, RAV_includeWaterwalkingMounts, RAV_includeClassMounts, RAV_includeSwimmingMounts, RAV_flyingMounts, RAV_groundMounts, RAV_vendorMounts, RAV_passengerFlyingMounts, RAV_passengerGroundMounts, RAV_waterwalkingMounts, RAV_swimmingMounts, RAV_vashjirMounts, RAV_aqMounts, RAV_chauffeurMounts
+## SavedVariablesPerCharacter: RAV_includeVendorMounts, RAV_includePassengerMounts, RAV_includeWaterwalkingMounts, RAV_includeSwimmingMounts, RAV_includeFlexMounts, RAV_flyingMounts, RAV_groundMounts, RAV_vendorMounts, RAV_passengerFlyingMounts, RAV_passengerGroundMounts, RAV_waterwalkingMounts, RAV_swimmingMounts, RAV_vashjirMounts, RAV_aqMounts, RAV_chauffeurMounts
 
-## X-Copyright: Copyright 2016–2018 waldenp0nd.
-## X-Website: http://www.wowinterface.com/downloads/info24005-RavenousMounts.html
+## X-License: Public Domain
+## X-Website: https://github.com/waldenp0nd/ravMounts
 
 
 API_CanFly.lua
