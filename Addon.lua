@@ -1,15 +1,16 @@
 ---
---  Ravenous Mounts
---  Copyright (c) 2016–2018 waldenp0nd
---    Chooses the best Mount for the job, with no configuration or set-up; it's
---    all based on your Mount Journal Favorites. Includes any and all available
---    Ground, Flying, Swimming, Vendor, Passenger, and Special Zone Mounts!
---  https://github.com/waldenp0nd/ravMounts
---  http://www.wowinterface.com/downloads/info24005-RavenousMounts.html
---  https://mods.curse.com/addons/wow/ravmounts
+-- Ravenous Mounts
+--   Chooses the best Mount for the job, with no configuration or set-up; it's
+--   all based on your Mount Journal Favorites. Includes any and all available
+--   Ground, Flying, Swimming, Vendor, Passenger, and Special Zone Mounts!
+-- Author: waldenp0nd
+-- License: Public Domain
+-- https://github.com/waldenp0nd/ravMounts
+-- http://www.wowinterface.com/downloads/info24005-RavenousMounts.html
+-- https://mods.curse.com/addons/wow/ravmounts
 ---
 local _, ravMounts = ...
-ravMounts.version = "1.8.7"
+ravMounts.version = "1.8.8"
 
 -- DEFAULTS
 -- These are only applied when the AddOn is first loaded.
@@ -18,8 +19,8 @@ local defaults = {
     INCLUDE_VENDOR_MOUNTS =       true,
     INCLUDE_PASSENGER_MOUNTS =    true,
     INCLUDE_WATERWALKING_MOUNTS = true,
-    INCLUDE_CLASS_MOUNTS =        true,
-    INCLUDE_SWIMMING_MOUNTS =     true
+    INCLUDE_SWIMMING_MOUNTS =     true,
+    INCLUDE_FLEX_MOUNTS =         true
 }
 
 -- Special formatting for messages
@@ -29,7 +30,7 @@ function ravMounts.prettyPrint(message, full)
     else
         message = message..":"
     end
-    local prefix = "\124cff5f8aa6Ravenous Mounts "..ravMounts.version..(full and " " or ":\124r ")
+    local prefix = "\124cff759ab3Ravenous Mounts "..ravMounts.version..(full and " " or ":\124r ")
     DEFAULT_CHAT_FRAME:AddMessage(prefix..message)
 end
 
@@ -40,9 +41,7 @@ local function mountSummon(list)
     end
 end
 
----
 -- Collect Data and Sort it
----
 function ravMounts.mountListHandler()
     -- Reset the global variables to be populated later
     RAV_flyingMounts = {}
@@ -51,7 +50,6 @@ function ravMounts.mountListHandler()
     RAV_passengerFlyingMounts = {}
     RAV_passengerGroundMounts = {}
     RAV_waterwalkingMounts = {}
-    RAV_classMounts = {}
     RAV_swimmingMounts = {}
     RAV_vashjirMounts = {}
     RAV_ahnQirajMounts = {}
@@ -59,12 +57,12 @@ function ravMounts.mountListHandler()
     RAV_includeVendorMounts = (RAV_includeVendorMounts == nil and defaults.INCLUDE_VENDOR_MOUNTS or RAV_includeVendorMounts)
     RAV_includePassengerMounts = (RAV_includePassengerMounts == nil and defaults.INCLUDE_PASSENGER_MOUNTS or RAV_includePassengerMounts)
     RAV_includeWaterwalkingMounts = (RAV_includeWaterwalkingMounts == nil and defaults.INCLUDE_WATERWALKING_MOUNTS or RAV_includeWaterwalkingMounts)
-    RAV_includeClassMounts = (RAV_includeClassMounts == nil and defaults.INCLUDE_CLASS_MOUNTS or RAV_includeClassMounts)
     RAV_includeSwimmingMounts = (RAV_includeSwimmingMounts == nil and defaults.INCLUDE_SWIMMING_MOUNTS or RAV_includeSwimmingMounts)
+    RAV_includeFlexMounts = (RAV_includeFlexMounts == nil and defaults.INCLUDE_FLEX_MOUNTS or RAV_includeFlexMounts)
 
     -- Let's start looping over our Mount Journal adding Mounts to their
     -- respective groups
-    local isFlyingMount, isGroundMount, isVendorMount, isPassengerFlyingMount, isPassengerGroundMount, isWaterwalkingMount, isSwimmingMount, isVashjirMount, isAhnQirajMount, isChauffeurMount
+    local isFlyingMount, isGroundMount, isVendorMount, isPassengerFlyingMount, isPassengerGroundMount, isWaterwalkingMount, isSwimmingMount, isVashjirMount, isAhnQirajMount, isChauffeurMount, isSpecialType, isFlexMount
     for mountIndex, mountID in pairs(C_MountJournal.GetMountIDs()) do
         local _, spellID, _, _, isUsable, _, isFavorite, _, _, hiddenOnCharacter, isCollected = C_MountJournal.GetMountInfoByID(mountID)
         local _, _, _, _, mountType = C_MountJournal.GetMountInfoExtraByID(mountID)
@@ -79,9 +77,14 @@ function ravMounts.mountListHandler()
         isAhnQirajMount = (mountType == 241)
         isChauffeurMount = (mountType == 284)
         isSpecialType = (isVendorMount or isPassengerFlyingMount or isPassengerGroundMount or isWaterwalkingMount)
+        isFlexMount = (mountID == 376 or mountID == 532 or mountID == 594 or mountID == 219 or mountID == 547 or mountID == 468 or mountID == 363 or mountID == 457 or mountID == 451 or mountID == 455 or mountID == 458 or mountID == 456 or mountID == 522 or mountID == 459 or mountID == 523 or mountID == 439 or mountID == 593 or mountID == 421)
         if isCollected and isUsable and not hiddenOnCharacter then
             if isFlyingMount and not isSpecialType and isFavorite then
-                table.insert(RAV_flyingMounts, mountID)
+                if RAV_includeFlexMounts and isFlexMount then
+                    table.insert(RAV_groundMounts, mountID)
+                else
+                    table.insert(RAV_flyingMounts, mountID)
+                end
             end
             if isGroundMount and not isSpecialType and isFavorite then
                 table.insert(RAV_groundMounts, mountID)
@@ -145,10 +148,8 @@ function ravMounts.mountListHandler()
     end
 end
 
----
 -- Check a plethora of conditions and choose the appropriate Mount from the
 -- Mount Journal, and do nothing if conditions are not met
----
 function ravMounts.mountUpHandler(specificType)
     -- Simplify the appearance of the logic later by casting our checks to
     -- simple variables
@@ -168,7 +169,6 @@ function ravMounts.mountUpHandler(specificType)
     local havePassengerFlyingMounts = (next(RAV_passengerFlyingMounts) ~= nil and true or false)
     local havePassengerGroundMounts = (next(RAV_passengerGroundMounts) ~= nil and true or false)
     local haveWaterwalkingMounts = (next(RAV_waterwalkingMounts) ~= nil and true or false)
-    local haveClassMounts = (next(RAV_classMounts) ~= nil and true or false)
     local haveSwimmingMounts = (next(RAV_swimmingMounts) ~= nil and true or false)
     local haveVashjirMounts = (next(RAV_vashjirMounts) ~= nil and true or false)
     local haveAhnQirajMounts = (next(RAV_ahnQirajMounts) ~= nil and true or false)
@@ -195,8 +195,6 @@ function ravMounts.mountUpHandler(specificType)
         mountSummon(RAV_ahnQirajMounts)
     elseif (specificType == "vj" or string.match(specificType, "vash") or string.match(specificType, "jir")) and haveVashjirMounts then
         mountSummon(RAV_vashjirMounts)
-    -- elseif specificType == "class" and haveClassMounts then
-        -- mountSummon(RAV_classMounts)
     -- Mount Special
     elseif ((shiftKey and altKey) or (shiftKey and controlKey)) and (mounted or inVehicle) then
         DoEmote(EMOTE171_TOKEN)
@@ -264,37 +262,35 @@ function ravMounts.mountUpHandler(specificType)
     end
 end
 
----
 -- Set up the slash command and variations
----
 local inclusionMessages = {
     ["vendor"] = {
-        "Vendor Mounts marked as a Favorite will be \124cff5f8aa6included\124r in the Ground/Flying Mount summoning list.",
-        "Vendor Mounts will be \124cff5f8aa6excluded\124r from their summoning list unless they are a Favorite."
+        "Vendor Mounts marked as a Favorite will be \124cff759ab3included\124r in the Ground/Flying Mount summoning list.",
+        "Vendor Mounts will be \124cff759ab3excluded\124r from their summoning list unless they are a Favorite."
     },
     ["passenger"] = {
-        "Passenger Mounts marked as a Favorite will be \124cff5f8aa6included\124r in the Ground/Flying Mount summoning list.",
-        "Passenger Mounts will be \124cff5f8aa6excluded\124r from their summoning list unless they are a Favorite."
+        "Passenger Mounts marked as a Favorite will be \124cff759ab3included\124r in the Ground/Flying Mount summoning list.",
+        "Passenger Mounts will be \124cff759ab3excluded\124r from their summoning list unless they are a Favorite."
     },
     ["waterwalking"] = {
-        "Waterwalking Mounts marked as a Favorite will be \124cff5f8aa6included\124r in the Ground Mount summoning list.",
-        "Waterwalking Mounts will be \124cff5f8aa6excluded\124r from their summoning list unless they are a Favorite."
-    },
-    ["class"] = {
-        "Class Mounts marked as a Favorite will be \124cff5f8aa6included\124r in the Ground Mount summoning list.",
-        "Class Mounts will be \124cff5f8aa6excluded\124r from their summoning list unless they are a Favorite."
+        "Waterwalking Mounts marked as a Favorite will be \124cff759ab3included\124r in the Ground Mount summoning list.",
+        "Waterwalking Mounts will be \124cff759ab3excluded\124r from their summoning list unless they are a Favorite."
     },
     ["swimming"] = {
-        "Swimming Mounts will be \124cff5f8aa6included\124r in their summoning list, regardless of Favorite status.",
-        "Swimming Mounts will be \124cff5f8aa6excluded\124r from their summoning list unless they are a Favorite."
+        "Swimming Mounts will be \124cff759ab3included\124r in their summoning list, regardless of Favorite status.",
+        "Swimming Mounts will be \124cff759ab3excluded\124r from their summoning list unless they are a Favorite."
     },
-    ["missing"] = "You need to specify which type of mount to include/exclude: vendor, passenger, swimming, or waterwalking."
+    ["flex"] = {
+        "Flex Mounts will be \124cff759ab3included\124r in the Ground Mount summoning list.",
+        "Flex Mounts will be \124cff759ab3excluded\124r from the Ground Mount summoning list."
+    },
+    ["missing"] = "You need to specify which type of mount to include/exclude: vendor, passenger, waterwalking, swimming, or flex."
 }
 SLASH_RAVMOUNTS1 = "/ravmounts"
 SLASH_RAVMOUNTS2 = "/ravm"
 local function slashHandler(message, editbox)
     if message == "version" or message == "v" then
-        print("You are running: \124cff5f8aa6Ravenous Mounts "..ravMounts.version)
+        print("You are running: \124cff759ab3Ravenous Mounts "..ravMounts.version)
     elseif string.match(message, "include") then
         if string.match(message, "vend") or string.match(message, "repair") or string.match(message, "trans") or string.match(message, "mog") then
             RAV_includeVendorMounts = true
@@ -305,12 +301,12 @@ local function slashHandler(message, editbox)
         elseif string.match(message, "waterwalk") then
             RAV_includeWaterwalkingMounts = true
             ravMounts.prettyPrint(inclusionMessages.waterwalking[1])
-        elseif string.match(message, "class") then
-            RAV_includeClassMounts = true
-            ravMounts.prettyPrint(inclusionMessages.class[1])
         elseif string.match(message, "swim") then
             RAV_includeSwimmingMounts = true
             ravMounts.prettyPrint(inclusionMessages.swimming[1])
+        elseif string.match(message, "flex") then
+            RAV_includeFlexMounts = true
+            ravMounts.prettyPrint(inclusionMessages.flex[1])
         else
             ravMounts.prettyPrint(inclusionMessages.missing)
         end
@@ -325,32 +321,32 @@ local function slashHandler(message, editbox)
         elseif string.match(message, "waterwalk") then
             RAV_includeWaterwalkingMounts = false
             ravMounts.prettyPrint(inclusionMessages.passenger[2])
-        elseif string.match(message, "class") then
-            RAV_includeClassMounts = false
-            ravMounts.prettyPrint(inclusionMessages.class[2])
         elseif string.match(message, "swim") then
             RAV_includeSwimmingMounts = false
             ravMounts.prettyPrint(inclusionMessages.swimming[2])
+        elseif string.match(message, "flex") then
+            RAV_includeFlexMounts = false
+            ravMounts.prettyPrint(inclusionMessages.flex[2])
         else
             ravMounts.prettyPrint(inclusionMessages.missing)
         end
         ravMounts.mountListHandler()
     elseif message == "settings" or message == "s" then
         ravMounts.prettyPrint("Inclusions and Exclusions", true)
-        print("\124cff5f8aa6Vendor Mounts:\124r "..(RAV_includeVendorMounts and "INCLUDE" or "EXCLUDE"))
-        print("\124cff5f8aa6Passenger Mounts:\124r "..(RAV_includePassengerMounts and "INCLUDE" or "EXCLUDE"))
-        print("\124cff5f8aa6Waterwalking Mounts:\124r "..(RAV_includeWaterwalkingMounts and "INCLUDE" or "EXCLUDE"))
-        print("\124cff5f8aa6Class Mounts:\124r "..(RAV_includeClassMounts and "INCLUDE" or "EXCLUDE"))
-        print("\124cff5f8aa6Swimming Mounts:\124r "..(RAV_includeSwimmingMounts and "INCLUDE" or "EXCLUDE"))
+        print("\124cff759ab3Vendor Mounts:\124r "..(RAV_includeVendorMounts and "INCLUDE" or "EXCLUDE"))
+        print("\124cff759ab3Passenger Mounts:\124r "..(RAV_includePassengerMounts and "INCLUDE" or "EXCLUDE"))
+        print("\124cff759ab3Waterwalking Mounts:\124r "..(RAV_includeWaterwalkingMounts and "INCLUDE" or "EXCLUDE"))
+        print("\124cff759ab3Swimming Mounts:\124r "..(RAV_includeSwimmingMounts and "INCLUDE" or "EXCLUDE"))
+        print("\124cff759ab3Flex Mounts:\124r "..(RAV_includeSwimmingMounts and "INCLUDE" or "EXCLUDE"))
     elseif message == "force" or message == "f" then
         ravMounts.mountListHandler()
         ravMounts.prettyPrint("Mount Journal data collected, sorted, and ready to rock.")
     elseif message == "help" or message == "h" then
         ravMounts.prettyPrint("Information and How to Use", true)
-        print("Type \124cff5f8aa6/ravmounts\124r to call a mount, or even better—add it to a macro. To include/exclude special mounts from your mount calls:")
-        print("e.g. \124cff5f8aa6/ravmounts include vendor\124r or \124cff5f8aa6/ravmounts exclude passenger\124r or \124cff5f8aa6/ravmounts include waterwalking")
-        print("Check your settings: \124cff5f8aa6/ravmounts settings")
-        print("Force a recache: \124cff5f8aa6/ravmounts force")
+        print("Type \124cff759ab3/ravmounts\124r to call a mount, or even better—add it to a macro. To include/exclude special mounts from your mount calls:")
+        print("e.g. \124cff759ab3/ravmounts include vendor\124r or \124cff759ab3/ravmounts exclude passenger\124r or \124cff759ab3/ravmounts include waterwalking")
+        print("Check your settings: \124cff759ab3/ravmounts settings")
+        print("Force a recache: \124cff759ab3/ravmounts force")
         print("Check out Ravenous Mounts on GitHub, WoWInterface, or Curse for more info and support: http://bit.ly/2hZTsAR")
     else
         ravMounts.mountListHandler()
@@ -359,19 +355,17 @@ local function slashHandler(message, editbox)
 end
 SlashCmdList["RAVMOUNTS"] = slashHandler
 
----
--- Check Installation and Updates on AddOn Load, Cache Mounts
----
+-- Check Installation and Updates on AddOn Load
 local frame = CreateFrame("Frame")
 frame:RegisterEvent("ADDON_LOADED")
 frame:SetScript("OnEvent", function(self, event, arg)
     if arg == "ravMounts" then
         if not RAV_version then
             ravMounts.prettyPrint("Thanks for installing Ravenous Mounts!")
-            print("Type \124cff5f8aa6/ravmounts help\124r to familiarize yourself with the AddOn!")
+            print("Type \124cff759ab3/ravmounts help\124r to familiarize yourself with the AddOn!")
         elseif RAV_version ~= ravMounts.version then
             ravMounts.prettyPrint("Thanks for updating Ravenous Mounts!")
-            print("Type \124cff5f8aa6/ravmounts help\124r to familiarize yourself with the AddOn!")
+            print("Type \124cff759ab3/ravmounts help\124r to familiarize yourself with the AddOn!")
         end
         RAV_version = ravMounts.version
         ravMounts.mountListHandler()

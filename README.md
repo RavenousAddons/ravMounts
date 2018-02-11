@@ -6,4 +6,4 @@ While this certainly isn't the most terse code, I like to write AddOns for WoW t
 
 ## License
 
-MIT
+Public Domain
