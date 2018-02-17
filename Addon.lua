@@ -10,7 +10,7 @@
 -- https://mods.curse.com/addons/wow/ravmounts
 ---
 local _, ravMounts = ...
-ravMounts.version = "1.8.8"
+ravMounts.version = "1.8.9"
 
 -- DEFAULTS
 -- These are only applied when the AddOn is first loaded.
@@ -155,7 +155,7 @@ function ravMounts.mountUpHandler(specificType)
     -- simple variables
     local mounted = IsMounted()
     local inVehicle = UnitInVehicle("player")
-    local flyable = ravMounts.CanFly()
+    local flyable = ravMounts.IsFlyableArea()
     local submerged = IsSubmerged()
     local mapID = GetCurrentMapAreaID()
     local inVashjir = ((mapID == 610 or mapID == 613 or mapID == 614 or mapID == 615) and true or false)
