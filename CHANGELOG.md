@@ -1,3 +1,8 @@
+## Version 1.8.9
+
+- Updated Phanx’s CanFly → LibFlyable code from https://github.com/phanx-wow/LibFlyable.
+
+
 ## Version 1.8.8
 
 - Add Flex mounts inclusion setting.
