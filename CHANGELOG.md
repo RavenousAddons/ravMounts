@@ -1,3 +1,9 @@
+## Version 1.9.0
+
+- Updated for 8.0.1
+- Made submerged check include floating check, thanks to DJharris71 (http://www.wowinterface.com/forums/member.php?userid=301959)
+
+
 ## Version 1.8.9
 
 - Updated Phanx’s CanFly → LibFlyable code from https://github.com/phanx-wow/LibFlyable.

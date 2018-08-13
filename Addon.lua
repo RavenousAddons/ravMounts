@@ -10,7 +10,7 @@
 -- https://mods.curse.com/addons/wow/ravmounts
 ---
 local _, ravMounts = ...
-ravMounts.version = "1.8.9"
+ravMounts.version = "1.9.0"
 
 -- DEFAULTS
 -- These are only applied when the AddOn is first loaded.
@@ -39,6 +39,13 @@ local function mountSummon(list)
     if not UnitAffectingCombat("player") then
         C_MountJournal.SummonByID(list[random(#list)])
     end
+end
+
+-- Check if floating
+-- Thanks to DJharris71 (http://www.wowinterface.com/forums/member.php?userid=301959)
+local function IsFloating()
+    local B, b, _, _, a = "BREATH", GetMirrorTimerInfo(2)
+    return (IsSwimming() and (not (b==B) or (b==B and a > -1)))
 end
 
 -- Collect Data and Sort it
@@ -156,8 +163,8 @@ function ravMounts.mountUpHandler(specificType)
     local mounted = IsMounted()
     local inVehicle = UnitInVehicle("player")
     local flyable = ravMounts.IsFlyableArea()
-    local submerged = IsSubmerged()
-    local mapID = GetCurrentMapAreaID()
+    local submerged = (IsSwimming() and not IsFloating())
+    local mapID = C_Map.GetMapInfo(1)
     local inVashjir = ((mapID == 610 or mapID == 613 or mapID == 614 or mapID == 615) and true or false)
     local inAhnQiraj = ((mapID == 717 or mapID == 766) and true or false)
     local shiftKey = IsShiftKeyDown()

@@ -1,5 +1,5 @@
-## Interface: 70305
-## Version: 1.8.9
+## Interface: 80001
+## Version: 1.9.0
 
 ## Name: Ravenous Mounts
 ## Title: |cff759ab3Ravenous Mounts
