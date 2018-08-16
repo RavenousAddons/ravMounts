@@ -56,7 +56,7 @@ local GetSubZoneText = GetSubZoneText
 local IsFlyableArea = IsFlyableArea
 local IsSpellKnown = IsSpellKnown
 
-function lib.IsFlyableArea()
+function ravMounts.IsFlyableArea()
     if not IsFlyableArea()
     or noFlySubzones[GetSubZoneText() or ""] then
         return false
