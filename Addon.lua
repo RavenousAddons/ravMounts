@@ -10,7 +10,7 @@
 -- https://mods.curse.com/addons/wow/ravmounts
 ---
 local _, ravMounts = ...
-ravMounts.version = "1.9.1"
+ravMounts.version = "1.9.2"
 
 -- DEFAULTS
 -- These are only applied when the AddOn is first loaded.
@@ -164,6 +164,7 @@ function ravMounts.mountUpHandler(specificType)
     local inVehicle = UnitInVehicle("player")
     local flyable = ravMounts.IsFlyableArea()
     local submerged = (IsSwimming() and not IsFloating())
+    local floating = (IsSwimming())
     local mapID = C_Map.GetMapInfo(1)
     local inVashjir = ((mapID == 610 or mapID == 613 or mapID == 614 or mapID == 615) and true or false)
     local inAhnQiraj = ((mapID == 717 or mapID == 766) and true or false)
@@ -214,12 +215,17 @@ function ravMounts.mountUpHandler(specificType)
             mountSummon(RAV_waterwalkingMounts)
         elseif (altKey or controlKey) and flyable and haveFlyingMounts then
             mountSummon(RAV_flyingMounts)
-        elseif (altKey or controlKey) and haveGroundMounts then
-            mountSummon(RAV_groundMounts)
         elseif inVashjir and haveVashjirMounts then
             mountSummon(RAV_vashjirMounts)
         elseif haveSwimmingMounts then
             mountSummon(RAV_swimmingMounts)
+        end
+    -- Waterwalking Mounts
+    elseif floating and haveWaterwalkingMounts then
+        if (altKey or controlKey) and flyable and haveFlyingMounts then
+            mountSummon(RAV_flyingMounts)
+        elseif haveWaterwalkingMounts then
+            mountSummon(RAV_waterwalkingMounts)
         end
     -- Two-Person Flying Mounts
     elseif controlKey and flyable and havePassengerFlyingMounts then
