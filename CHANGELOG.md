@@ -1,3 +1,8 @@
+## Version 1.9.2
+
+- Make distinction for "floating"
+
+
 ## Version 1.9.1
 
 - Update LibFlyable
