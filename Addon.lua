@@ -10,7 +10,7 @@
 -- https://mods.curse.com/addons/wow/ravmounts
 ---
 local _, ravMounts = ...
-ravMounts.version = "1.9.2"
+ravMounts.version = "1.9.3"
 
 -- DEFAULTS
 -- These are only applied when the AddOn is first loaded.
@@ -75,8 +75,8 @@ function ravMounts.mountListHandler()
         local _, _, _, _, mountType = C_MountJournal.GetMountInfoExtraByID(mountID)
         isFlyingMount = (mountType == 247 or mountType == 248)
         isGroundMount = (mountType == 230)
-        isVendorMount = (spellID == 61425 or spellID == 61447 or spellID == 122708)
-        isPassengerFlyingMount = (spellID == 93326 or spellID == 121820 or spellID == 75973 or spellID == 245723 or spellID == 245725)
+        isVendorMount = (spellID == 61425 or spellID == 61447 or spellID == 122708 or spellID == 264058)
+        isPassengerFlyingMount = (spellID == 93326 or spellID == 121820 or spellID == 75973 or spellID == 245723 or spellID == 245725 or spellID == 261395)
         isPassengerGroundMount = (spellID == 60424 or spellID == 55531 or spellID == 61465 or spellID == 61467 or spellID == 61469 or spellID == 61470)
         isWaterwalkingMount = (mountType == 269)
         isSwimmingMount = (mountType == 231 or mountType == 254 or spellID == 214791 or spellID == 228919)
@@ -84,7 +84,7 @@ function ravMounts.mountListHandler()
         isAhnQirajMount = (mountType == 241)
         isChauffeurMount = (mountType == 284)
         isSpecialType = (isVendorMount or isPassengerFlyingMount or isPassengerGroundMount or isWaterwalkingMount)
-        isFlexMount = (mountID == 376 or mountID == 532 or mountID == 594 or mountID == 219 or mountID == 547 or mountID == 468 or mountID == 363 or mountID == 457 or mountID == 451 or mountID == 455 or mountID == 458 or mountID == 456 or mountID == 522 or mountID == 459 or mountID == 523 or mountID == 439 or mountID == 593 or mountID == 421)
+        isFlexMount = (mountID == 376 or mountID == 532 or mountID == 594 or mountID == 219 or mountID == 547 or mountID == 468 or mountID == 363 or mountID == 457 or mountID == 451 or mountID == 455 or mountID == 458 or mountID == 456 or mountID == 522 or mountID == 459 or mountID == 523 or mountID == 439 or mountID == 593 or mountID == 421 or mountID == 764 or spellID == 290133)
         if isCollected and isUsable and not hiddenOnCharacter then
             if isFlyingMount and not isSpecialType and isFavorite then
                 if RAV_includeFlexMounts and isFlexMount then

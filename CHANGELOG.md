@@ -1,3 +1,10 @@
+## Version 1.9.3
+
+- Add Hivemind to Passenger Flying Mounts
+- Add new Flex Mounts
+- Fix LibFlyable to check for Island Expeditions
+
+
 ## Version 1.9.2
 
 - Make distinction for "floating"
