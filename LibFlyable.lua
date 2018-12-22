@@ -40,6 +40,14 @@ local spellForContinent = {
     [1469] = -1, -- The Heart of Azeroth (Shaman)
     [1107] = -1, -- Dreadscar Rift (Warlock)
     [1479] = -1, -- Skyhold (Warrior)
+
+    -- Battle for Azeroth
+    [1813] = -1, -- Un'gol Ruins
+    [1882] = -1, -- Verdant Wilds
+    [1883] = -1, -- Whispering Reef
+    [1893] = -1, -- The Dread Chain
+    [1892] = -1, -- Rotting Mire
+    [1897] = -1, -- Molten Clay
 }
 
 local noFlySubzones = {
