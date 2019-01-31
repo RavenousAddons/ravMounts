@@ -36,7 +36,7 @@ end
 
 -- Simplify mount summoning syntax
 local function mountSummon(list)
-    if not UnitAffectingCombat("player") then
+    if not UnitAffectingCombat("player") and #list > 0 then
         C_MountJournal.SummonByID(list[random(#list)])
     end
 end
