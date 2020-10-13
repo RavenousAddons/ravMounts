@@ -51,15 +51,17 @@ end
 -- Get the mount being used by the target (if they're a Player)
 -- Thanks to DJharris71 (http://www.wowinterface.com/forums/member.php?userid=301959)
 local function GetTargetMount()
+    local id = false
     if UnitIsPlayer("target") then
         for buffIndex = 1, 40 do
             for mountIndex = 1, table.maxn(RAV_allMountsByName) do
                 if UnitBuff("target", buffIndex) == RAV_allMountsByName[mountIndex] then
-                    return RAV_allMountsByID[mountIndex];
+                    id = RAV_allMountsByID[mountIndex];
                 end
             end
         end
     end
+    return id
 end
 
 -- Collect Data and Sort it
@@ -199,6 +201,7 @@ function ravMounts.mountUpHandler(specificType)
     local haveVashjirMounts = (next(RAV_vashjirMounts) ~= nil and true or false)
     local haveAhnQirajMounts = (next(RAV_ahnQirajMounts) ~= nil and true or false)
     local haveChauffeurMounts = (next(RAV_chauffeurMounts) ~= nil and true or false)
+    local targetMountID = GetTargetMount()
 
     -- Specific Mounts
     if (string.match(specificType, "vend") or string.match(specificType, "repair") or string.match(specificType, "trans") or string.match(specificType, "mog")) and haveVendorMounts then
@@ -221,11 +224,11 @@ function ravMounts.mountUpHandler(specificType)
         mountSummon(RAV_ahnQirajMounts)
     elseif (specificType == "vj" or string.match(specificType, "vash") or string.match(specificType, "jir")) and haveVashjirMounts then
         mountSummon(RAV_vashjirMounts)
-    elseif specificType == "copy" or specificType == "clone" then
-        C_MountJournal.SummonByID(GetTargetMount())
+    elseif (specificType == "copy" or specificType == "clone") and targetMountID then
+        C_MountJournal.SummonByID(targetMountID)
     -- Copy / Clone
-    elseif controlKey and altKey and UnitIsPlayer("target") then
-        C_MountJournal.SummonByID(GetTargetMount())
+    elseif UnitIsPlayer("target") and targetMountID then
+        C_MountJournal.SummonByID(targetMountID)
     -- Mount Special
     elseif ((shiftKey and altKey) or (shiftKey and controlKey)) and (mounted or inVehicle) then
         DoEmote(EMOTE171_TOKEN)
