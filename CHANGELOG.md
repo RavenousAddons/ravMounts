@@ -1,3 +1,14 @@
+## Version 1.9.5
+
+- Expand checks for LibFlyable
+- Add copy/clone target mount functionality, thanks to DJharris71 (http://www.wowinterface.com/forums/member.php?userid=301959)
+
+
+## Version 1.9.4
+
+- Make more checks for viable Mounts before summoning Chauffeur Mounts
+
+
 ## Version 1.9.3
 
 - Add Hivemind to Passenger Flying Mounts
