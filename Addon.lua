@@ -10,7 +10,7 @@
 -- https://mods.curse.com/addons/wow/ravmounts
 ---
 local _, ravMounts = ...
-ravMounts.version = "1.9.3"
+ravMounts.version = "1.9.5"
 
 -- DEFAULTS
 -- These are only applied when the AddOn is first loaded.
@@ -48,6 +48,20 @@ local function IsFloating()
     return (IsSwimming() and (not (b==B) or (b==B and a > -1)))
 end
 
+-- Get the mount being used by the target (if they're a Player)
+-- Thanks to DJharris71 (http://www.wowinterface.com/forums/member.php?userid=301959)
+local function GetTargetMount()
+    if UnitIsPlayer("target") then
+        for buffIndex = 1, 40 do
+            for mountIndex = 1, table.maxn(RAV_allMountsByName) do
+                if UnitBuff("target", buffIndex) == RAV_allMountsByName[mountIndex] then
+                    return RAV_allMountsByID[mountIndex];
+                end
+            end
+        end
+    end
+end
+
 -- Collect Data and Sort it
 function ravMounts.mountListHandler()
     -- Reset the global variables to be populated later
@@ -61,6 +75,8 @@ function ravMounts.mountListHandler()
     RAV_vashjirMounts = {}
     RAV_ahnQirajMounts = {}
     RAV_chauffeurMounts = {}
+    RAV_allMountsByName = {}
+    RAV_allMountsByID = {}
     RAV_includeVendorMounts = (RAV_includeVendorMounts == nil and defaults.INCLUDE_VENDOR_MOUNTS or RAV_includeVendorMounts)
     RAV_includePassengerMounts = (RAV_includePassengerMounts == nil and defaults.INCLUDE_PASSENGER_MOUNTS or RAV_includePassengerMounts)
     RAV_includeWaterwalkingMounts = (RAV_includeWaterwalkingMounts == nil and defaults.INCLUDE_WATERWALKING_MOUNTS or RAV_includeWaterwalkingMounts)
@@ -71,7 +87,7 @@ function ravMounts.mountListHandler()
     -- respective groups
     local isFlyingMount, isGroundMount, isVendorMount, isPassengerFlyingMount, isPassengerGroundMount, isWaterwalkingMount, isSwimmingMount, isVashjirMount, isAhnQirajMount, isChauffeurMount, isSpecialType, isFlexMount
     for mountIndex, mountID in pairs(C_MountJournal.GetMountIDs()) do
-        local _, spellID, _, _, isUsable, _, isFavorite, _, _, hiddenOnCharacter, isCollected = C_MountJournal.GetMountInfoByID(mountID)
+        local mountName, spellID, _, _, isUsable, _, isFavorite, _, _, hiddenOnCharacter, isCollected = C_MountJournal.GetMountInfoByID(mountID)
         local _, _, _, _, mountType = C_MountJournal.GetMountInfoExtraByID(mountID)
         isFlyingMount = (mountType == 247 or mountType == 248)
         isGroundMount = (mountType == 230)
@@ -86,6 +102,8 @@ function ravMounts.mountListHandler()
         isSpecialType = (isVendorMount or isPassengerFlyingMount or isPassengerGroundMount or isWaterwalkingMount)
         isFlexMount = (mountID == 376 or mountID == 532 or mountID == 594 or mountID == 219 or mountID == 547 or mountID == 468 or mountID == 363 or mountID == 457 or mountID == 451 or mountID == 455 or mountID == 458 or mountID == 456 or mountID == 522 or mountID == 459 or mountID == 523 or mountID == 439 or mountID == 593 or mountID == 421 or mountID == 764 or spellID == 290133)
         if isCollected and isUsable and not hiddenOnCharacter then
+            table.insert(RAV_allMountsByName, mountName)
+            table.insert(RAV_allMountsByID, mountID)
             if isFlyingMount and not isSpecialType and isFavorite then
                 if RAV_includeFlexMounts and isFlexMount then
                     table.insert(RAV_groundMounts, mountID)
@@ -203,6 +221,11 @@ function ravMounts.mountUpHandler(specificType)
         mountSummon(RAV_ahnQirajMounts)
     elseif (specificType == "vj" or string.match(specificType, "vash") or string.match(specificType, "jir")) and haveVashjirMounts then
         mountSummon(RAV_vashjirMounts)
+    elseif specificType == "copy" or specificType == "clone" then
+        C_MountJournal.SummonByID(GetTargetMount())
+    -- Copy / Clone
+    elseif controlKey and altKey and UnitIsPlayer("target") then
+        C_MountJournal.SummonByID(GetTargetMount())
     -- Mount Special
     elseif ((shiftKey and altKey) or (shiftKey and controlKey)) and (mounted or inVehicle) then
         DoEmote(EMOTE171_TOKEN)
@@ -269,6 +292,13 @@ function ravMounts.mountUpHandler(specificType)
         else
             mountSummon(RAV_groundMounts)
         end
+    -- Check for Mounts that might work before Chauffeur…
+    elseif haveWaterwalkingMounts then
+        mountSummon(RAV_waterwalkingMounts)
+    elseif haveFlyingMounts then
+        mountSummon(RAV_flyingMounts)
+    elseif haveVendorMounts then
+        mountSummon(RAV_vendorMounts)
     -- Chauffeur Mount
     else
         mountSummon(RAV_chauffeurMounts)
@@ -356,9 +386,10 @@ local function slashHandler(message, editbox)
         ravMounts.prettyPrint("Mount Journal data collected, sorted, and ready to rock.")
     elseif message == "help" or message == "h" then
         ravMounts.prettyPrint("Information and How to Use", true)
-        print("Type \124cff759ab3/ravmounts\124r to call a mount, or even better—add it to a macro. To include/exclude special mounts from your mount calls:")
+        print("Type \124cff759ab3/ravmounts\124r to call a Mount, or even better—add it to a macro.")
+        print("Check your Mount list settings: \124cff759ab3/ravmounts settings")
+        print("To include/exclude special Mounts from your Mount lists:")
         print("e.g. \124cff759ab3/ravmounts include vendor\124r or \124cff759ab3/ravmounts exclude passenger\124r or \124cff759ab3/ravmounts include waterwalking")
-        print("Check your settings: \124cff759ab3/ravmounts settings")
         print("Force a recache: \124cff759ab3/ravmounts force")
         print("Check out Ravenous Mounts on GitHub, WoWInterface, or Curse for more info and support: http://bit.ly/2hZTsAR")
     else
