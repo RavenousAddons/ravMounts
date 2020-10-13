@@ -41,13 +41,34 @@ local spellForContinent = {
     [1107] = -1, -- Dreadscar Rift (Warlock)
     [1479] = -1, -- Skyhold (Warrior)
 
-    -- Battle for Azeroth
+    -- Unflyable island expeditions where IsFlyableArea returns true:
+    -- flying serves no purpose here, so we'll just say no.
     [1813] = -1, -- Un'gol Ruins
-    [1882] = -1, -- Verdant Wilds
-    [1883] = -1, -- Whispering Reef
-    [1893] = -1, -- The Dread Chain
+    [1814] = -1, -- Havenswood
     [1892] = -1, -- Rotting Mire
+    [1893] = -1, -- The Dread Chain
+    [1883] = -1, -- Whispering Reef
     [1897] = -1, -- Molten Clay
+    [1882] = -1, -- Verdant Wilds
+    [1879] = -1, -- Jorundall
+    [1907] = -1, -- Snowblossom Village
+    [2124] = -1, -- Crestfall
+
+    -- Unflyable dungeons where IsFlyableArea returns true:
+    -- flying serves no purpose here, so we'll just say no.
+    [1763] = -1, -- Atal'dazar
+
+    -- Unflyable Warfronts where IsFlyableArea returns true:
+    -- flying serves no purpose here, so we'll just say no.
+    [1943] = -1, -- The Battle of Stormgarde
+
+    -- Unflyable Raids where IsFlyableArea returns true:
+    -- flying serves no purpose here, so we'll just say no.
+    [2169] = -1, -- Uldir: The Oblivion Door
+
+    -- Unflyable Scenarios where IsFlyableArea returns true:
+    -- flying serves no purpose here, so we'll just say no.
+    [1662] = -1, -- Assault of the Sanctum of Order
 }
 
 local noFlySubzones = {
