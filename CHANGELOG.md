@@ -1,3 +1,9 @@
+## Version 2.0.0
+
+- Why not, let's go: 2 point 0!
+- Fix for Draenor flying by the venerable DJharris71, again
+
+
 ## Version 1.9.6
 
 - Tidy up checking of mounts and toggling of automation (rewording mainly)
@@ -92,7 +98,7 @@
 
 ## Version 1.7.3
 
-- Added ability to summon a custom mount type (e.g. /ravmounts waterwalking)
+- Added ability to summon a custom mount type (e.g. /ravm waterwalking)
 
 
 ## Version 1.7.2
