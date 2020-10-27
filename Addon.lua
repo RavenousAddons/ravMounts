@@ -336,7 +336,7 @@ local automationMessages = {
         "Your target's mount, if they are using one and you own it too, will be summoned instead of following your Favorites.",
         "The addon will stop cloning your target's mount."
     },
-    ["missing"] = "You need to specify which type of automation to toggle: vendor, passenger, waterwalking, swimming, flex, clone. If you need help: \124cff9eb8c9/ravmounts help"
+    ["missing"] = "You need to specify which type of automation to toggle: vendor, passenger, waterwalking, swimming, flex, clone. If you need help: \124cff9eb8c9/ravm help"
 }
 SLASH_RAVMOUNTS1 = "/ravmounts"
 SLASH_RAVMOUNTS2 = "/ravm"
@@ -428,10 +428,10 @@ frame:SetScript("OnEvent", function(self, event, arg)
         ravMounts.mountListHandler()
         if not RAV_version then
             ravMounts.prettyPrint("Thanks for installing Ravenous Mounts!")
-            print("Type \124cff9eb8c9/ravmounts help\124r to familiarize yourself with the AddOn!")
+            print("Type \124cff9eb8c9/ravm help\124r to familiarize yourself with the AddOn!")
         elseif RAV_version ~= ravMounts.version then
             ravMounts.prettyPrint("Thanks for updating Ravenous Mounts!")
-            print("Type \124cff9eb8c9/ravmounts help\124r to familiarize yourself with the AddOn!")
+            print("Type \124cff9eb8c9/ravm help\124r to familiarize yourself with the AddOn!")
         end
         print("There are: "..table.maxn(RAV_allMountsByName).." total usable, "..table.maxn(RAV_groundMounts).." ground, "..table.maxn(RAV_flyingMounts).." flying, "..table.maxn(RAV_vendorMounts).." vendor, "..table.maxn(RAV_passengerGroundMounts) + table.maxn(RAV_passengerFlyingMounts).." passenger, "..table.maxn(RAV_waterwalkingMounts).." waterwalking, and "..table.maxn(RAV_swimmingMounts).." swimming.");
         RAV_version = ravMounts.version
