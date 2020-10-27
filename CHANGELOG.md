@@ -1,3 +1,8 @@
+## Version 1.9.6
+
+- Tidy up checking of mounts and toggling of automation (rewording mainly)
+
+
 ## Version 1.9.5
 
 - Expand checks for LibFlyable
