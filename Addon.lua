@@ -10,7 +10,7 @@
 -- https://mods.curse.com/addons/wow/ravmounts
 ---
 local _, ravMounts = ...
-ravMounts.version = "1.9.6"
+ravMounts.version = "2.0.0"
 
 -- DEFAULTS
 -- These are only applied when the AddOn is first loaded.
@@ -31,7 +31,7 @@ function ravMounts.prettyPrint(message, full)
     else
         message = message..":"
     end
-    local prefix = "\124cff759ab3Ravenous Mounts v"..ravMounts.version..(full and " " or ":\124r ")
+    local prefix = "\124cff9eb8c9Ravenous Mounts v"..ravMounts.version..(full and " " or ":\124r ")
     DEFAULT_CHAT_FRAME:AddMessage(prefix..message)
 end
 
@@ -214,7 +214,7 @@ function ravMounts.mountUpHandler(specificType)
         mountSummon(RAV_passengerGroundMounts)
     elseif string.match(specificType, "swim") and haveSwimmingMounts then
         mountSummon(RAV_swimmingMounts)
-    elseif string.match(specificType, "waterwalk") and haveWaterwalkingMounts then
+    elseif string.match(specificType, "water") and haveWaterwalkingMounts then
         mountSummon(RAV_waterwalkingMounts)
     elseif string.match(specificType, "fly") and haveFlyingMounts then
         mountSummon(RAV_flyingMounts)
@@ -313,19 +313,19 @@ end
 -- Set up the slash command and variations
 local automationMessages = {
     ["vendor"] = {
-        "Vendor Mounts will be called automatically, and if they are marked as a Favorite, they will be \124cff759ab3included\124r in the Ground/Flying Mount summoning list.",
+        "Vendor Mounts will be called automatically, and if they are marked as a Favorite, they will be \124cff9eb8c9included\124r in the Ground/Flying Mount summoning list.",
         "Vendor Mounts will only be summoned if they are marked as a Favorite."
     },
     ["passenger"] = {
-        "Passenger Mounts will be summoned automatically, and if they are marked as a Favorite, they will be \124cff759ab3included\124r in the Ground/Flying Mount summoning list.",
+        "Passenger Mounts will be summoned automatically, and if they are marked as a Favorite, they will be \124cff9eb8c9included\124r in the Ground/Flying Mount summoning list.",
         "Passenger Mounts will only be summoned if they are marked as a Favorite."
     },
     ["waterwalking"] = {
-        "Waterwalking Mounts will be summoned automatically, and if they are marked as a Favorite, they will be \124cff759ab3included\124r in the Ground Mount summoning list.",
+        "Waterwalking Mounts will be summoned automatically, and if they are marked as a Favorite, they will be \124cff9eb8c9included\124r in the Ground Mount summoning list.",
         "Waterwalking Mounts will only be summoned if they are marked as a Favorite."
     },
     ["swimming"] = {
-        "Swimming Mounts will be \124cff759ab3included\124r in their summoning list, regardless of Favorite status.",
+        "Swimming Mounts will be \124cff9eb8c9included\124r in their summoning list, regardless of Favorite status.",
         "Swimming Mounts will only be summoned if they are marked as a Favorite."
     },
     ["flex"] = {
@@ -336,13 +336,13 @@ local automationMessages = {
         "Your target's mount, if they are using one and you own it too, will be summoned instead of following your Favorites.",
         "The addon will stop cloning your target's mount."
     },
-    ["missing"] = "You need to specify which type of automation to toggle: vendor, passenger, waterwalking, swimming, flex, clone. If you need help: \124cff759ab3/ravmounts help"
+    ["missing"] = "You need to specify which type of automation to toggle: vendor, passenger, waterwalking, swimming, flex, clone. If you need help: \124cff9eb8c9/ravmounts help"
 }
 SLASH_RAVMOUNTS1 = "/ravmounts"
 SLASH_RAVMOUNTS2 = "/ravm"
 local function slashHandler(message, editbox)
     if message == "version" or message == "v" then
-        print("You are running: \124cff759ab3Ravenous Mounts "..ravMounts.version)
+        print("You are running: \124cff9eb8c9Ravenous Mounts "..ravMounts.version)
     elseif string.match(message, "auto") then
         if string.match(message, "vend") or string.match(message, "repair") or string.match(message, "trans") or string.match(message, "mog") then
             RAV_autoVendorMounts = not RAV_autoVendorMounts
@@ -393,23 +393,23 @@ local function slashHandler(message, editbox)
     elseif message == "settings" or message == "s" or message == "config" or message == "c" then
         ravMounts.mountListHandler()
         ravMounts.prettyPrint("Automation", true)
-        print("\124cff759ab3Vendor Mounts:\124r "..(RAV_autoVendorMounts and "Automatically summoned" or "Manually favorited"))
-        print("\124cff759ab3Passenger Mounts:\124r "..(RAV_autoPassengerMounts and "Automatically summoned" or "Manually favorited"))
-        print("\124cff759ab3Waterwalking Mounts:\124r "..(RAV_autoWaterwalkingMounts and "Automatically summoned" or "Manually favorited"))
-        print("\124cff759ab3Swimming Mounts:\124r "..(RAV_autoSwimmingMounts and "Automatically summoned" or "Manually favorited"))
-        print("\124cff759ab3Flexible Mounts:\124r "..(RAV_autoFlexMounts and "Flying & Ground" or "Flying-only"))
-        print("\124cff759ab3Clone Mounts:\124r "..(RAV_autoClone and "ON" or "OFF"))
+        print("\124cff9eb8c9Vendor Mounts:\124r "..(RAV_autoVendorMounts and "Automatically summoned" or "Manually favorited"))
+        print("\124cff9eb8c9Passenger Mounts:\124r "..(RAV_autoPassengerMounts and "Automatically summoned" or "Manually favorited"))
+        print("\124cff9eb8c9Waterwalking Mounts:\124r "..(RAV_autoWaterwalkingMounts and "Automatically summoned" or "Manually favorited"))
+        print("\124cff9eb8c9Swimming Mounts:\124r "..(RAV_autoSwimmingMounts and "Automatically summoned" or "Manually favorited"))
+        print("\124cff9eb8c9Flexible Mounts:\124r "..(RAV_autoFlexMounts and "Flying & Ground" or "Flying-only"))
+        print("\124cff9eb8c9Clone Mounts:\124r "..(RAV_autoClone and "ON" or "OFF"))
     elseif message == "force" or message == "f" then
         ravMounts.mountListHandler()
         ravMounts.prettyPrint("Mount Journal data collected, sorted, and ready to rock.")
         print("There are: "..table.maxn(RAV_allMountsByName).." total usable, "..table.maxn(RAV_groundMounts).." ground, "..table.maxn(RAV_flyingMounts).." flying, "..table.maxn(RAV_vendorMounts).." vendor, "..table.maxn(RAV_passengerGroundMounts) + table.maxn(RAV_passengerFlyingMounts).." passenger, "..table.maxn(RAV_waterwalkingMounts).." waterwalking, and "..table.maxn(RAV_swimmingMounts).." swimming.");
     elseif message == "help" or message == "h" then
         ravMounts.prettyPrint("Information and How to Use", true)
-        print("Type \124cff759ab3/ravm\124r to call a Mount, or even better—add it to a macro.")
-        print("Check your config: \124cff759ab3/ravm config")
+        print("Type \124cff9eb8c9/ravm\124r to call a Mount, or even better—add it to a macro.")
+        print("Check your config: \124cff9eb8c9/ravm config")
         print("To toggle automation of special mounts from your Mount lists:")
-        print("e.g. \124cff759ab3/ravm auto vendor\124r or \124cff759ab3/ravm auto flex\124r or \124cff759ab3/ravm auto clone")
-        print("Force a recache: \124cff759ab3/ravm force")
+        print("e.g. \124cff9eb8c9/ravm auto vendor\124r or \124cff9eb8c9/ravm auto flex\124r or \124cff9eb8c9/ravm auto clone")
+        print("Force a recache: \124cff9eb8c9/ravm force")
         print("Check out Ravenous Mounts on GitHub, WoWInterface, or Curse for more info and support: http://bit.ly/2hZTsAR")
     elseif message ~= "" then
         ravMounts.prettyPrint("Sorry, that command was not recognized!", false)
@@ -428,10 +428,10 @@ frame:SetScript("OnEvent", function(self, event, arg)
         ravMounts.mountListHandler()
         if not RAV_version then
             ravMounts.prettyPrint("Thanks for installing Ravenous Mounts!")
-            print("Type \124cff759ab3/ravmounts help\124r to familiarize yourself with the AddOn!")
+            print("Type \124cff9eb8c9/ravmounts help\124r to familiarize yourself with the AddOn!")
         elseif RAV_version ~= ravMounts.version then
             ravMounts.prettyPrint("Thanks for updating Ravenous Mounts!")
-            print("Type \124cff759ab3/ravmounts help\124r to familiarize yourself with the AddOn!")
+            print("Type \124cff9eb8c9/ravmounts help\124r to familiarize yourself with the AddOn!")
         end
         print("There are: "..table.maxn(RAV_allMountsByName).." total usable, "..table.maxn(RAV_groundMounts).." ground, "..table.maxn(RAV_flyingMounts).." flying, "..table.maxn(RAV_vendorMounts).." vendor, "..table.maxn(RAV_passengerGroundMounts) + table.maxn(RAV_passengerFlyingMounts).." passenger, "..table.maxn(RAV_waterwalkingMounts).." waterwalking, and "..table.maxn(RAV_swimmingMounts).." swimming.");
         RAV_version = ravMounts.version
