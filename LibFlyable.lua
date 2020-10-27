@@ -10,18 +10,6 @@ local _, ravMounts = ...
 -- TODO: Find out when Wintergrasp isn't flyable? Or too old to bother with?
 
 local spellForContinent = {
-    -- Continents/instances requiring a spell to fly:
-    -- Draenor Pathfinder
-    [1116] = 191645, -- Draenor
-    [1464] = 191645, -- Tanaan Jungle
-    [1152] = 191645, -- FW Horde Garrison Level 1
-    [1330] = 191645, -- FW Horde Garrison Level 2
-    [1153] = 191645, -- FW Horde Garrison Level 3
-    [1154] = 191645, -- FW Horde Garrison Level 4
-    [1158] = 191645, -- SMV Alliance Garrison Level 1
-    [1331] = 191645, -- SMV Alliance Garrison Level 2
-    [1159] = 191645, -- SMV Alliance Garrison Level 3
-    [1160] = 191645, -- SMV Alliance Garrison Level 4
     -- Broken Isles Pathfinder
     [1220] = 233368, -- Broken Isles
 
