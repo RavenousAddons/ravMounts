@@ -10,8 +10,10 @@ local _, ravMounts = ...
 -- TODO: Find out when Wintergrasp isn't flyable? Or too old to bother with?
 
 local spellForContinent = {
-    -- Broken Isles Pathfinder
-    [1220] = 233368, -- Broken Isles
+    -- Battle for Azeroth Pathfinder
+    [1642] = 278833, -- Zandalar
+    [1643] = 278833, -- Kul Tiras
+    [1718] = 278833, -- Nazjatar
 
     -- Unflyable continents/instances where IsFlyableArea returns true:
     [1191] = -1, -- Ashran (PvP)
@@ -33,30 +35,33 @@ local spellForContinent = {
     -- flying serves no purpose here, so we'll just say no.
     [1813] = -1, -- Un'gol Ruins
     [1814] = -1, -- Havenswood
+    [1879] = -1, -- Jorundall
+    [1882] = -1, -- Verdant Wilds
+    [1883] = -1, -- Whispering Reef
     [1892] = -1, -- Rotting Mire
     [1893] = -1, -- The Dread Chain
-    [1883] = -1, -- Whispering Reef
     [1897] = -1, -- Molten Clay
-    [1882] = -1, -- Verdant Wilds
-    [1879] = -1, -- Jorundall
+    [1898] = -1, -- Skittering Hollow
     [1907] = -1, -- Snowblossom Village
     [2124] = -1, -- Crestfall
 
-    -- Unflyable dungeons where IsFlyableArea returns true:
-    -- flying serves no purpose here, so we'll just say no.
+    -- Unflyable Dungeons where IsFlyableArea returns true:
     [1763] = -1, -- Atal'dazar
 
     -- Unflyable Warfronts where IsFlyableArea returns true:
-    -- flying serves no purpose here, so we'll just say no.
     [1943] = -1, -- The Battle of Stormgarde
+    [1876] = -1, -- Warfronts Arathi - Horde
 
     -- Unflyable Raids where IsFlyableArea returns true:
-    -- flying serves no purpose here, so we'll just say no.
     [2169] = -1, -- Uldir: The Oblivion Door
 
     -- Unflyable Scenarios where IsFlyableArea returns true:
-    -- flying serves no purpose here, so we'll just say no.
     [1662] = -1, -- Assault of the Sanctum of Order
+    [1906] = -1, -- Zandalar Continent Finale
+    [1917] = -1, -- Mag'har Scenario
+
+    -- Unflyable Lesser Visions where IsFlyableArea returns true:
+    [2275] = -1, -- Vale of Eternal Twilight
 }
 
 local noFlySubzones = {
