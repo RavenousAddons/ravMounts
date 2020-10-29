@@ -1,3 +1,13 @@
+## Version 2.0.2
+
+- Update LibFlyable for Shadowlands.
+
+
+## Version 2.0.1
+
+- I dub this version: the inevitable, where I inevitably broke something and have now fixed it: summoning specific types
+
+
 ## Version 2.0.0
 
 - Why not, let's go: 2 point 0!
