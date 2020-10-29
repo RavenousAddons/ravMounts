@@ -10,7 +10,7 @@
 -- https://mods.curse.com/addons/wow/ravmounts
 ---
 local _, ravMounts = ...
-ravMounts.version = "2.0.0"
+ravMounts.version = "2.0.2"
 
 -- DEFAULTS
 -- These are only applied when the AddOn is first loaded.
@@ -411,8 +411,6 @@ local function slashHandler(message, editbox)
         print("e.g. \124cff9eb8c9/ravm auto vendor\124r or \124cff9eb8c9/ravm auto flex\124r or \124cff9eb8c9/ravm auto clone")
         print("Force a recache: \124cff9eb8c9/ravm force")
         print("Check out Ravenous Mounts on GitHub, WoWInterface, or Curse for more info and support: http://bit.ly/2hZTsAR")
-    elseif message ~= "" then
-        ravMounts.prettyPrint("Sorry, that command was not recognized!", false)
     else
         ravMounts.mountListHandler()
         ravMounts.mountUpHandler(message)
@@ -429,11 +427,12 @@ frame:SetScript("OnEvent", function(self, event, arg)
         if not RAV_version then
             ravMounts.prettyPrint("Thanks for installing Ravenous Mounts!")
             print("Type \124cff9eb8c9/ravm help\124r to familiarize yourself with the AddOn!")
+            print("There are: "..table.maxn(RAV_allMountsByName).." total usable, "..table.maxn(RAV_groundMounts).." ground, "..table.maxn(RAV_flyingMounts).." flying, "..table.maxn(RAV_vendorMounts).." vendor, "..table.maxn(RAV_passengerGroundMounts) + table.maxn(RAV_passengerFlyingMounts).." passenger, "..table.maxn(RAV_waterwalkingMounts).." waterwalking, and "..table.maxn(RAV_swimmingMounts).." swimming.");
         elseif RAV_version ~= ravMounts.version then
             ravMounts.prettyPrint("Thanks for updating Ravenous Mounts!")
             print("Type \124cff9eb8c9/ravm help\124r to familiarize yourself with the AddOn!")
+            print("There are: "..table.maxn(RAV_allMountsByName).." total usable, "..table.maxn(RAV_groundMounts).." ground, "..table.maxn(RAV_flyingMounts).." flying, "..table.maxn(RAV_vendorMounts).." vendor, "..table.maxn(RAV_passengerGroundMounts) + table.maxn(RAV_passengerFlyingMounts).." passenger, "..table.maxn(RAV_waterwalkingMounts).." waterwalking, and "..table.maxn(RAV_swimmingMounts).." swimming.");
         end
-        print("There are: "..table.maxn(RAV_allMountsByName).." total usable, "..table.maxn(RAV_groundMounts).." ground, "..table.maxn(RAV_flyingMounts).." flying, "..table.maxn(RAV_vendorMounts).." vendor, "..table.maxn(RAV_passengerGroundMounts) + table.maxn(RAV_passengerFlyingMounts).." passenger, "..table.maxn(RAV_waterwalkingMounts).." waterwalking, and "..table.maxn(RAV_swimmingMounts).." swimming.");
         RAV_version = ravMounts.version
     end
 end)
