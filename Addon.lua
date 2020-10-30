@@ -10,7 +10,7 @@
 -- https://mods.curse.com/addons/wow/ravmounts
 ---
 local _, ravMounts = ...
-ravMounts.version = "2.0.2"
+ravMounts.version = "2.0.3"
 
 -- DEFAULTS
 -- These are only applied when the AddOn is first loaded.
@@ -18,7 +18,6 @@ ravMounts.version = "2.0.2"
 local defaults = {
     AUTO_VENDOR_MOUNTS =       true,
     AUTO_PASSENGER_MOUNTS =    true,
-    AUTO_WATERWALKING_MOUNTS = true,
     AUTO_SWIMMING_MOUNTS =     true,
     AUTO_FLEX_MOUNTS =         true,
     AUTO_CLONE =               true
@@ -73,7 +72,6 @@ function ravMounts.mountListHandler()
     RAV_vendorMounts = {}
     RAV_passengerFlyingMounts = {}
     RAV_passengerGroundMounts = {}
-    RAV_waterwalkingMounts = {}
     RAV_swimmingMounts = {}
     RAV_vashjirMounts = {}
     RAV_ahnQirajMounts = {}
@@ -82,14 +80,13 @@ function ravMounts.mountListHandler()
     RAV_allMountsByID = {}
     RAV_autoVendorMounts = (RAV_autoVendorMounts == nil and defaults.AUTO_VENDOR_MOUNTS or RAV_autoVendorMounts)
     RAV_autoPassengerMounts = (RAV_autoPassengerMounts == nil and defaults.AUTO_PASSENGER_MOUNTS or RAV_autoPassengerMounts)
-    RAV_autoWaterwalkingMounts = (RAV_autoWaterwalkingMounts == nil and defaults.AUTO_WATERWALKING_MOUNTS or RAV_autoWaterwalkingMounts)
     RAV_autoSwimmingMounts = (RAV_autoSwimmingMounts == nil and defaults.AUTO_SWIMMING_MOUNTS or RAV_autoSwimmingMounts)
     RAV_autoFlexMounts = (RAV_autoFlexMounts == nil and defaults.AUTO_FLEX_MOUNTS or RAV_autoFlexMounts)
     RAV_autoClone = (RAV_autoClone == nil and defaults.AUTO_CLONE or RAV_autoClone)
 
     -- Let's start looping over our Mount Journal adding Mounts to their
     -- respective groups
-    local isFlyingMount, isGroundMount, isVendorMount, isPassengerFlyingMount, isPassengerGroundMount, isWaterwalkingMount, isSwimmingMount, isVashjirMount, isAhnQirajMount, isChauffeurMount, isSpecialType, isFlexMount
+    local isFlyingMount, isGroundMount, isVendorMount, isPassengerFlyingMount, isPassengerGroundMount, isSwimmingMount, isVashjirMount, isAhnQirajMount, isChauffeurMount, isSpecialType, isFlexMount
     for mountIndex, mountID in pairs(C_MountJournal.GetMountIDs()) do
         local mountName, spellID, _, _, isUsable, _, isFavorite, _, _, hiddenOnCharacter, isCollected = C_MountJournal.GetMountInfoByID(mountID)
         local _, _, _, _, mountType = C_MountJournal.GetMountInfoExtraByID(mountID)
@@ -102,8 +99,7 @@ function ravMounts.mountListHandler()
         isVendorMount = (mountID == 280 or mountID == 284 or mountID == 460 or mountID == 1039)
         isPassengerFlyingMount = (mountID == 407 or mountID == 455 or mountID == 382 or mountID == 959 or mountID == 960)
         isPassengerGroundMount = (mountID == 275 or mountID == 240 or mountID == 286 or mountID == 287 or mountID == 288 or mountID == 289)
-        isWaterwalkingMount = (mountID == 449 or mountID == 488)
-        isSpecialType = (isVendorMount or isPassengerFlyingMount or isPassengerGroundMount or isWaterwalkingMount)
+        isSpecialType = (isVendorMount or isPassengerFlyingMount or isPassengerGroundMount)
         isFlexMount = (mountID == 376 or mountID == 532 or mountID == 594 or mountID == 219 or mountID == 547 or mountID == 468 or mountID == 363 or mountID == 457 or mountID == 451 or mountID == 455 or mountID == 458 or mountID == 456 or mountID == 522 or mountID == 459 or mountID == 523 or mountID == 439 or mountID == 593 or mountID == 421 or mountID == 764 or mountID == 1222 or mountID == 1290)
         if isCollected and isUsable and not hiddenOnCharacter then
             table.insert(RAV_allMountsByName, mountName)
@@ -148,16 +144,6 @@ function ravMounts.mountListHandler()
                     table.insert(RAV_passengerGroundMounts, mountID)
                 end
             end
-            if isWaterwalkingMount then
-                if RAV_autoWaterwalkingMounts then
-                    table.insert(RAV_waterwalkingMounts, mountID)
-                    if isFavorite then
-                        table.insert(RAV_groundMounts, mountID)
-                    end
-                elseif not RAV_autoWaterwalkingMounts and isFavorite then
-                    table.insert(RAV_waterwalkingMounts, mountID)
-                end
-            end
             if isSwimmingMount then
                 if RAV_autoSwimmingMounts
                 or not RAV_autoSwimmingMounts and isFavorite then
@@ -198,7 +184,6 @@ function ravMounts.mountUpHandler(specificType)
     local haveVendorMounts = (next(RAV_vendorMounts) ~= nil and true or false)
     local havePassengerFlyingMounts = (next(RAV_passengerFlyingMounts) ~= nil and true or false)
     local havePassengerGroundMounts = (next(RAV_passengerGroundMounts) ~= nil and true or false)
-    local haveWaterwalkingMounts = (next(RAV_waterwalkingMounts) ~= nil and true or false)
     local haveSwimmingMounts = (next(RAV_swimmingMounts) ~= nil and true or false)
     local haveVashjirMounts = (next(RAV_vashjirMounts) ~= nil and true or false)
     local haveAhnQirajMounts = (next(RAV_ahnQirajMounts) ~= nil and true or false)
@@ -214,8 +199,6 @@ function ravMounts.mountUpHandler(specificType)
         mountSummon(RAV_passengerGroundMounts)
     elseif string.match(specificType, "swim") and haveSwimmingMounts then
         mountSummon(RAV_swimmingMounts)
-    elseif string.match(specificType, "water") and haveWaterwalkingMounts then
-        mountSummon(RAV_waterwalkingMounts)
     elseif string.match(specificType, "fly") and haveFlyingMounts then
         mountSummon(RAV_flyingMounts)
     elseif specificType == "ground" and haveGroundMounts then
@@ -237,23 +220,14 @@ function ravMounts.mountUpHandler(specificType)
     -- Vendor Mounts
     elseif shiftKey and haveVendorMounts then
         mountSummon(RAV_vendorMounts)
-    -- Vash'jir, Swimming, and Waterwalking Mounts
-    elseif submerged and (haveVashjirMounts or haveSwimmingMounts or haveWaterwalkingMounts) then
-        if altKey and haveWaterwalkingMounts then
-            mountSummon(RAV_waterwalkingMounts)
-        elseif (altKey or controlKey) and flyable and haveFlyingMounts then
+    -- Vash'jir and Swimming Mounts
+    elseif submerged and (haveVashjirMounts or haveSwimmingMounts) then
+        if altKey and flyable and haveFlyingMounts then
             mountSummon(RAV_flyingMounts)
         elseif inVashjir and haveVashjirMounts then
             mountSummon(RAV_vashjirMounts)
         elseif haveSwimmingMounts then
             mountSummon(RAV_swimmingMounts)
-        end
-    -- Waterwalking Mounts
-    elseif floating and haveWaterwalkingMounts then
-        if (altKey or controlKey) and flyable and haveFlyingMounts then
-            mountSummon(RAV_flyingMounts)
-        elseif haveWaterwalkingMounts then
-            mountSummon(RAV_waterwalkingMounts)
         end
     -- Two-Person Flying Mounts
     elseif controlKey and flyable and havePassengerFlyingMounts then
@@ -298,8 +272,6 @@ function ravMounts.mountUpHandler(specificType)
             mountSummon(RAV_groundMounts)
         end
     -- Check for Mounts that might work before Chauffeur…
-    elseif haveWaterwalkingMounts then
-        mountSummon(RAV_waterwalkingMounts)
     elseif haveFlyingMounts then
         mountSummon(RAV_flyingMounts)
     elseif haveVendorMounts then
@@ -320,10 +292,6 @@ local automationMessages = {
         "Passenger Mounts will be summoned automatically, and if they are marked as a Favorite, they will be \124cff9eb8c9included\124r in the Ground/Flying Mount summoning list.",
         "Passenger Mounts will only be summoned if they are marked as a Favorite."
     },
-    ["waterwalking"] = {
-        "Waterwalking Mounts will be summoned automatically, and if they are marked as a Favorite, they will be \124cff9eb8c9included\124r in the Ground Mount summoning list.",
-        "Waterwalking Mounts will only be summoned if they are marked as a Favorite."
-    },
     ["swimming"] = {
         "Swimming Mounts will be \124cff9eb8c9included\124r in their summoning list, regardless of Favorite status.",
         "Swimming Mounts will only be summoned if they are marked as a Favorite."
@@ -336,7 +304,7 @@ local automationMessages = {
         "Your target's mount, if they are using one and you own it too, will be summoned instead of following your Favorites.",
         "The addon will stop cloning your target's mount."
     },
-    ["missing"] = "You need to specify which type of automation to toggle: vendor, passenger, waterwalking, swimming, flex, clone. If you need help: \124cff9eb8c9/ravm help"
+    ["missing"] = "You need to specify which type of automation to toggle: vendor, passenger, swimming, flex, clone. If you need help: \124cff9eb8c9/ravm help"
 }
 SLASH_RAVMOUNTS1 = "/ravmounts"
 SLASH_RAVMOUNTS2 = "/ravm"
@@ -357,13 +325,6 @@ local function slashHandler(message, editbox)
                 ravMounts.prettyPrint(automationMessages.passenger[1])
             else
                 ravMounts.prettyPrint(automationMessages.passenger[2])
-            end
-        elseif string.match(message, "water") then
-            RAV_autoWaterwalkingMounts = not RAV_autoWaterwalkingMounts
-            if RAV_autoWaterwalkingMounts then
-                ravMounts.prettyPrint(automationMessages.waterwalking[1])
-            else
-                ravMounts.prettyPrint(automationMessages.waterwalking[2])
             end
         elseif string.match(message, "swim") then
             RAV_autoSwimmingMounts = not RAV_autoSwimmingMounts
@@ -393,16 +354,15 @@ local function slashHandler(message, editbox)
     elseif message == "settings" or message == "s" or message == "config" or message == "c" then
         ravMounts.mountListHandler()
         ravMounts.prettyPrint("Automation", true)
-        print("\124cff9eb8c9Vendor Mounts:\124r "..(RAV_autoVendorMounts and "Automatically summoned" or "Manually favorited"))
-        print("\124cff9eb8c9Passenger Mounts:\124r "..(RAV_autoPassengerMounts and "Automatically summoned" or "Manually favorited"))
-        print("\124cff9eb8c9Waterwalking Mounts:\124r "..(RAV_autoWaterwalkingMounts and "Automatically summoned" or "Manually favorited"))
-        print("\124cff9eb8c9Swimming Mounts:\124r "..(RAV_autoSwimmingMounts and "Automatically summoned" or "Manually favorited"))
-        print("\124cff9eb8c9Flexible Mounts:\124r "..(RAV_autoFlexMounts and "Flying & Ground" or "Flying-only"))
+        print("\124cff9eb8c9Vendor Mounts:\124r "..(RAV_autoVendorMounts and "Automatically chosen" or "Favorite manually"))
+        print("\124cff9eb8c9Passenger Mounts:\124r "..(RAV_autoPassengerMounts and "Automatically chosen" or "Favorite manually"))
+        print("\124cff9eb8c9Swimming Mounts:\124r "..(RAV_autoSwimmingMounts and "Automatically chosen" or "Favorite manually"))
+        print("\124cff9eb8c9Flexible Mounts:\124r "..(RAV_autoFlexMounts and "Treated as Flying & Ground" or "Treated as Flying-only"))
         print("\124cff9eb8c9Clone Mounts:\124r "..(RAV_autoClone and "ON" or "OFF"))
     elseif message == "force" or message == "f" then
         ravMounts.mountListHandler()
         ravMounts.prettyPrint("Mount Journal data collected, sorted, and ready to rock.")
-        print("There are: "..table.maxn(RAV_allMountsByName).." total usable, "..table.maxn(RAV_groundMounts).." ground, "..table.maxn(RAV_flyingMounts).." flying, "..table.maxn(RAV_vendorMounts).." vendor, "..table.maxn(RAV_passengerGroundMounts) + table.maxn(RAV_passengerFlyingMounts).." passenger, "..table.maxn(RAV_waterwalkingMounts).." waterwalking, and "..table.maxn(RAV_swimmingMounts).." swimming.");
+        print("There are: "..table.maxn(RAV_allMountsByName).." total usable, "..table.maxn(RAV_groundMounts).." ground, "..table.maxn(RAV_flyingMounts).." flying, "..table.maxn(RAV_vendorMounts).." vendor, "..table.maxn(RAV_passengerGroundMounts) + table.maxn(RAV_passengerFlyingMounts).." passenger, and "..table.maxn(RAV_swimmingMounts).." swimming.");
     elseif message == "help" or message == "h" then
         ravMounts.prettyPrint("Information and How to Use", true)
         print("Type \124cff9eb8c9/ravm\124r to call a Mount, or even better—add it to a macro.")
@@ -427,11 +387,11 @@ frame:SetScript("OnEvent", function(self, event, arg)
         if not RAV_version then
             ravMounts.prettyPrint("Thanks for installing Ravenous Mounts!")
             print("Type \124cff9eb8c9/ravm help\124r to familiarize yourself with the AddOn!")
-            print("There are: "..table.maxn(RAV_allMountsByName).." total usable, "..table.maxn(RAV_groundMounts).." ground, "..table.maxn(RAV_flyingMounts).." flying, "..table.maxn(RAV_vendorMounts).." vendor, "..table.maxn(RAV_passengerGroundMounts) + table.maxn(RAV_passengerFlyingMounts).." passenger, "..table.maxn(RAV_waterwalkingMounts).." waterwalking, and "..table.maxn(RAV_swimmingMounts).." swimming.");
+            print("There are: "..table.maxn(RAV_allMountsByName).." total usable, "..table.maxn(RAV_groundMounts).." ground, "..table.maxn(RAV_flyingMounts).." flying, "..table.maxn(RAV_vendorMounts).." vendor, "..table.maxn(RAV_passengerGroundMounts) + table.maxn(RAV_passengerFlyingMounts).." passenger, and "..table.maxn(RAV_swimmingMounts).." swimming.");
         elseif RAV_version ~= ravMounts.version then
             ravMounts.prettyPrint("Thanks for updating Ravenous Mounts!")
             print("Type \124cff9eb8c9/ravm help\124r to familiarize yourself with the AddOn!")
-            print("There are: "..table.maxn(RAV_allMountsByName).." total usable, "..table.maxn(RAV_groundMounts).." ground, "..table.maxn(RAV_flyingMounts).." flying, "..table.maxn(RAV_vendorMounts).." vendor, "..table.maxn(RAV_passengerGroundMounts) + table.maxn(RAV_passengerFlyingMounts).." passenger, "..table.maxn(RAV_waterwalkingMounts).." waterwalking, and "..table.maxn(RAV_swimmingMounts).." swimming.");
+            print("There are: "..table.maxn(RAV_allMountsByName).." total usable, "..table.maxn(RAV_groundMounts).." ground, "..table.maxn(RAV_flyingMounts).." flying, "..table.maxn(RAV_vendorMounts).." vendor, "..table.maxn(RAV_passengerGroundMounts) + table.maxn(RAV_passengerFlyingMounts).." passenger, and "..table.maxn(RAV_swimmingMounts).." swimming.");
         end
         RAV_version = ravMounts.version
     end
