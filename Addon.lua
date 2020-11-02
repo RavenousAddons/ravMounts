@@ -10,7 +10,7 @@
 -- https://www.curseforge.com/wow/addons/ravmounts
 ---
 local _, ravMounts = ...
-ravMounts.version = "2.0.4"
+ravMounts.version = "2.0.5"
 
 -- DEFAULTS
 -- These are only applied when the AddOn is first loaded.
