@@ -6,8 +6,8 @@
 -- Author: waldenp0nd
 -- License: Public Domain
 -- https://github.com/waldenp0nd/ravMounts
--- http://www.wowinterface.com/downloads/info24005-RavenousMounts.html
--- https://mods.curse.com/addons/wow/ravmounts
+-- https://www.wowinterface.com/downloads/info24005-RavenousMounts.html
+-- https://www.curseforge.com/wow/addons/ravmounts
 ---
 local _, ravMounts = ...
 ravMounts.version = "2.0.4"
@@ -360,7 +360,7 @@ local function slashHandler(message, editbox)
         print("\124cff9eb8c9Passenger Mounts:\124r "..(RAV_autoPassengerMounts and "Automatically chosen" or "Favorite manually"))
         print("\124cff9eb8c9Swimming Mounts:\124r "..(RAV_autoSwimmingMounts and "Automatically chosen" or "Favorite manually"))
         print("\124cff9eb8c9Flexible Mounts:\124r "..(RAV_autoFlexMounts and "Treated as Flying & Ground" or "Treated as Flying-only"))
-        print("\124cff9eb8c9Clone Mounts:\124r "..(RAV_autoClone and "ON" or "OFF"))
+        print("\124cff9eb8c9Clone Target Mount:\124r "..(RAV_autoClone and "ON" or "OFF"))
     elseif message == "force" or message == "f" then
         ravMounts.mountListHandler()
         ravMounts.prettyPrint("Mount Journal data collected, sorted, and ready to rock.")
