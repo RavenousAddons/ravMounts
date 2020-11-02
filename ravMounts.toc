@@ -1,5 +1,5 @@
 ## Interface: 90001
-## Version: 2.0.2
+## Version: 2.0.4
 
 ## Name: Ravenous Mounts
 ## Title: |cff9eb8c9Ravenous Mounts
@@ -7,7 +7,7 @@
 ## Author: waldenp0nd
 
 ## SavedVariables: RAV_version
-## SavedVariablesPerCharacter: RAV_autoVendorMounts, RAV_autoPassengerMounts, RAV_autoWaterwalkingMounts, RAV_autoSwimmingMounts, RAV_autoFlexMounts, RAV_autoClone, RAV_flyingMounts, RAV_groundMounts, RAV_vendorMounts, RAV_passengerFlyingMounts, RAV_passengerGroundMounts, RAV_waterwalkingMounts, RAV_swimmingMounts, RAV_vashjirMounts, RAV_aqMounts, RAV_chauffeurMounts, RAV_allMountsByName, RAV_allMountsByID
+## SavedVariablesPerCharacter: RAV_autoVendorMounts, RAV_autoPassengerMounts, RAV_autoSwimmingMounts, RAV_autoFlexMounts, RAV_autoClone, RAV_flyingMounts, RAV_groundMounts, RAV_vendorMounts, RAV_flyingPassengerMounts, RAV_groundPassengerMounts, RAV_swimmingMounts, RAV_vashjirMounts, RAV_aqMounts, RAV_chauffeurMounts, RAV_allMountsByName, RAV_allMountsByID
 
 ## X-License: Public Domain
 ## X-Website: https://github.com/waldenp0nd/ravMounts

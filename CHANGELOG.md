@@ -1,3 +1,13 @@
+## Version 2.0.4
+
+- Make the specific "two" commands use flyable
+
+
+## Version 2.0.3
+
+- Remove waterwalking type
+
+
 ## Version 2.0.2
 
 - Update LibFlyable for Shadowlands.
@@ -108,7 +118,7 @@
 
 ## Version 1.7.3
 
-- Added ability to summon a custom mount type (e.g. /ravm waterwalking)
+- Added ability to summon a custom mount type (e.g. /ravm vendor)
 
 
 ## Version 1.7.2

@@ -10,7 +10,7 @@
 -- https://mods.curse.com/addons/wow/ravmounts
 ---
 local _, ravMounts = ...
-ravMounts.version = "2.0.3"
+ravMounts.version = "2.0.4"
 
 -- DEFAULTS
 -- These are only applied when the AddOn is first loaded.
@@ -70,8 +70,8 @@ function ravMounts.mountListHandler()
     RAV_flyingMounts = {}
     RAV_groundMounts = {}
     RAV_vendorMounts = {}
-    RAV_passengerFlyingMounts = {}
-    RAV_passengerGroundMounts = {}
+    RAV_flyingPassengerMounts = {}
+    RAV_groundPassengerMounts = {}
     RAV_swimmingMounts = {}
     RAV_vashjirMounts = {}
     RAV_ahnQirajMounts = {}
@@ -86,7 +86,7 @@ function ravMounts.mountListHandler()
 
     -- Let's start looping over our Mount Journal adding Mounts to their
     -- respective groups
-    local isFlyingMount, isGroundMount, isVendorMount, isPassengerFlyingMount, isPassengerGroundMount, isSwimmingMount, isVashjirMount, isAhnQirajMount, isChauffeurMount, isSpecialType, isFlexMount
+    local isFlyingMount, isGroundMount, isVendorMount, isFlyingPassengerMount, isGroundPassengerMount, isSwimmingMount, isVashjirMount, isAhnQirajMount, isChauffeurMount, isSpecialType, isFlexMount
     for mountIndex, mountID in pairs(C_MountJournal.GetMountIDs()) do
         local mountName, spellID, _, _, isUsable, _, isFavorite, _, _, hiddenOnCharacter, isCollected = C_MountJournal.GetMountInfoByID(mountID)
         local _, _, _, _, mountType = C_MountJournal.GetMountInfoExtraByID(mountID)
@@ -97,9 +97,9 @@ function ravMounts.mountListHandler()
         isAhnQirajMount = (mountType == 241)
         isChauffeurMount = (mountType == 284)
         isVendorMount = (mountID == 280 or mountID == 284 or mountID == 460 or mountID == 1039)
-        isPassengerFlyingMount = (mountID == 407 or mountID == 455 or mountID == 382 or mountID == 959 or mountID == 960)
-        isPassengerGroundMount = (mountID == 275 or mountID == 240 or mountID == 286 or mountID == 287 or mountID == 288 or mountID == 289)
-        isSpecialType = (isVendorMount or isPassengerFlyingMount or isPassengerGroundMount)
+        isFlyingPassengerMount = (mountID == 407 or mountID == 455 or mountID == 382 or mountID == 959 or mountID == 960)
+        isGroundPassengerMount = (mountID == 275 or mountID == 240 or mountID == 286 or mountID == 287 or mountID == 288 or mountID == 289)
+        isSpecialType = (isVendorMount or isFlyingPassengerMount or isGroundPassengerMount)
         isFlexMount = (mountID == 376 or mountID == 532 or mountID == 594 or mountID == 219 or mountID == 547 or mountID == 468 or mountID == 363 or mountID == 457 or mountID == 451 or mountID == 455 or mountID == 458 or mountID == 456 or mountID == 522 or mountID == 459 or mountID == 523 or mountID == 439 or mountID == 593 or mountID == 421 or mountID == 764 or mountID == 1222 or mountID == 1290)
         if isCollected and isUsable and not hiddenOnCharacter then
             table.insert(RAV_allMountsByName, mountName)
@@ -124,24 +124,24 @@ function ravMounts.mountListHandler()
                     table.insert(RAV_vendorMounts, mountID)
                 end
             end
-            if isPassengerFlyingMount then
+            if isFlyingPassengerMount then
                 if RAV_autoPassengerMounts then
-                    table.insert(RAV_passengerFlyingMounts, mountID)
+                    table.insert(RAV_flyingPassengerMounts, mountID)
                     if isFavorite then
                         table.insert(RAV_flyingMounts, mountID)
                     end
                 elseif not RAV_autoPassengerMounts and isFavorite then
-                    table.insert(RAV_passengerFlyingMounts, mountID)
+                    table.insert(RAV_flyingPassengerMounts, mountID)
                 end
             end
-            if isPassengerGroundMount then
+            if isGroundPassengerMount then
                 if RAV_autoPassengerMounts then
-                    table.insert(RAV_passengerGroundMounts, mountID)
+                    table.insert(RAV_groundPassengerMounts, mountID)
                     if isFavorite then
                         table.insert(RAV_groundMounts, mountID)
                     end
                 elseif not RAV_autoPassengerMounts and isFavorite then
-                    table.insert(RAV_passengerGroundMounts, mountID)
+                    table.insert(RAV_groundPassengerMounts, mountID)
                 end
             end
             if isSwimmingMount then
@@ -182,8 +182,8 @@ function ravMounts.mountUpHandler(specificType)
     local haveFlyingMounts = (next(RAV_flyingMounts) ~= nil and true or false)
     local haveGroundMounts = (next(RAV_groundMounts) ~= nil and true or false)
     local haveVendorMounts = (next(RAV_vendorMounts) ~= nil and true or false)
-    local havePassengerFlyingMounts = (next(RAV_passengerFlyingMounts) ~= nil and true or false)
-    local havePassengerGroundMounts = (next(RAV_passengerGroundMounts) ~= nil and true or false)
+    local haveFlyingPassengerMounts = (next(RAV_flyingPassengerMounts) ~= nil and true or false)
+    local haveGroundPassengerMounts = (next(RAV_groundPassengerMounts) ~= nil and true or false)
     local haveSwimmingMounts = (next(RAV_swimmingMounts) ~= nil and true or false)
     local haveVashjirMounts = (next(RAV_vashjirMounts) ~= nil and true or false)
     local haveAhnQirajMounts = (next(RAV_ahnQirajMounts) ~= nil and true or false)
@@ -193,10 +193,12 @@ function ravMounts.mountUpHandler(specificType)
     -- Specific Mounts
     if (string.match(specificType, "vend") or string.match(specificType, "repair") or string.match(specificType, "trans") or string.match(specificType, "mog")) and haveVendorMounts then
         mountSummon(RAV_vendorMounts)
-    elseif string.match(specificType, "fly") and (string.match(specificType, "2") or string.match(specificType, "two") or string.match(specificType, "multi") or string.match(specificType, "passenger")) and havePassengerFlyingMounts then
-        mountSummon(RAV_passengerFlyingMounts)
-    elseif (string.match(specificType, "2") or string.match(specificType, "two") or string.match(specificType, "multi") or string.match(specificType, "passenger")) and havePassengerGroundMounts then
-        mountSummon(RAV_passengerGroundMounts)
+    elseif (string.match(specificType, "2") or string.match(specificType, "two") or string.match(specificType, "multi") or string.match(specificType, "passenger")) and haveFlyingPassengerMounts and flyable then
+        mountSummon(RAV_flyingPassengerMounts)
+    elseif string.match(specificType, "fly") and (string.match(specificType, "2") or string.match(specificType, "two") or string.match(specificType, "multi") or string.match(specificType, "passenger")) and haveFlyingPassengerMounts then
+        mountSummon(RAV_flyingPassengerMounts)
+    elseif (string.match(specificType, "2") or string.match(specificType, "two") or string.match(specificType, "multi") or string.match(specificType, "passenger")) and haveGroundPassengerMounts then
+        mountSummon(RAV_groundPassengerMounts)
     elseif string.match(specificType, "swim") and haveSwimmingMounts then
         mountSummon(RAV_swimmingMounts)
     elseif string.match(specificType, "fly") and haveFlyingMounts then
@@ -230,18 +232,18 @@ function ravMounts.mountUpHandler(specificType)
             mountSummon(RAV_swimmingMounts)
         end
     -- Two-Person Flying Mounts
-    elseif controlKey and flyable and havePassengerFlyingMounts then
+    elseif controlKey and flyable and haveFlyingPassengerMounts then
         if altKey then
-            mountSummon(RAV_passengerGroundMounts)
+            mountSummon(RAV_groundPassengerMounts)
         else
-            mountSummon(RAV_passengerFlyingMounts)
+            mountSummon(RAV_flyingPassengerMounts)
         end
     -- Two-Person Ground Mounts
-    elseif controlKey and havePassengerGroundMounts then
+    elseif controlKey and haveGroundPassengerMounts then
         if altKey then
-            mountSummon(RAV_passengerFlyingMounts)
+            mountSummon(RAV_flyingPassengerMounts)
         else
-            mountSummon(RAV_passengerGroundMounts)
+            mountSummon(RAV_groundPassengerMounts)
         end
     -- Dismount / Exit Vehicle
     elseif mounted or inVehicle then
@@ -362,7 +364,7 @@ local function slashHandler(message, editbox)
     elseif message == "force" or message == "f" then
         ravMounts.mountListHandler()
         ravMounts.prettyPrint("Mount Journal data collected, sorted, and ready to rock.")
-        print("There are: "..table.maxn(RAV_allMountsByName).." total usable, "..table.maxn(RAV_groundMounts).." ground, "..table.maxn(RAV_flyingMounts).." flying, "..table.maxn(RAV_vendorMounts).." vendor, "..table.maxn(RAV_passengerGroundMounts) + table.maxn(RAV_passengerFlyingMounts).." passenger, and "..table.maxn(RAV_swimmingMounts).." swimming.");
+        print("There are: "..table.maxn(RAV_allMountsByName).." total usable, "..table.maxn(RAV_groundMounts).." ground, "..table.maxn(RAV_flyingMounts).." flying, "..table.maxn(RAV_vendorMounts).." vendor, "..table.maxn(RAV_groundPassengerMounts) + table.maxn(RAV_flyingPassengerMounts).." passenger, and "..table.maxn(RAV_swimmingMounts).." swimming.");
     elseif message == "help" or message == "h" then
         ravMounts.prettyPrint("Information and How to Use", true)
         print("Type \124cff9eb8c9/ravm\124r to call a Mount, or even better—add it to a macro.")
@@ -387,11 +389,11 @@ frame:SetScript("OnEvent", function(self, event, arg)
         if not RAV_version then
             ravMounts.prettyPrint("Thanks for installing Ravenous Mounts!")
             print("Type \124cff9eb8c9/ravm help\124r to familiarize yourself with the AddOn!")
-            print("There are: "..table.maxn(RAV_allMountsByName).." total usable, "..table.maxn(RAV_groundMounts).." ground, "..table.maxn(RAV_flyingMounts).." flying, "..table.maxn(RAV_vendorMounts).." vendor, "..table.maxn(RAV_passengerGroundMounts) + table.maxn(RAV_passengerFlyingMounts).." passenger, and "..table.maxn(RAV_swimmingMounts).." swimming.");
+            print("There are: "..table.maxn(RAV_allMountsByName).." total usable, "..table.maxn(RAV_groundMounts).." ground, "..table.maxn(RAV_flyingMounts).." flying, "..table.maxn(RAV_vendorMounts).." vendor, "..table.maxn(RAV_groundPassengerMounts) + table.maxn(RAV_flyingPassengerMounts).." passenger, and "..table.maxn(RAV_swimmingMounts).." swimming.");
         elseif RAV_version ~= ravMounts.version then
             ravMounts.prettyPrint("Thanks for updating Ravenous Mounts!")
             print("Type \124cff9eb8c9/ravm help\124r to familiarize yourself with the AddOn!")
-            print("There are: "..table.maxn(RAV_allMountsByName).." total usable, "..table.maxn(RAV_groundMounts).." ground, "..table.maxn(RAV_flyingMounts).." flying, "..table.maxn(RAV_vendorMounts).." vendor, "..table.maxn(RAV_passengerGroundMounts) + table.maxn(RAV_passengerFlyingMounts).." passenger, and "..table.maxn(RAV_swimmingMounts).." swimming.");
+            print("There are: "..table.maxn(RAV_allMountsByName).." total usable, "..table.maxn(RAV_groundMounts).." ground, "..table.maxn(RAV_flyingMounts).." flying, "..table.maxn(RAV_vendorMounts).." vendor, "..table.maxn(RAV_groundPassengerMounts) + table.maxn(RAV_flyingPassengerMounts).." passenger, and "..table.maxn(RAV_swimmingMounts).." swimming.");
         end
         RAV_version = ravMounts.version
     end
