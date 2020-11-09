@@ -16,11 +16,11 @@ ravMounts.version = "2.0.5"
 -- These are only applied when the AddOn is first loaded.
 -- From there values are loaded from RAV_ values stored in your WTF folder.
 local defaults = {
-    AUTO_VENDOR_MOUNTS =       true,
-    AUTO_PASSENGER_MOUNTS =    true,
-    AUTO_SWIMMING_MOUNTS =     true,
-    AUTO_FLEX_MOUNTS =         true,
-    AUTO_CLONE =               true
+    AUTO_VENDOR_MOUNTS =    true,
+    AUTO_PASSENGER_MOUNTS = true,
+    AUTO_SWIMMING_MOUNTS =  true,
+    AUTO_FLEX_MOUNTS =      true,
+    AUTO_CLONE =            true
 }
 
 -- Special formatting for messages
@@ -364,7 +364,7 @@ local function slashHandler(message, editbox)
     elseif message == "force" or message == "f" then
         ravMounts.mountListHandler()
         ravMounts.prettyPrint("Mount Journal data collected, sorted, and ready to rock.")
-        print("There are: "..table.maxn(RAV_allMountsByName).." total usable, "..table.maxn(RAV_groundMounts).." ground, "..table.maxn(RAV_flyingMounts).." flying, "..table.maxn(RAV_vendorMounts).." vendor, "..table.maxn(RAV_groundPassengerMounts) + table.maxn(RAV_flyingPassengerMounts).." passenger, and "..table.maxn(RAV_swimmingMounts).." swimming.");
+        print("There are: "..table.maxn(RAV_allMountsByName).." total usable, "..table.maxn(RAV_groundMounts).." ground, "..table.maxn(RAV_flyingMounts).." flying, "..table.maxn(RAV_vendorMounts).." vendor, "..table.maxn(RAV_groundPassengerMounts) + table.maxn(RAV_flyingPassengerMounts).." passenger, and "..table.maxn(RAV_swimmingMounts).." swimming.")
     elseif message == "help" or message == "h" then
         ravMounts.prettyPrint("Information and How to Use", true)
         print("Type \124cff9eb8c9/ravm\124r to call a Mount, or even better—add it to a macro.")
@@ -389,11 +389,11 @@ frame:SetScript("OnEvent", function(self, event, arg)
         if not RAV_version then
             ravMounts.prettyPrint("Thanks for installing Ravenous Mounts!")
             print("Type \124cff9eb8c9/ravm help\124r to familiarize yourself with the AddOn!")
-            print("There are: "..table.maxn(RAV_allMountsByName).." total usable, "..table.maxn(RAV_groundMounts).." ground, "..table.maxn(RAV_flyingMounts).." flying, "..table.maxn(RAV_vendorMounts).." vendor, "..table.maxn(RAV_groundPassengerMounts) + table.maxn(RAV_flyingPassengerMounts).." passenger, and "..table.maxn(RAV_swimmingMounts).." swimming.");
+            print("There are: "..table.maxn(RAV_allMountsByName).." total usable, "..table.maxn(RAV_groundMounts).." ground, "..table.maxn(RAV_flyingMounts).." flying, "..table.maxn(RAV_vendorMounts).." vendor, "..table.maxn(RAV_groundPassengerMounts) + table.maxn(RAV_flyingPassengerMounts).." passenger, and "..table.maxn(RAV_swimmingMounts).." swimming.")
         elseif RAV_version ~= ravMounts.version then
             ravMounts.prettyPrint("Thanks for updating Ravenous Mounts!")
             print("Type \124cff9eb8c9/ravm help\124r to familiarize yourself with the AddOn!")
-            print("There are: "..table.maxn(RAV_allMountsByName).." total usable, "..table.maxn(RAV_groundMounts).." ground, "..table.maxn(RAV_flyingMounts).." flying, "..table.maxn(RAV_vendorMounts).." vendor, "..table.maxn(RAV_groundPassengerMounts) + table.maxn(RAV_flyingPassengerMounts).." passenger, and "..table.maxn(RAV_swimmingMounts).." swimming.");
+            print("There are: "..table.maxn(RAV_allMountsByName).." total usable, "..table.maxn(RAV_groundMounts).." ground, "..table.maxn(RAV_flyingMounts).." flying, "..table.maxn(RAV_vendorMounts).." vendor, "..table.maxn(RAV_groundPassengerMounts) + table.maxn(RAV_flyingPassengerMounts).." passenger, and "..table.maxn(RAV_swimmingMounts).." swimming.")
         end
         RAV_version = ravMounts.version
     end
