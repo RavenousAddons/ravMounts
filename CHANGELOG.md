@@ -1,3 +1,9 @@
+## Version 2.0.6
+
+- Add focus to cloneable targets
+- Minor tidy-ups
+
+
 ## Version 2.0.4
 
 - Make the specific "two" commands use flyable
