@@ -10,7 +10,7 @@
 -- https://www.curseforge.com/wow/addons/ravmounts
 ---
 local _, ravMounts = ...
-ravMounts.version = "2.0.5"
+ravMounts.version = "2.0.6"
 
 -- DEFAULTS
 -- These are only applied when the AddOn is first loaded.
@@ -40,17 +40,8 @@ local function mountSummon(list)
     local mounted = IsMounted()
     local inVehicle = UnitInVehicle("player")
     local shapeshift = GetShapeshiftFormID()
-    if not inCombat then
-        -- Dismount / Exit Vehicle
-        if mounted or inVehicle or shapeshift ~= nil then
-            Dismount()
-            VehicleExit()
-            CancelShapeshiftForm()
-            UIErrorsFrame:Clear()
-        end
-        if #list > 0 then
-            C_MountJournal.SummonByID(list[random(#list)])
-        end
+    if not inCombat and #list > 0 then
+        C_MountJournal.SummonByID(list[random(#list)])
     end
 end
 
@@ -243,6 +234,12 @@ function ravMounts.mountUpHandler(specificType)
     elseif shiftKey and haveVendorMounts then
         mountSummon(RAV_vendorMounts)
     -- Vash'jir and Swimming Mounts
+    -- Dismount / Exit Vehicle
+    elseif mounted or inVehicle or shapeshift ~= nil then
+        Dismount()
+        VehicleExit()
+        CancelShapeshiftForm()
+        UIErrorsFrame:Clear()
     elseif submerged and (haveVashjirMounts or haveSwimmingMounts) then
         if altKey and flyable and haveFlyingMounts then
             mountSummon(RAV_flyingMounts)
