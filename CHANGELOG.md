@@ -1,7 +1,6 @@
 ## Version 2.0.7
 
-- Add focus to cloneable targets
-- Minor tidy-ups
+- General tidy-up of code and making things more terse
 
 
 ## Version 2.0.6
