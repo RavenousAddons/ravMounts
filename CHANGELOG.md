@@ -1,3 +1,8 @@
+## Version 2.0.8
+
+- Minor cleanup of slash-command coverage and feedback request in install/update message
+
+
 ## Version 2.0.7
 
 - General tidy-up of code and making things more terse

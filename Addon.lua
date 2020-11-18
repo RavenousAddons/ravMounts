@@ -11,7 +11,7 @@
 ---
 local _, ravMounts = ...
 ravMounts.name = "Ravenous Mounts"
-ravMounts.version = "2.0.7"
+ravMounts.version = "2.0.8"
 
 -- DEFAULTS
 -- These are only applied when the AddOn is first loaded.
@@ -281,8 +281,9 @@ local automationMessages = {
     },
     ["missing"] = "You need to specify which type of automation to toggle: vendor, passenger, swimming, flex, clone. If you need help: \124cff9eb8c9/ravm help"
 }
-SLASH_RAVMOUNTS1 = "/ravmounts"
-SLASH_RAVMOUNTS2 = "/ravm"
+SLASH_RAVMOUNTS1 = "/ravenousmounts"
+SLASH_RAVMOUNTS2 = "/ravmounts"
+SLASH_RAVMOUNTS3 = "/ravm"
 local function slashHandler(message, editbox)
     if message == "version" or message == "v" then
         print("You are running: \124cff9eb8c9" .. ravMounts.name .. " v"..ravMounts.version)
@@ -371,11 +372,12 @@ frame:SetScript("OnEvent", function(self, event, arg)
             ravMounts.mountListHandler()
             if not RAV_version then
                 prettyPrint("Thanks for installing " .. ravMounts.name .. "!")
-                print("Type \124cff9eb8c9/ravm help\124r to familiarize yourself with the AddOn!")
-                print("The AddOn found "..table.maxn(RAV_allMountsByName).." total usable, "..table.maxn(RAV_groundMounts).." ground, "..table.maxn(RAV_flyingMounts).." flying, "..table.maxn(RAV_groundPassengerMounts).." ground passenger, "..table.maxn(RAV_flyingPassengerMounts).." flying passenger, "..table.maxn(RAV_vendorMounts).." vendor, "..table.maxn(RAV_swimmingMounts).." swimming, "..table.maxn(RAV_vashjirMounts).." Vash'jir, "..table.maxn(RAV_ahnQirajMounts).." Ahn'Qiraj, and "..table.maxn(RAV_chauffeurMounts).." chauffers.")
             elseif RAV_version ~= ravMounts.version then
                 prettyPrint("Thanks for updating " .. ravMounts.name .. "!")
+            end
+            if not RAV_version or RAV_version ~= ravMounts.version then
                 print("Type \124cff9eb8c9/ravm help\124r to familiarize yourself with the AddOn!")
+                print("Check out " .. ravMounts.name .. " on GitHub, WoWInterface, or Curse for more info and support: http://bit.ly/2hZTsAR")
                 print("The AddOn found "..table.maxn(RAV_allMountsByName).." total usable, "..table.maxn(RAV_groundMounts).." ground, "..table.maxn(RAV_flyingMounts).." flying, "..table.maxn(RAV_groundPassengerMounts).." ground passenger, "..table.maxn(RAV_flyingPassengerMounts).." flying passenger, "..table.maxn(RAV_vendorMounts).." vendor, "..table.maxn(RAV_swimmingMounts).." swimming, "..table.maxn(RAV_vashjirMounts).." Vash'jir, "..table.maxn(RAV_ahnQirajMounts).." Ahn'Qiraj, and "..table.maxn(RAV_chauffeurMounts).." chauffers.")
             end
             RAV_version = ravMounts.version
