@@ -1,3 +1,8 @@
+## Version 2.1.0
+
+- Add locale support starting with enUS (please contribute other languages that you know!)
+
+
 ## Version 2.0.8
 
 - Minor cleanup of slash-command coverage and feedback request in install/update message

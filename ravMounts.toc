@@ -1,5 +1,5 @@
 ## Interface: 90002
-## Version: 2.0.8
+## Version: 2.1.0
 
 ## Name: Ravenous Mounts
 ## Title: |cff9eb8c9Ravenous Mounts
@@ -13,5 +13,6 @@
 ## X-Website: https://github.com/waldenp0nd/ravMounts
 
 
+locales.lua
 LibFlyable.lua
 Addon.lua

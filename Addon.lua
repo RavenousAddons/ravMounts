@@ -11,7 +11,7 @@
 ---
 local _, ravMounts = ...
 ravMounts.name = "Ravenous Mounts"
-ravMounts.version = "2.0.8"
+ravMounts.version = "2.1.0"
 
 -- DEFAULTS
 -- These are only applied when the AddOn is first loaded.
@@ -28,7 +28,7 @@ local faction, _ = UnitFactionGroup("player")
 
 -- Special formatting for messages
 local function prettyPrint(message, full)
-    if not full then
+    if full == false then
         message = message..":"
     end
     local prefix = "\124cff9eb8c9" .. ravMounts.name .. " v"..ravMounts.version..(full and " " or ":\124r ")
@@ -253,34 +253,10 @@ function ravMounts.mountUpHandler(specificType)
     elseif haveChauffeurMounts then
         mountSummon(RAV_chauffeurMounts)
     else
-        prettyPrint("Unfortunately you don't have any mounts that can be called at this time!")
+        prettyPrint(ravMounts.locales[ravMounts.locale].notice.nomounts)
     end
 end
 
--- Set up the slash command and variations
-local automationMessages = {
-    ["vendor"] = {
-        "Vendor Mounts will be called automatically, and if they are marked as a Favorite, they will be \124cff9eb8c9included\124r in the Ground/Flying Mount summoning list.",
-        "Vendor Mounts will only be summoned if they are marked as a Favorite."
-    },
-    ["passenger"] = {
-        "Passenger Mounts will be summoned automatically, and if they are marked as a Favorite, they will be \124cff9eb8c9included\124r in the Ground/Flying Mount summoning list.",
-        "Passenger Mounts will only be summoned if they are marked as a Favorite."
-    },
-    ["swimming"] = {
-        "Swimming Mounts will be \124cff9eb8c9included\124r in their summoning list, regardless of Favorite status.",
-        "Swimming Mounts will only be summoned if they are marked as a Favorite."
-    },
-    ["flex"] = {
-        "Flex Mounts will be included in the Ground Mount summoning list.",
-        "Flex Mounts will be excluded from the Ground Mount summoning list."
-    },
-    ["clone"] = {
-        "Your target/focus's mount, if they are using one and you own it too, will be summoned instead of following your Favorites.",
-        "The addon will stop cloning your target/focus's mount."
-    },
-    ["missing"] = "You need to specify which type of automation to toggle: vendor, passenger, swimming, flex, clone. If you need help: \124cff9eb8c9/ravm help"
-}
 SLASH_RAVMOUNTS1 = "/ravenousmounts"
 SLASH_RAVMOUNTS2 = "/ravmounts"
 SLASH_RAVMOUNTS3 = "/ravm"
@@ -291,71 +267,71 @@ local function slashHandler(message, editbox)
         if string.match(message, "vend") or string.match(message, "repair") or string.match(message, "trans") or string.match(message, "mog") then
             RAV_autoVendorMounts = not RAV_autoVendorMounts
             if RAV_autoVendorMounts then
-                prettyPrint(automationMessages.vendor[1])
+                prettyPrint(ravMounts.locales[ravMounts.locale].automation.vendor[1])
             else
-                prettyPrint(automationMessages.vendor[2])
+                prettyPrint(ravMounts.locales[ravMounts.locale].automation.vendor[2])
             end
         elseif string.match(message, "2") or string.match(message, "two") or string.match(message, "multi") or string.match(message, "passenger") then
             RAV_autoPassengerMounts = not RAV_autoPassengerMounts
             if RAV_autoPassengerMounts then
-                prettyPrint(automationMessages.passenger[1])
+                prettyPrint(ravMounts.locales[ravMounts.locale].automation.passenger[1])
             else
-                prettyPrint(automationMessages.passenger[2])
+                prettyPrint(ravMounts.locales[ravMounts.locale].automation.passenger[2])
             end
         elseif string.match(message, "swim") then
             RAV_autoSwimmingMounts = not RAV_autoSwimmingMounts
             if RAV_autoSwimmingMounts then
-                prettyPrint(automationMessages.swimming[1])
+                prettyPrint(ravMounts.locales[ravMounts.locale].automation.swimming[1])
             else
-                prettyPrint(automationMessages.swimming[2])
+                prettyPrint(ravMounts.locales[ravMounts.locale].automation.swimming[2])
             end
         elseif string.match(message, "flex") then
             RAV_autoFlexMounts = not RAV_autoFlexMounts
             if RAV_autoFlexMounts then
-                prettyPrint(automationMessages.flex[1])
+                prettyPrint(ravMounts.locales[ravMounts.locale].automation.flex[1])
             else
-                prettyPrint(automationMessages.flex[2])
+                prettyPrint(ravMounts.locales[ravMounts.locale].automation.flex[2])
             end
         elseif string.match(message, "clone") or string.match(message, "copy") then
             RAV_autoClone = not RAV_autoClone
             if RAV_autoClone then
-                prettyPrint(automationMessages.clone[1])
+                prettyPrint(ravMounts.locales[ravMounts.locale].automation.clone[1])
             else
-                prettyPrint(automationMessages.clone[2])
+                prettyPrint(ravMounts.locales[ravMounts.locale].automation.clone[2])
             end
         else
-            prettyPrint(automationMessages.missing)
+            prettyPrint(ravMounts.locales[ravMounts.locale].automation.missing)
         end
         ravMounts.mountListHandler()
     elseif message == "settings" or message == "s" or message == "config" or message == "c" then
         ravMounts.mountListHandler()
-        prettyPrint("Automation", true)
-        print("\124cff9eb8c9Vendor Mounts:\124r "..(RAV_autoVendorMounts and "Automatically chosen" or "Favorite manually"))
-        print("\124cff9eb8c9Passenger Mounts:\124r "..(RAV_autoPassengerMounts and "Automatically chosen" or "Favorite manually"))
-        print("\124cff9eb8c9Swimming Mounts:\124r "..(RAV_autoSwimmingMounts and "Automatically chosen" or "Favorite manually"))
-        print("\124cff9eb8c9Flexible Mounts:\124r "..(RAV_autoFlexMounts and "Treated as Flying & Ground" or "Treated as Flying-only"))
-        print("\124cff9eb8c9Clone Target Mount:\124r "..(RAV_autoClone and "ON" or "OFF"))
+        prettyPrint(ravMounts.locales[ravMounts.locale].notice.config)
+        print("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.vendor .. ":\124r "..(RAV_autoVendorMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual))
+        print("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.passenger .. ":\124r "..(RAV_autoPassengerMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual))
+        print("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.swimming .. ":\124r "..(RAV_autoSwimmingMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual))
+        print("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.flex .. ":\124r "..(RAV_autoFlexMounts and ravMounts.locales[ravMounts.locale].config.flexboth or ravMounts.locales[ravMounts.locale].config.flexone))
+        print("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.clone .. ":\124r "..(RAV_autoClone and ravMounts.locales[ravMounts.locale].config.on or ravMounts.locales[ravMounts.locale].config.off))
     elseif message == "force" or message == "f" then
         ravMounts.mountListHandler()
-        prettyPrint("Mount Journal data collected, sorted, and ready to go.", true)
-        print("Total Usable \124cffffff66" .. table.maxn(RAV_allMountsByName))
-        print("Ground \124cffffff66" .. table.maxn(RAV_groundMounts))
-        print("Flying \124cffffff66" .. table.maxn(RAV_flyingMounts))
-        print("Ground Passenger \124cffffff66" .. table.maxn(RAV_groundPassengerMounts))
-        print("Flying Passenger \124cffffff66" .. table.maxn(RAV_flyingPassengerMounts))
-        print("Vendor \124cffffff66" .. table.maxn(RAV_vendorMounts))
-        print("Swimming \124cffffff66" .. table.maxn(RAV_swimmingMounts))
-        print("Vash'jir \124cffffff66" .. table.maxn(RAV_vashjirMounts))
-        print("Ahn'Qiraj \124cffffff66" .. table.maxn(RAV_ahnQirajMounts))
-        print("Chauffers \124cffffff66" .. table.maxn(RAV_chauffeurMounts))
+        prettyPrint(ravMounts.locales[ravMounts.locale].notice.force)
+        print(ravMounts.locales[ravMounts.locale].type.total .. " \124cffffff66" .. table.maxn(RAV_allMountsByName))
+        print(ravMounts.locales[ravMounts.locale].type.ground .. " \124cffffff66" .. table.maxn(RAV_groundMounts))
+        print(ravMounts.locales[ravMounts.locale].type.flying .. " \124cffffff66" .. table.maxn(RAV_flyingMounts))
+        print(ravMounts.locales[ravMounts.locale].type.groundpassenger .. " \124cffffff66" .. table.maxn(RAV_groundPassengerMounts))
+        print(ravMounts.locales[ravMounts.locale].type.flyingpassenger .. " \124cffffff66" .. table.maxn(RAV_flyingPassengerMounts))
+        print(ravMounts.locales[ravMounts.locale].type.vendor .. " \124cffffff66" .. table.maxn(RAV_vendorMounts))
+        print(ravMounts.locales[ravMounts.locale].type.swimming .. " \124cffffff66" .. table.maxn(RAV_swimmingMounts))
+        print(ravMounts.locales[ravMounts.locale].type.vashjir .. " \124cffffff66" .. table.maxn(RAV_vashjirMounts))
+        print(ravMounts.locales[ravMounts.locale].type.ahnqiraj .. " \124cffffff66" .. table.maxn(RAV_ahnQirajMounts))
+        print(ravMounts.locales[ravMounts.locale].type.chauffer .. " \124cffffff66" .. table.maxn(RAV_chauffeurMounts))
     elseif message == "help" or message == "h" then
-        prettyPrint("Information and How to Use", true)
-        print("Type \124cff9eb8c9/ravm\124r to call a Mount, or even better—add it to a macro.")
-        print("Check your config: \124cff9eb8c9/ravm config")
-        print("To toggle automation of special mounts from your Mount lists:")
-        print("e.g. \124cff9eb8c9/ravm auto vendor\124r or \124cff9eb8c9/ravm auto flex\124r or \124cff9eb8c9/ravm auto clone")
-        print("Force a recache: \124cff9eb8c9/ravm force")
-        print("Check out " .. ravMounts.name .. " on GitHub, WoWInterface, or Curse for more info and support: http://bit.ly/2hZTsAR")
+        prettyPrint(ravMounts.locales[ravMounts.locale].notice.help)
+        print(ravMounts.locales[ravMounts.locale].help[2])
+        print(ravMounts.locales[ravMounts.locale].help[3])
+        print(ravMounts.locales[ravMounts.locale].help[4])
+        print(ravMounts.locales[ravMounts.locale].help[5])
+        print(ravMounts.locales[ravMounts.locale].help[6])
+        print(ravMounts.locales[ravMounts.locale].help[7])
     else
         ravMounts.mountListHandler()
         ravMounts.mountUpHandler(message)
@@ -369,16 +345,22 @@ frame:RegisterEvent("ADDON_LOADED")
 frame:SetScript("OnEvent", function(self, event, arg)
     if arg == "ravMounts" then
         if event == "ADDON_LOADED" then
+            ravMounts.locale = GetLocale()
             ravMounts.mountListHandler()
             if not RAV_version then
-                prettyPrint("Thanks for installing " .. ravMounts.name .. "!")
+                prettyPrint(ravMounts.locales[ravMounts.locale].load.install)
             elseif RAV_version ~= ravMounts.version then
-                prettyPrint("Thanks for updating " .. ravMounts.name .. "!")
+                prettyPrint(ravMounts.locales[ravMounts.locale].load.update)
             end
             if not RAV_version or RAV_version ~= ravMounts.version then
-                print("Type \124cff9eb8c9/ravm help\124r to familiarize yourself with the AddOn!")
-                print("Check out " .. ravMounts.name .. " on GitHub, WoWInterface, or Curse for more info and support: http://bit.ly/2hZTsAR")
-                print("The AddOn found "..table.maxn(RAV_allMountsByName).." total usable, "..table.maxn(RAV_groundMounts).." ground, "..table.maxn(RAV_flyingMounts).." flying, "..table.maxn(RAV_groundPassengerMounts).." ground passenger, "..table.maxn(RAV_flyingPassengerMounts).." flying passenger, "..table.maxn(RAV_vendorMounts).." vendor, "..table.maxn(RAV_swimmingMounts).." swimming, "..table.maxn(RAV_vashjirMounts).." Vash'jir, "..table.maxn(RAV_ahnQirajMounts).." Ahn'Qiraj, and "..table.maxn(RAV_chauffeurMounts).." chauffers.")
+                print(ravMounts.locales[ravMounts.locale].help[1])
+                print(ravMounts.locales[ravMounts.locale].help[2])
+                print(ravMounts.locales[ravMounts.locale].help[3])
+                print(ravMounts.locales[ravMounts.locale].help[4])
+                print(ravMounts.locales[ravMounts.locale].help[5])
+                print(ravMounts.locales[ravMounts.locale].help[6])
+                print(ravMounts.locales[ravMounts.locale].help[7])
+                print(ravMounts.locales[ravMounts.locale].type.total .. " \124cffffff66" .. table.maxn(RAV_allMountsByName) .. ", " .. ravMounts.locales[ravMounts.locale].type.ground .. " \124cffffff66" .. table.maxn(RAV_groundMounts) .. ", " .. ravMounts.locales[ravMounts.locale].type.flying .. " \124cffffff66" .. table.maxn(RAV_flyingMounts) .. ", " .. ravMounts.locales[ravMounts.locale].type.groundpassenger .. " \124cffffff66" .. table.maxn(RAV_groundPassengerMounts) .. ", " .. ravMounts.locales[ravMounts.locale].type.flyingpassenger .. " \124cffffff66" .. table.maxn(RAV_flyingPassengerMounts) .. ", " .. ravMounts.locales[ravMounts.locale].type.vendor .. " \124cffffff66" .. table.maxn(RAV_vendorMounts) .. ", " .. ravMounts.locales[ravMounts.locale].type.swimming .. " \124cffffff66" .. table.maxn(RAV_swimmingMounts) .. ", " .. ravMounts.locales[ravMounts.locale].type.vashjir .. " \124cffffff66" .. table.maxn(RAV_vashjirMounts) .. ", " .. ravMounts.locales[ravMounts.locale].type.ahnqiraj .. " \124cffffff66" .. table.maxn(RAV_ahnQirajMounts) .. ", " .. ravMounts.locales[ravMounts.locale].type.chauffer .. " \124cffffff66" .. table.maxn(RAV_chauffeurMounts))
             end
             RAV_version = ravMounts.version
         end
