@@ -1,3 +1,8 @@
+## Version 2.1.1
+
+- More tidying of wording and enUS locale
+
+
 ## Version 2.1.0
 
 - Add locale support starting with enUS (please contribute other languages that you know!)

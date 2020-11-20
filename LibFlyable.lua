@@ -69,9 +69,6 @@ local noFlySubzones = {
     ["Nespirah"] = true, ["Неспира"] = true, ["네스피라"] = true, ["奈瑟匹拉"] = true, ["奈斯畢拉"] = true,
 }
 
-----------------------------------------
--- Logic
-----------------------------------------
 
 local GetInstanceInfo = GetInstanceInfo
 local GetSubZoneText = GetSubZoneText

@@ -11,7 +11,7 @@
 ---
 local _, ravMounts = ...
 ravMounts.name = "Ravenous Mounts"
-ravMounts.version = "2.1.0"
+ravMounts.version = "2.1.1"
 
 -- DEFAULTS
 -- These are only applied when the AddOn is first loaded.
@@ -29,10 +29,10 @@ local faction, _ = UnitFactionGroup("player")
 -- Special formatting for messages
 local function prettyPrint(message, full)
     if full == false then
-        message = message..":"
+        message = message .. ":"
     end
-    local prefix = "\124cff9eb8c9" .. ravMounts.name .. " v"..ravMounts.version..(full and " " or ":\124r ")
-    DEFAULT_CHAT_FRAME:AddMessage(prefix..message)
+    local prefix = "\124cff9eb8c9" .. ravMounts.name .. " v" .. ravMounts.version .. (full and " " or ":\124r ")
+    DEFAULT_CHAT_FRAME:AddMessage(prefix .. message)
 end
 
 -- Simplify mount summoning syntax
@@ -47,7 +47,7 @@ end
 -- Thanks to DJharris71 (http://www.wowinterface.com/forums/member.php?userid=301959)
 local function IsFloating()
     local B, b, _, _, a = "BREATH", GetMirrorTimerInfo(2)
-    return (IsSwimming() and (not (b==B) or (b==B and a > -1)))
+    return (IsSwimming() and (not (b == B) or (b == B and a > -1)))
 end
 
 -- Get the mount being used by the target or focus (if they're a Player)
@@ -261,49 +261,60 @@ SLASH_RAVMOUNTS1 = "/ravenousmounts"
 SLASH_RAVMOUNTS2 = "/ravmounts"
 SLASH_RAVMOUNTS3 = "/ravm"
 local function slashHandler(message, editbox)
-    if message == "version" or message == "v" then
-        print("You are running: \124cff9eb8c9" .. ravMounts.name .. " v"..ravMounts.version)
-    elseif string.match(message, "auto") then
-        if string.match(message, "vend") or string.match(message, "repair") or string.match(message, "trans") or string.match(message, "mog") then
+    local command, argument = strsplit(" ", message)
+    if command == "version" or command == "v" then
+        prettyPrint(ravMounts.locales[ravMounts.locale].notice.version, true)
+    elseif string.match(command, "auto") or string.match(command, "togg") or (argument and command == "c" or string.match(command, "config")) then
+        if string.match(argument, "vend") or string.match(argument, "repair") or string.match(argument, "trans") or string.match(argument, "mog") then
             RAV_autoVendorMounts = not RAV_autoVendorMounts
+            prettyPrint("", true)
+            print("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.vendor .. "\124cffffffff: " .. (RAV_autoVendorMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual))
             if RAV_autoVendorMounts then
-                prettyPrint(ravMounts.locales[ravMounts.locale].automation.vendor[1])
+                print(ravMounts.locales[ravMounts.locale].automation.vendor[1])
             else
-                prettyPrint(ravMounts.locales[ravMounts.locale].automation.vendor[2])
+                print(ravMounts.locales[ravMounts.locale].automation.vendor[2])
             end
-        elseif string.match(message, "2") or string.match(message, "two") or string.match(message, "multi") or string.match(message, "passenger") then
+        elseif string.match(argument, "2") or string.match(argument, "two") or string.match(argument, "multi") or string.match(argument, "passenger") then
             RAV_autoPassengerMounts = not RAV_autoPassengerMounts
+            prettyPrint("", true)
+            print("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.passenger .. "\124cffffffff: " .. (RAV_autoPassengerMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual))
             if RAV_autoPassengerMounts then
-                prettyPrint(ravMounts.locales[ravMounts.locale].automation.passenger[1])
+                print(ravMounts.locales[ravMounts.locale].automation.passenger[1])
             else
-                prettyPrint(ravMounts.locales[ravMounts.locale].automation.passenger[2])
+                print(ravMounts.locales[ravMounts.locale].automation.passenger[2])
             end
-        elseif string.match(message, "swim") then
+        elseif string.match(argument, "swim") then
             RAV_autoSwimmingMounts = not RAV_autoSwimmingMounts
+            prettyPrint("", true)
+            print("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.swimming .. "\124cffffffff: " .. (RAV_autoSwimmingMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual))
             if RAV_autoSwimmingMounts then
-                prettyPrint(ravMounts.locales[ravMounts.locale].automation.swimming[1])
+                print(ravMounts.locales[ravMounts.locale].automation.swimming[1])
             else
-                prettyPrint(ravMounts.locales[ravMounts.locale].automation.swimming[2])
+                print(ravMounts.locales[ravMounts.locale].automation.swimming[2])
             end
-        elseif string.match(message, "flex") then
+        elseif string.match(argument, "flex") then
             RAV_autoFlexMounts = not RAV_autoFlexMounts
+            prettyPrint("", true)
+            print("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.flex .. "\124cffffffff: " .. (RAV_autoFlexMounts and ravMounts.locales[ravMounts.locale].config.flexboth or ravMounts.locales[ravMounts.locale].config.flexone))
             if RAV_autoFlexMounts then
-                prettyPrint(ravMounts.locales[ravMounts.locale].automation.flex[1])
+                print(ravMounts.locales[ravMounts.locale].automation.flex[1])
             else
-                prettyPrint(ravMounts.locales[ravMounts.locale].automation.flex[2])
+                print(ravMounts.locales[ravMounts.locale].automation.flex[2])
             end
-        elseif string.match(message, "clone") or string.match(message, "copy") then
+        elseif string.match(argument, "clone") or string.match(argument, "copy") then
             RAV_autoClone = not RAV_autoClone
+            prettyPrint("", true)
+            print("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.clone .. "\124cffffffff: " .. (RAV_autoClone and ravMounts.locales[ravMounts.locale].config.on or ravMounts.locales[ravMounts.locale].config.off))
             if RAV_autoClone then
-                prettyPrint(ravMounts.locales[ravMounts.locale].automation.clone[1])
+                print(ravMounts.locales[ravMounts.locale].automation.clone[1])
             else
-                prettyPrint(ravMounts.locales[ravMounts.locale].automation.clone[2])
+                print(ravMounts.locales[ravMounts.locale].automation.clone[2])
             end
         else
-            prettyPrint(ravMounts.locales[ravMounts.locale].automation.missing)
+            print(ravMounts.locales[ravMounts.locale].automation.missing)
         end
         ravMounts.mountListHandler()
-    elseif message == "settings" or message == "s" or message == "config" or message == "c" then
+    elseif command == "settings" or command == "s" or command == "config" or command == "c" then
         ravMounts.mountListHandler()
         prettyPrint(ravMounts.locales[ravMounts.locale].notice.config)
         print("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.vendor .. ":\124r "..(RAV_autoVendorMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual))
@@ -311,20 +322,20 @@ local function slashHandler(message, editbox)
         print("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.swimming .. ":\124r "..(RAV_autoSwimmingMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual))
         print("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.flex .. ":\124r "..(RAV_autoFlexMounts and ravMounts.locales[ravMounts.locale].config.flexboth or ravMounts.locales[ravMounts.locale].config.flexone))
         print("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.clone .. ":\124r "..(RAV_autoClone and ravMounts.locales[ravMounts.locale].config.on or ravMounts.locales[ravMounts.locale].config.off))
-    elseif message == "force" or message == "f" then
+    elseif command == "force" or command == "f" then
         ravMounts.mountListHandler()
         prettyPrint(ravMounts.locales[ravMounts.locale].notice.force)
-        print(ravMounts.locales[ravMounts.locale].type.total .. " \124cffffff66" .. table.maxn(RAV_allMountsByName))
-        print(ravMounts.locales[ravMounts.locale].type.ground .. " \124cffffff66" .. table.maxn(RAV_groundMounts))
-        print(ravMounts.locales[ravMounts.locale].type.flying .. " \124cffffff66" .. table.maxn(RAV_flyingMounts))
-        print(ravMounts.locales[ravMounts.locale].type.groundpassenger .. " \124cffffff66" .. table.maxn(RAV_groundPassengerMounts))
-        print(ravMounts.locales[ravMounts.locale].type.flyingpassenger .. " \124cffffff66" .. table.maxn(RAV_flyingPassengerMounts))
-        print(ravMounts.locales[ravMounts.locale].type.vendor .. " \124cffffff66" .. table.maxn(RAV_vendorMounts))
-        print(ravMounts.locales[ravMounts.locale].type.swimming .. " \124cffffff66" .. table.maxn(RAV_swimmingMounts))
-        print(ravMounts.locales[ravMounts.locale].type.vashjir .. " \124cffffff66" .. table.maxn(RAV_vashjirMounts))
-        print(ravMounts.locales[ravMounts.locale].type.ahnqiraj .. " \124cffffff66" .. table.maxn(RAV_ahnQirajMounts))
-        print(ravMounts.locales[ravMounts.locale].type.chauffer .. " \124cffffff66" .. table.maxn(RAV_chauffeurMounts))
-    elseif message == "help" or message == "h" then
+        print("\124cffffff66" ..ravMounts.locales[ravMounts.locale].type.total .. " \124r" .. table.maxn(RAV_allMountsByName))
+        print("\124cffffff66" ..ravMounts.locales[ravMounts.locale].type.ground .. " \124r" .. table.maxn(RAV_groundMounts))
+        print("\124cffffff66" ..ravMounts.locales[ravMounts.locale].type.flying .. " \124r" .. table.maxn(RAV_flyingMounts))
+        print("\124cffffff66" ..ravMounts.locales[ravMounts.locale].type.groundpassenger .. " \124r" .. table.maxn(RAV_groundPassengerMounts))
+        print("\124cffffff66" ..ravMounts.locales[ravMounts.locale].type.flyingpassenger .. " \124r" .. table.maxn(RAV_flyingPassengerMounts))
+        print("\124cffffff66" ..ravMounts.locales[ravMounts.locale].type.vendor .. " \124r" .. table.maxn(RAV_vendorMounts))
+        print("\124cffffff66" ..ravMounts.locales[ravMounts.locale].type.swimming .. " \124r" .. table.maxn(RAV_swimmingMounts))
+        print("\124cffffff66" ..ravMounts.locales[ravMounts.locale].type.vashjir .. " \124r" .. table.maxn(RAV_vashjirMounts))
+        print("\124cffffff66" ..ravMounts.locales[ravMounts.locale].type.ahnqiraj .. " \124r" .. table.maxn(RAV_ahnQirajMounts))
+        print("\124cffffff66" ..ravMounts.locales[ravMounts.locale].type.chauffer .. " \124r" .. table.maxn(RAV_chauffeurMounts))
+    elseif command == "help" or command == "h" then
         prettyPrint(ravMounts.locales[ravMounts.locale].notice.help)
         print(ravMounts.locales[ravMounts.locale].help[2])
         print(ravMounts.locales[ravMounts.locale].help[3])
@@ -334,7 +345,7 @@ local function slashHandler(message, editbox)
         print(ravMounts.locales[ravMounts.locale].help[7])
     else
         ravMounts.mountListHandler()
-        ravMounts.mountUpHandler(message)
+        ravMounts.mountUpHandler(command)
     end
 end
 SlashCmdList["RAVMOUNTS"] = slashHandler

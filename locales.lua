@@ -4,7 +4,7 @@ ravMounts.locales = {
     ["enUS"] = {
         ["help"] = {
             "Type \124cff9eb8c9/ravm help\124r to familiarize yourself with \124cff9eb8c9Ravenous Mounts\124r.",
-            "Type \124cff9eb8c9/ravm\124r to call a Mount, or even better—add it to a macro.",
+            "Type \124cff9eb8c9/ravm\124r to call a Mount, or even better: add it to a macro.",
             "Check your config: \124cff9eb8c9/ravm config",
             "To toggle automation of special mounts from your Mount lists:",
             "e.g. \124cff9eb8c9/ravm auto vendor\124r or \124cff9eb8c9/ravm auto flex\124r or \124cff9eb8c9/ravm auto clone",
@@ -16,6 +16,7 @@ ravMounts.locales = {
             ["update"] = "Thanks for updating Ravenous Mounts!"
         },
         ["notice"] = {
+            ["version"] = "is the current version.",
             ["config"] = "Automation Settings",
             ["force"] = "Mount Journal data collected, sorted, and ready to go.",
             ["nomounts"] = "Unfortunately you don't have any mounts that can be called at this time!",
