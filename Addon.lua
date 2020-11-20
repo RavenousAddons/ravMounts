@@ -11,7 +11,7 @@
 ---
 local _, ravMounts = ...
 ravMounts.name = "Ravenous Mounts"
-ravMounts.version = "2.1.1"
+ravMounts.version = "2.1.2"
 
 -- DEFAULTS
 -- These are only applied when the AddOn is first loaded.
@@ -322,7 +322,8 @@ local function slashHandler(message, editbox)
         print("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.swimming .. ":\124r "..(RAV_autoSwimmingMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual))
         print("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.flex .. ":\124r "..(RAV_autoFlexMounts and ravMounts.locales[ravMounts.locale].config.flexboth or ravMounts.locales[ravMounts.locale].config.flexone))
         print("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.clone .. ":\124r "..(RAV_autoClone and ravMounts.locales[ravMounts.locale].config.on or ravMounts.locales[ravMounts.locale].config.off))
-    elseif command == "force" or command == "f" then
+        print(ravMounts.locales[ravMounts.locale].help[5])
+    elseif command == "force" or command == "f" or command == "data" or command == "d" then
         ravMounts.mountListHandler()
         prettyPrint(ravMounts.locales[ravMounts.locale].notice.force)
         print("\124cffffff66" ..ravMounts.locales[ravMounts.locale].type.total .. " \124r" .. table.maxn(RAV_allMountsByName))
@@ -337,12 +338,12 @@ local function slashHandler(message, editbox)
         print("\124cffffff66" ..ravMounts.locales[ravMounts.locale].type.chauffer .. " \124r" .. table.maxn(RAV_chauffeurMounts))
     elseif command == "help" or command == "h" then
         prettyPrint(ravMounts.locales[ravMounts.locale].notice.help)
+        print(ravMounts.locales[ravMounts.locale].help[1])
         print(ravMounts.locales[ravMounts.locale].help[2])
         print(ravMounts.locales[ravMounts.locale].help[3])
         print(ravMounts.locales[ravMounts.locale].help[4])
         print(ravMounts.locales[ravMounts.locale].help[5])
         print(ravMounts.locales[ravMounts.locale].help[6])
-        print(ravMounts.locales[ravMounts.locale].help[7])
     else
         ravMounts.mountListHandler()
         ravMounts.mountUpHandler(command)
@@ -364,14 +365,7 @@ frame:SetScript("OnEvent", function(self, event, arg)
                 prettyPrint(ravMounts.locales[ravMounts.locale].load.update)
             end
             if not RAV_version or RAV_version ~= ravMounts.version then
-                print(ravMounts.locales[ravMounts.locale].help[1])
-                print(ravMounts.locales[ravMounts.locale].help[2])
-                print(ravMounts.locales[ravMounts.locale].help[3])
-                print(ravMounts.locales[ravMounts.locale].help[4])
-                print(ravMounts.locales[ravMounts.locale].help[5])
-                print(ravMounts.locales[ravMounts.locale].help[6])
-                print(ravMounts.locales[ravMounts.locale].help[7])
-                print(ravMounts.locales[ravMounts.locale].type.total .. " \124cffffff66" .. table.maxn(RAV_allMountsByName) .. ", " .. ravMounts.locales[ravMounts.locale].type.ground .. " \124cffffff66" .. table.maxn(RAV_groundMounts) .. ", " .. ravMounts.locales[ravMounts.locale].type.flying .. " \124cffffff66" .. table.maxn(RAV_flyingMounts) .. ", " .. ravMounts.locales[ravMounts.locale].type.groundpassenger .. " \124cffffff66" .. table.maxn(RAV_groundPassengerMounts) .. ", " .. ravMounts.locales[ravMounts.locale].type.flyingpassenger .. " \124cffffff66" .. table.maxn(RAV_flyingPassengerMounts) .. ", " .. ravMounts.locales[ravMounts.locale].type.vendor .. " \124cffffff66" .. table.maxn(RAV_vendorMounts) .. ", " .. ravMounts.locales[ravMounts.locale].type.swimming .. " \124cffffff66" .. table.maxn(RAV_swimmingMounts) .. ", " .. ravMounts.locales[ravMounts.locale].type.vashjir .. " \124cffffff66" .. table.maxn(RAV_vashjirMounts) .. ", " .. ravMounts.locales[ravMounts.locale].type.ahnqiraj .. " \124cffffff66" .. table.maxn(RAV_ahnQirajMounts) .. ", " .. ravMounts.locales[ravMounts.locale].type.chauffer .. " \124cffffff66" .. table.maxn(RAV_chauffeurMounts))
+                print(ravMounts.locales[ravMounts.locale].load.both)
             end
             RAV_version = ravMounts.version
         end

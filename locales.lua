@@ -3,24 +3,24 @@ local _, ravMounts = ...
 ravMounts.locales = {
     ["enUS"] = {
         ["help"] = {
-            "Type \124cff9eb8c9/ravm help\124r to familiarize yourself with \124cff9eb8c9Ravenous Mounts\124r.",
             "Type \124cff9eb8c9/ravm\124r to call a Mount, or even better: add it to a macro.",
             "Check your config: \124cff9eb8c9/ravm config",
             "To toggle automation of special mounts from your Mount lists:",
             "e.g. \124cff9eb8c9/ravm auto vendor\124r or \124cff9eb8c9/ravm auto flex\124r or \124cff9eb8c9/ravm auto clone",
-            "Force a recache: \124cff9eb8c9/ravm force",
+            "To force a recache or see what the AddOn has found: \124cff9eb8c9/ravm data",
             "Check out \124cff9eb8c9Ravenous Mounts\124r on GitHub, WoWInterface, or Curse for more info and support: http://bit.ly/2hZTsAR"
         },
         ["load"] = {
             ["install"] = "Thanks for installing Ravenous Mounts!",
-            ["update"] = "Thanks for updating Ravenous Mounts!"
+            ["update"] = "Thanks for updating Ravenous Mounts!",
+            ["both"] = "Type \124cff9eb8c9/ravm help\124r to familiarize yourself with \124cff9eb8c9Ravenous Mounts\124r."
         },
         ["notice"] = {
             ["version"] = "is the current version.",
-            ["config"] = "Automation Settings",
+            ["config"] = "Configuration",
             ["force"] = "Mount Journal data collected, sorted, and ready to go.",
             ["nomounts"] = "Unfortunately you don't have any mounts that can be called at this time!",
-            ["info"] = "Information and How to Use"
+            ["help"] = "Information and How to Use"
         },
         ["type"] = {
             ["total"] = "Total Usable",
