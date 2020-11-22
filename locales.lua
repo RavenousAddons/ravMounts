@@ -3,20 +3,20 @@ local _, ravMounts = ...
 ravMounts.locales = {
     ["enUS"] = {
         ["help"] = {
-            "Type \124cff9eb8c9/ravm\124r to call a Mount, or even better: add it to a macro.",
-            "Check your config: \124cff9eb8c9/ravm config",
+            "Type \124cff9eb8c9/%s\124r to call a Mount, or even better: add it to a macro.", -- defaults.COMMAND
+            "Check your config: \124cff9eb8c9/%s config", -- defaults.COMMAND
             "To toggle automation of special mounts from your Mount lists:",
-            "e.g. \124cff9eb8c9/ravm auto vendor\124r or \124cff9eb8c9/ravm auto flex\124r or \124cff9eb8c9/ravm auto clone",
-            "To force a recache or see what the AddOn has found: \124cff9eb8c9/ravm data",
-            "Check out \124cff9eb8c9Ravenous Mounts\124r on GitHub, WoWInterface, or Curse for more info and support: http://bit.ly/2hZTsAR"
+            "e.g. \124cff9eb8c9/%s auto vendor\124r or \124cff9eb8c9/%s auto flex\124r or \124cff9eb8c9/%s auto clone", -- defaults.COMMAND, defaults.COMMAND, defaults.COMMAND
+            "To force a recache or see what the AddOn has found: \124cff9eb8c9/%s data", -- defaults.COMMAND
+            "Check out \124cff9eb8c9%s\124r on GitHub, WoWInterface, or Curse for more info and support: http://bit.ly/2hZTsAR" -- ravMounts.name
         },
         ["load"] = {
-            ["install"] = "Thanks for installing Ravenous Mounts!",
-            ["update"] = "Thanks for updating Ravenous Mounts!",
-            ["both"] = "Type \124cff9eb8c9/ravm help\124r to familiarize yourself with \124cff9eb8c9Ravenous Mounts\124r."
+            ["install"] = "Thanks for installing \124cff9eb8c9%s\124r!", -- ravMounts.name
+            ["update"] = "Thanks for updating \124cff9eb8c9%s\124r!", -- ravMounts.name
+            ["both"] = "Type \124cff9eb8c9/%s help\124r to familiarize yourself with \124cff9eb8c9%s\124r." -- defaults.COMMAND, ravMounts.name
         },
         ["notice"] = {
-            ["version"] = "is the current version.",
+            ["version"] = "%s is the current version.", -- ravMounts.version
             ["config"] = "Configuration",
             ["force"] = "Mount Journal data collected, sorted, and ready to go.",
             ["nomounts"] = "Unfortunately you don't have any mounts that can be called at this time!",
@@ -68,7 +68,7 @@ ravMounts.locales = {
                 "Your target/focus's mount, if they are using one and you own it too, will be summoned instead of following your Favorites.",
                 "The addon will stop cloning your target/focus's mount."
             },
-            ["missing"] = "You need to specify which type of automation to toggle: vendor, passenger, swimming, flex, clone. If you need help: \124cff9eb8c9/ravm help"
+            ["missing"] = "You need to specify which type of automation to toggle: vendor, passenger, swimming, flex, clone. If you need help: \124cff9eb8c9/%s help" -- defaults.COMMAND
         }
     }
 }

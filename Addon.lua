@@ -17,6 +17,8 @@ ravMounts.version = "2.1.2"
 -- These are only applied when the AddOn is first loaded.
 -- From there values are loaded from RAV_ values stored in your WTF folder.
 local defaults = {
+    COMMAND =               "ravm",
+    LOCALE =                "enUS",
     AUTO_VENDOR_MOUNTS =    true,
     AUTO_PASSENGER_MOUNTS = true,
     AUTO_SWIMMING_MOUNTS =  true,
@@ -263,7 +265,7 @@ SLASH_RAVMOUNTS3 = "/ravm"
 local function slashHandler(message, editbox)
     local command, argument = strsplit(" ", message)
     if command == "version" or command == "v" then
-        prettyPrint(ravMounts.locales[ravMounts.locale].notice.version, true)
+        prettyPrint(string.format(ravMounts.locales[ravMounts.locale].notice.version, ravMounts.version))
     elseif string.match(command, "auto") or string.match(command, "togg") or (argument and command == "c" or string.match(command, "config")) then
         if string.match(argument, "vend") or string.match(argument, "repair") or string.match(argument, "trans") or string.match(argument, "mog") then
             RAV_autoVendorMounts = not RAV_autoVendorMounts
@@ -311,7 +313,7 @@ local function slashHandler(message, editbox)
                 print(ravMounts.locales[ravMounts.locale].automation.clone[2])
             end
         else
-            print(ravMounts.locales[ravMounts.locale].automation.missing)
+            print(string.format(ravMounts.locales[ravMounts.locale].automation.missing, defaults.COMMAND))
         end
         ravMounts.mountListHandler()
     elseif command == "settings" or command == "s" or command == "config" or command == "c" then
@@ -322,7 +324,7 @@ local function slashHandler(message, editbox)
         print("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.swimming .. ":\124r "..(RAV_autoSwimmingMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual))
         print("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.flex .. ":\124r "..(RAV_autoFlexMounts and ravMounts.locales[ravMounts.locale].config.flexboth or ravMounts.locales[ravMounts.locale].config.flexone))
         print("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.clone .. ":\124r "..(RAV_autoClone and ravMounts.locales[ravMounts.locale].config.on or ravMounts.locales[ravMounts.locale].config.off))
-        print(ravMounts.locales[ravMounts.locale].help[5])
+        print(string.format(ravMounts.locales[ravMounts.locale].help[5], defaults.COMMAND))
     elseif command == "force" or command == "f" or command == "data" or command == "d" then
         ravMounts.mountListHandler()
         prettyPrint(ravMounts.locales[ravMounts.locale].notice.force)
@@ -338,12 +340,12 @@ local function slashHandler(message, editbox)
         print("\124cffffff66" ..ravMounts.locales[ravMounts.locale].type.chauffer .. " \124r" .. table.maxn(RAV_chauffeurMounts))
     elseif command == "help" or command == "h" then
         prettyPrint(ravMounts.locales[ravMounts.locale].notice.help)
-        print(ravMounts.locales[ravMounts.locale].help[1])
-        print(ravMounts.locales[ravMounts.locale].help[2])
-        print(ravMounts.locales[ravMounts.locale].help[3])
-        print(ravMounts.locales[ravMounts.locale].help[4])
-        print(ravMounts.locales[ravMounts.locale].help[5])
-        print(ravMounts.locales[ravMounts.locale].help[6])
+        print(string.format(ravMounts.locales[ravMounts.locale].help[1], defaults.COMMAND))
+        print(string.format(ravMounts.locales[ravMounts.locale].help[2], defaults.COMMAND))
+        print(string.format(ravMounts.locales[ravMounts.locale].help[3], defaults.COMMAND))
+        print(string.format(ravMounts.locales[ravMounts.locale].help[4], defaults.COMMAND, defaults.COMMAND, defaults.COMMAND))
+        print(string.format(ravMounts.locales[ravMounts.locale].help[5], defaults.COMMAND))
+        print(string.format(ravMounts.locales[ravMounts.locale].help[6], ravMounts.name))
     else
         ravMounts.mountListHandler()
         ravMounts.mountUpHandler(command)
@@ -358,14 +360,17 @@ frame:SetScript("OnEvent", function(self, event, arg)
     if arg == "ravMounts" then
         if event == "ADDON_LOADED" then
             ravMounts.locale = GetLocale()
+            if not ravMounts.locales[ravMounts.locale] then
+                ravMounts.locale = defaults.LOCALE
+            end
             ravMounts.mountListHandler()
             if not RAV_version then
-                prettyPrint(ravMounts.locales[ravMounts.locale].load.install)
+                prettyPrint(string.format(ravMounts.locales[ravMounts.locale].load.install, ravMounts.name))
             elseif RAV_version ~= ravMounts.version then
-                prettyPrint(ravMounts.locales[ravMounts.locale].load.update)
+                prettyPrint(string.format(ravMounts.locales[ravMounts.locale].load.update, ravMounts.name))
             end
             if not RAV_version or RAV_version ~= ravMounts.version then
-                print(ravMounts.locales[ravMounts.locale].load.both)
+                print(string.format(ravMounts.locales[ravMounts.locale].load.both, defaults.COMMAND, ravMounts.name))
             end
             RAV_version = ravMounts.version
         end
