@@ -197,7 +197,7 @@ function ravMounts.mountUpHandler(specificType)
     -- simple variables
     local mounted = IsMounted()
     local inVehicle = UnitInVehicle("player")
-    local shapeshift = IsShapeshifted()
+    local shapeshifted = IsShapeshifted()
     local flyable = ravMounts.IsFlyableArea()
     local submerged = IsSwimming() and not IsFloating()
     local mapID = C_Map.GetMapInfo(1)
@@ -248,8 +248,7 @@ function ravMounts.mountUpHandler(specificType)
         mountSummon(RAV_flyingPassengerMounts)
     elseif controlKey and (not flyable or (flyable and altKey)) and haveGroundPassengerMounts then
         mountSummon(RAV_groundPassengerMounts)
-    elseif mounted or inVehicle or
-    (RAV_class == "Druid" or shapeshift == 4 or shapeshift == 29 or shapeshift == 27 or shapeshift == 3) then
+    elseif mounted or inVehicle or shapeshifted then
         Dismount()
         VehicleExit()
         CancelShapeshiftForm()
