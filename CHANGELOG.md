@@ -1,3 +1,8 @@
+## Version 2.1.3
+
+- Fix to shapeshifting courtesy of krunk (https://www.curseforge.com/members/krunktron/projects)
+
+
 ## Version 2.1.2
 
 - More tidying of wording and enUS locale

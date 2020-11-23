@@ -52,6 +52,17 @@ local function IsFloating()
     return (IsSwimming() and (not (b == B) or (b == B and a > -1)))
 end
 
+local function IsShapeshifted()
+    local _, class, _ = UnitClass("player")
+    local shapeshift = GetShapeshiftForm()
+    if class == "Druid" and shapeshift then
+        return true
+    elseif class == "Shaman" and shapeshift then
+        return true
+    end
+    return false
+end
+
 -- Get the mount being used by the target or focus (if they're a Player)
 -- Thanks to DJharris71 (http://www.wowinterface.com/forums/member.php?userid=301959)
 local function GetCloneMount()
@@ -186,7 +197,7 @@ function ravMounts.mountUpHandler(specificType)
     -- simple variables
     local mounted = IsMounted()
     local inVehicle = UnitInVehicle("player")
-    local shapeshift = GetShapeshiftFormID()
+    local shapeshift = IsShapeshifted()
     local flyable = ravMounts.IsFlyableArea()
     local submerged = IsSwimming() and not IsFloating()
     local mapID = C_Map.GetMapInfo(1)
@@ -237,7 +248,8 @@ function ravMounts.mountUpHandler(specificType)
         mountSummon(RAV_flyingPassengerMounts)
     elseif controlKey and (not flyable or (flyable and altKey)) and haveGroundPassengerMounts then
         mountSummon(RAV_groundPassengerMounts)
-    elseif mounted or inVehicle or shapeshift ~= nil then
+    elseif mounted or inVehicle or
+    (RAV_class == "Druid" or shapeshift == 4 or shapeshift == 29 or shapeshift == 27 or shapeshift == 3) then
         Dismount()
         VehicleExit()
         CancelShapeshiftForm()
