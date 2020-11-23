@@ -5,8 +5,8 @@ ravMounts.locales = {
         ["help"] = {
             "Type \124cff9eb8c9/%s\124r to call a Mount, or even better: add it to a macro.", -- defaults.COMMAND
             "Check your config: \124cff9eb8c9/%s config", -- defaults.COMMAND
-            "To toggle automation of special mounts from your Mount lists:",
-            "e.g. \124cff9eb8c9/%s auto vendor\124r or \124cff9eb8c9/%s auto flex\124r or \124cff9eb8c9/%s auto clone", -- defaults.COMMAND, defaults.COMMAND, defaults.COMMAND
+            "To toggle settings from your configuration, e.g.",
+            "\124cff9eb8c9/%s toggle vendor\124r or \124cff9eb8c9/%s toggle flex\124r or \124cff9eb8c9/%s toggle clone", -- defaults.COMMAND, defaults.COMMAND, defaults.COMMAND
             "To force a recache or see what the AddOn has found: \124cff9eb8c9/%s data", -- defaults.COMMAND
             "Check out \124cff9eb8c9%s\124r on GitHub, WoWInterface, or Curse for more info and support: http://bit.ly/2hZTsAR" -- ravMounts.name
         },

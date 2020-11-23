@@ -266,11 +266,10 @@ local function slashHandler(message, editbox)
     local command, argument = strsplit(" ", message)
     if command == "version" or command == "v" then
         prettyPrint(string.format(ravMounts.locales[ravMounts.locale].notice.version, ravMounts.version))
-    elseif string.match(command, "auto") or string.match(command, "togg") or (argument and command == "c" or string.match(command, "config")) then
+    elseif argument and (command == "s" or string.match(command, "setting") or command == "c" or string.match(command, "config") or string.match(command, "auto") or string.match(command, "tog")) then
         if string.match(argument, "vend") or string.match(argument, "repair") or string.match(argument, "trans") or string.match(argument, "mog") then
             RAV_autoVendorMounts = not RAV_autoVendorMounts
-            prettyPrint("", true)
-            print("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.vendor .. "\124cffffffff: " .. (RAV_autoVendorMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual))
+            prettyPrint("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.vendor .. "\124cffffffff: " .. (RAV_autoVendorMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual), true)
             if RAV_autoVendorMounts then
                 print(ravMounts.locales[ravMounts.locale].automation.vendor[1])
             else
@@ -278,8 +277,7 @@ local function slashHandler(message, editbox)
             end
         elseif string.match(argument, "2") or string.match(argument, "two") or string.match(argument, "multi") or string.match(argument, "passenger") then
             RAV_autoPassengerMounts = not RAV_autoPassengerMounts
-            prettyPrint("", true)
-            print("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.passenger .. "\124cffffffff: " .. (RAV_autoPassengerMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual))
+            prettyPrint("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.passenger .. "\124cffffffff: " .. (RAV_autoPassengerMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual), true)
             if RAV_autoPassengerMounts then
                 print(ravMounts.locales[ravMounts.locale].automation.passenger[1])
             else
@@ -287,8 +285,7 @@ local function slashHandler(message, editbox)
             end
         elseif string.match(argument, "swim") then
             RAV_autoSwimmingMounts = not RAV_autoSwimmingMounts
-            prettyPrint("", true)
-            print("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.swimming .. "\124cffffffff: " .. (RAV_autoSwimmingMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual))
+            prettyPrint("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.swimming .. "\124cffffffff: " .. (RAV_autoSwimmingMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual), true)
             if RAV_autoSwimmingMounts then
                 print(ravMounts.locales[ravMounts.locale].automation.swimming[1])
             else
@@ -296,8 +293,7 @@ local function slashHandler(message, editbox)
             end
         elseif string.match(argument, "flex") then
             RAV_autoFlexMounts = not RAV_autoFlexMounts
-            prettyPrint("", true)
-            print("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.flex .. "\124cffffffff: " .. (RAV_autoFlexMounts and ravMounts.locales[ravMounts.locale].config.flexboth or ravMounts.locales[ravMounts.locale].config.flexone))
+            prettyPrint("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.flex .. "\124cffffffff: " .. (RAV_autoFlexMounts and ravMounts.locales[ravMounts.locale].config.flexboth or ravMounts.locales[ravMounts.locale].config.flexone), true)
             if RAV_autoFlexMounts then
                 print(ravMounts.locales[ravMounts.locale].automation.flex[1])
             else
@@ -305,8 +301,7 @@ local function slashHandler(message, editbox)
             end
         elseif string.match(argument, "clone") or string.match(argument, "copy") then
             RAV_autoClone = not RAV_autoClone
-            prettyPrint("", true)
-            print("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.clone .. "\124cffffffff: " .. (RAV_autoClone and ravMounts.locales[ravMounts.locale].config.on or ravMounts.locales[ravMounts.locale].config.off))
+            prettyPrint("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.clone .. "\124cffffffff: " .. (RAV_autoClone and ravMounts.locales[ravMounts.locale].config.on or ravMounts.locales[ravMounts.locale].config.off), true)
             if RAV_autoClone then
                 print(ravMounts.locales[ravMounts.locale].automation.clone[1])
             else
@@ -316,7 +311,7 @@ local function slashHandler(message, editbox)
             print(string.format(ravMounts.locales[ravMounts.locale].automation.missing, defaults.COMMAND))
         end
         ravMounts.mountListHandler()
-    elseif command == "settings" or command == "s" or command == "config" or command == "c" then
+    elseif command == "s" or string.match(command, "setting") or command == "c" or string.match(command, "config") then
         ravMounts.mountListHandler()
         prettyPrint(ravMounts.locales[ravMounts.locale].notice.config)
         print("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.vendor .. ":\124r "..(RAV_autoVendorMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual))
@@ -324,8 +319,9 @@ local function slashHandler(message, editbox)
         print("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.swimming .. ":\124r "..(RAV_autoSwimmingMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual))
         print("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.flex .. ":\124r "..(RAV_autoFlexMounts and ravMounts.locales[ravMounts.locale].config.flexboth or ravMounts.locales[ravMounts.locale].config.flexone))
         print("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.clone .. ":\124r "..(RAV_autoClone and ravMounts.locales[ravMounts.locale].config.on or ravMounts.locales[ravMounts.locale].config.off))
-        print(string.format(ravMounts.locales[ravMounts.locale].help[5], defaults.COMMAND))
-    elseif command == "force" or command == "f" or command == "data" or command == "d" then
+        print(string.format(ravMounts.locales[ravMounts.locale].help[3], defaults.COMMAND))
+        print(string.format(ravMounts.locales[ravMounts.locale].help[4], defaults.COMMAND, defaults.COMMAND, defaults.COMMAND))
+    elseif command == "f" or string.match(command, "forc") or command == "d" or string.match(command, "dat") then
         ravMounts.mountListHandler()
         prettyPrint(ravMounts.locales[ravMounts.locale].notice.force)
         print("\124cffffff66" ..ravMounts.locales[ravMounts.locale].type.total .. " \124r" .. table.maxn(RAV_allMountsByName))
@@ -338,7 +334,7 @@ local function slashHandler(message, editbox)
         print("\124cffffff66" ..ravMounts.locales[ravMounts.locale].type.vashjir .. " \124r" .. table.maxn(RAV_vashjirMounts))
         print("\124cffffff66" ..ravMounts.locales[ravMounts.locale].type.ahnqiraj .. " \124r" .. table.maxn(RAV_ahnQirajMounts))
         print("\124cffffff66" ..ravMounts.locales[ravMounts.locale].type.chauffer .. " \124r" .. table.maxn(RAV_chauffeurMounts))
-    elseif command == "help" or command == "h" then
+    elseif command == "h" or string.match(command, "hel") then
         prettyPrint(ravMounts.locales[ravMounts.locale].notice.help)
         print(string.format(ravMounts.locales[ravMounts.locale].help[1], defaults.COMMAND))
         print(string.format(ravMounts.locales[ravMounts.locale].help[2], defaults.COMMAND))
