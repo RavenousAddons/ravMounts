@@ -11,7 +11,7 @@
 ---
 local _, ravMounts = ...
 ravMounts.name = "Ravenous Mounts"
-ravMounts.version = "2.1.2"
+ravMounts.version = "2.1.3"
 
 -- DEFAULTS
 -- These are only applied when the AddOn is first loaded.
