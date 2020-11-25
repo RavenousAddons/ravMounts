@@ -9,9 +9,9 @@
 -- https://www.wowinterface.com/downloads/info24005-RavenousMounts.html
 -- https://www.curseforge.com/wow/addons/ravmounts
 ---
-local _, ravMounts = ...
+local ADDON_NAME, ravMounts = ...
 ravMounts.name = "Ravenous Mounts"
-ravMounts.version = "2.1.4"
+ravMounts.version = GetAddOnMetadata(ADDON_NAME, "Version")
 
 -- DEFAULTS
 -- These are only applied when the AddOn is first loaded.
@@ -34,7 +34,7 @@ local function prettyPrint(message, full)
     if full == false then
         message = message .. ":"
     end
-    local prefix = "\124cff9eb8c9" .. ravMounts.name .. " v" .. ravMounts.version .. (full and " " or ":\124r ")
+    local prefix = "|cff9eb8c9" .. ravMounts.name .. (full and " " or ":|r ")
     DEFAULT_CHAT_FRAME:AddMessage(prefix .. message)
 end
 
@@ -284,7 +284,7 @@ local function slashHandler(message, editbox)
     elseif argument and (command == "s" or string.match(command, "setting") or command == "c" or string.match(command, "config") or string.match(command, "auto") or string.match(command, "tog")) then
         if string.match(argument, "norm") or string.match(argument, "fly") or string.match(argument, "ground") or string.match(argument, "flying/ground") or string.match(argument, "Flying/Ground") then
             RAV_autoNormalMounts = not RAV_autoNormalMounts
-            prettyPrint("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.normal .. "\124cffffffff: " .. (RAV_autoNormalMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual), true)
+            prettyPrint("|cffffff66" .. ravMounts.locales[ravMounts.locale].config.normal .. "|cffffffff: " .. (RAV_autoNormalMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual), true)
             if RAV_autoNormalMounts then
                 print(ravMounts.locales[ravMounts.locale].automation.normal[1])
             else
@@ -292,7 +292,7 @@ local function slashHandler(message, editbox)
             end
         elseif string.match(argument, "vend") or string.match(argument, "repair") or string.match(argument, "trans") or string.match(argument, "mog") then
             RAV_autoVendorMounts = not RAV_autoVendorMounts
-            prettyPrint("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.vendor .. "\124cffffffff: " .. (RAV_autoVendorMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual), true)
+            prettyPrint("|cffffff66" .. ravMounts.locales[ravMounts.locale].config.vendor .. "|cffffffff: " .. (RAV_autoVendorMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual), true)
             if RAV_autoVendorMounts then
                 print(ravMounts.locales[ravMounts.locale].automation.vendor[1])
             else
@@ -300,7 +300,7 @@ local function slashHandler(message, editbox)
             end
         elseif string.match(argument, "2") or string.match(argument, "two") or string.match(argument, "multi") or string.match(argument, "passenger") then
             RAV_autoPassengerMounts = not RAV_autoPassengerMounts
-            prettyPrint("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.passenger .. "\124cffffffff: " .. (RAV_autoPassengerMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual), true)
+            prettyPrint("|cffffff66" .. ravMounts.locales[ravMounts.locale].config.passenger .. "|cffffffff: " .. (RAV_autoPassengerMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual), true)
             if RAV_autoPassengerMounts then
                 print(ravMounts.locales[ravMounts.locale].automation.passenger[1])
             else
@@ -308,7 +308,7 @@ local function slashHandler(message, editbox)
             end
         elseif string.match(argument, "swim") then
             RAV_autoSwimmingMounts = not RAV_autoSwimmingMounts
-            prettyPrint("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.swimming .. "\124cffffffff: " .. (RAV_autoSwimmingMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual), true)
+            prettyPrint("|cffffff66" .. ravMounts.locales[ravMounts.locale].config.swimming .. "|cffffffff: " .. (RAV_autoSwimmingMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual), true)
             if RAV_autoSwimmingMounts then
                 print(ravMounts.locales[ravMounts.locale].automation.swimming[1])
             else
@@ -316,7 +316,7 @@ local function slashHandler(message, editbox)
             end
         elseif string.match(argument, "flex") then
             RAV_autoFlexMounts = not RAV_autoFlexMounts
-            prettyPrint("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.flex .. "\124cffffffff: " .. (RAV_autoFlexMounts and ravMounts.locales[ravMounts.locale].config.flexboth or ravMounts.locales[ravMounts.locale].config.flexone), true)
+            prettyPrint("|cffffff66" .. ravMounts.locales[ravMounts.locale].config.flex .. "|cffffffff: " .. (RAV_autoFlexMounts and ravMounts.locales[ravMounts.locale].config.flexboth or ravMounts.locales[ravMounts.locale].config.flexone), true)
             if RAV_autoFlexMounts then
                 print(ravMounts.locales[ravMounts.locale].automation.flex[1])
             else
@@ -324,7 +324,7 @@ local function slashHandler(message, editbox)
             end
         elseif string.match(argument, "clone") or string.match(argument, "copy") then
             RAV_autoClone = not RAV_autoClone
-            prettyPrint("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.clone .. "\124cffffffff: " .. (RAV_autoClone and ravMounts.locales[ravMounts.locale].config.on or ravMounts.locales[ravMounts.locale].config.off), true)
+            prettyPrint("|cffffff66" .. ravMounts.locales[ravMounts.locale].config.clone .. "|cffffffff: " .. (RAV_autoClone and ravMounts.locales[ravMounts.locale].config.on or ravMounts.locales[ravMounts.locale].config.off), true)
             if RAV_autoClone then
                 print(ravMounts.locales[ravMounts.locale].automation.clone[1])
             else
@@ -337,27 +337,27 @@ local function slashHandler(message, editbox)
     elseif command == "s" or string.match(command, "setting") or command == "c" or string.match(command, "config") then
         ravMounts.mountListHandler()
         prettyPrint(ravMounts.locales[ravMounts.locale].notice.config)
-        print("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.normal .. ":\124r "..(RAV_autoNormalMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual))
-        print("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.vendor .. ":\124r "..(RAV_autoVendorMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual))
-        print("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.passenger .. ":\124r "..(RAV_autoPassengerMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual))
-        print("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.swimming .. ":\124r "..(RAV_autoSwimmingMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual))
-        print("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.flex .. ":\124r "..(RAV_autoFlexMounts and ravMounts.locales[ravMounts.locale].config.flexboth or ravMounts.locales[ravMounts.locale].config.flexone))
-        print("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.clone .. ":\124r "..(RAV_autoClone and ravMounts.locales[ravMounts.locale].config.on or ravMounts.locales[ravMounts.locale].config.off))
+        print("|cffffff66" .. ravMounts.locales[ravMounts.locale].config.normal .. ":|r "..(RAV_autoNormalMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual))
+        print("|cffffff66" .. ravMounts.locales[ravMounts.locale].config.vendor .. ":|r "..(RAV_autoVendorMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual))
+        print("|cffffff66" .. ravMounts.locales[ravMounts.locale].config.passenger .. ":|r "..(RAV_autoPassengerMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual))
+        print("|cffffff66" .. ravMounts.locales[ravMounts.locale].config.swimming .. ":|r "..(RAV_autoSwimmingMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual))
+        print("|cffffff66" .. ravMounts.locales[ravMounts.locale].config.flex .. ":|r "..(RAV_autoFlexMounts and ravMounts.locales[ravMounts.locale].config.flexboth or ravMounts.locales[ravMounts.locale].config.flexone))
+        print("|cffffff66" .. ravMounts.locales[ravMounts.locale].config.clone .. ":|r "..(RAV_autoClone and ravMounts.locales[ravMounts.locale].config.on or ravMounts.locales[ravMounts.locale].config.off))
         print(string.format(ravMounts.locales[ravMounts.locale].help[3], defaults.COMMAND))
         print(string.format(ravMounts.locales[ravMounts.locale].help[4], defaults.COMMAND, defaults.COMMAND, defaults.COMMAND))
     elseif command == "f" or string.match(command, "force") or command == "d" or string.match(command, "data") or string.match(command, "cache") then
         ravMounts.mountListHandler()
         prettyPrint(ravMounts.locales[ravMounts.locale].notice.force)
-        print("\124cffffff66" ..ravMounts.locales[ravMounts.locale].type.total .. " \124r" .. table.maxn(RAV_allMountsByName))
-        print("\124cffffff66" ..ravMounts.locales[ravMounts.locale].type.ground .. " \124r" .. table.maxn(RAV_groundMounts))
-        print("\124cffffff66" ..ravMounts.locales[ravMounts.locale].type.flying .. " \124r" .. table.maxn(RAV_flyingMounts))
-        print("\124cffffff66" ..ravMounts.locales[ravMounts.locale].type.groundpassenger .. " \124r" .. table.maxn(RAV_groundPassengerMounts))
-        print("\124cffffff66" ..ravMounts.locales[ravMounts.locale].type.flyingpassenger .. " \124r" .. table.maxn(RAV_flyingPassengerMounts))
-        print("\124cffffff66" ..ravMounts.locales[ravMounts.locale].type.vendor .. " \124r" .. table.maxn(RAV_vendorMounts))
-        print("\124cffffff66" ..ravMounts.locales[ravMounts.locale].type.swimming .. " \124r" .. table.maxn(RAV_swimmingMounts))
-        print("\124cffffff66" ..ravMounts.locales[ravMounts.locale].type.vashjir .. " \124r" .. table.maxn(RAV_vashjirMounts))
-        print("\124cffffff66" ..ravMounts.locales[ravMounts.locale].type.ahnqiraj .. " \124r" .. table.maxn(RAV_ahnQirajMounts))
-        print("\124cffffff66" ..ravMounts.locales[ravMounts.locale].type.chauffer .. " \124r" .. table.maxn(RAV_chauffeurMounts))
+        print("|cffffff66" ..ravMounts.locales[ravMounts.locale].type.total .. " |r" .. table.maxn(RAV_allMountsByName))
+        print("|cffffff66" ..ravMounts.locales[ravMounts.locale].type.ground .. " |r" .. table.maxn(RAV_groundMounts))
+        print("|cffffff66" ..ravMounts.locales[ravMounts.locale].type.flying .. " |r" .. table.maxn(RAV_flyingMounts))
+        print("|cffffff66" ..ravMounts.locales[ravMounts.locale].type.groundpassenger .. " |r" .. table.maxn(RAV_groundPassengerMounts))
+        print("|cffffff66" ..ravMounts.locales[ravMounts.locale].type.flyingpassenger .. " |r" .. table.maxn(RAV_flyingPassengerMounts))
+        print("|cffffff66" ..ravMounts.locales[ravMounts.locale].type.vendor .. " |r" .. table.maxn(RAV_vendorMounts))
+        print("|cffffff66" ..ravMounts.locales[ravMounts.locale].type.swimming .. " |r" .. table.maxn(RAV_swimmingMounts))
+        print("|cffffff66" ..ravMounts.locales[ravMounts.locale].type.vashjir .. " |r" .. table.maxn(RAV_vashjirMounts))
+        print("|cffffff66" ..ravMounts.locales[ravMounts.locale].type.ahnqiraj .. " |r" .. table.maxn(RAV_ahnQirajMounts))
+        print("|cffffff66" ..ravMounts.locales[ravMounts.locale].type.chauffer .. " |r" .. table.maxn(RAV_chauffeurMounts))
     elseif command == "h" or string.match(command, "hel") then
         prettyPrint(ravMounts.locales[ravMounts.locale].notice.help)
         print(string.format(ravMounts.locales[ravMounts.locale].help[1], defaults.COMMAND))
@@ -374,11 +374,18 @@ end
 SlashCmdList["RAVMOUNTS"] = slashHandler
 
 -- Check Installation and Updates on AddOn Load
-local frame = CreateFrame("Frame")
-frame:RegisterEvent("ADDON_LOADED")
-frame:SetScript("OnEvent", function(self, event, arg)
-    if arg == "ravMounts" then
-        if event == "ADDON_LOADED" then
+local playerName = UnitName("player")
+local function OnEvent(self, event, arg, ...)
+    if arg == ADDON_NAME then
+        if event == "CHAT_MSG_ADDON" and not RAV_hasSeenUpdateMessage then
+            local message, _ = ...
+            local a, b, c = strsplit(".", ravMounts.version)
+            local d, e, f = strsplit(".", message)
+            if (d > a) or (d == a and e > b) or (d == a and e == b and f > c) then
+                prettyPrint(string.format(ravMounts.locales[ravMounts.locale].load.outofdate, ravMounts.name))
+                RAV_hasSeenUpdateMessage = true
+            end
+        elseif event == "ADDON_LOADED" then
             ravMounts.locale = GetLocale()
             if not ravMounts.locales[ravMounts.locale] then
                 ravMounts.locale = defaults.LOCALE
@@ -391,8 +398,17 @@ frame:SetScript("OnEvent", function(self, event, arg)
             end
             if not RAV_version or RAV_version ~= ravMounts.version then
                 print(string.format(ravMounts.locales[ravMounts.locale].load.both, defaults.COMMAND, ravMounts.name))
+                RAV_hasSeenUpdateMessage = false
             end
             RAV_version = ravMounts.version
+            C_ChatInfo.RegisterAddonMessagePrefix(ADDON_NAME)
+            C_ChatInfo.SendAddonMessage(ADDON_NAME, RAV_version, "GUILD")
+            C_ChatInfo.SendAddonMessage(ADDON_NAME, RAV_version, "PARTY")
+            C_ChatInfo.SendAddonMessage(ADDON_NAME, RAV_version, "RAID")
         end
     end
-end)
+end
+local f = CreateFrame("Frame")
+f:RegisterEvent("CHAT_MSG_ADDON")
+f:RegisterEvent("ADDON_LOADED")
+f:SetScript("OnEvent", OnEvent)
