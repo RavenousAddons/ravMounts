@@ -35,6 +35,7 @@ ravMounts.locales = {
             ["chauffer"] = "Chauffer"
         },
         ["config"] = {
+            ["normal"] = "Flying/Ground Mounts",
             ["vendor"] = "Vendor Mounts",
             ["passenger"] = "Passenger Mounts",
             ["swimming"] = "Swimming Mounts",
@@ -48,6 +49,10 @@ ravMounts.locales = {
             ["off"] = "OFF"
         },
         ["automation"] = {
+            ["normal"] = {
+                "Flying/Ground Mounts will be called randomly, regardless of Favorite status.",
+                "Flying/Ground will only be summoned if they are marked as a Favorite."
+            },
             ["vendor"] = {
                 "Vendor Mounts will be called automatically, and if they are marked as a Favorite, they will be \124cff9eb8c9included\124r in the Ground/Flying Mount summoning list.",
                 "Vendor Mounts will only be summoned if they are marked as a Favorite."
@@ -57,7 +62,7 @@ ravMounts.locales = {
                 "Passenger Mounts will only be summoned if they are marked as a Favorite."
             },
             ["swimming"] = {
-                "Swimming Mounts will be \124cff9eb8c9included\124r in their summoning list, regardless of Favorite status.",
+                "Swimming Mounts will be called automatically, regardless of Favorite status.",
                 "Swimming Mounts will only be summoned if they are marked as a Favorite."
             },
             ["flex"] = {
@@ -65,10 +70,10 @@ ravMounts.locales = {
                 "Flex Mounts will be excluded from the Ground Mount summoning list."
             },
             ["clone"] = {
-                "Your target/focus's mount, if they are using one and you own it too, will be summoned instead of following your Favorites.",
-                "The addon will stop cloning your target/focus's mount."
+                "Your target/focus' mount with be called instead of following your Favorites.",
+                "The addon will stop cloning your target/focus' mount."
             },
-            ["missing"] = "You need to specify which type of automation to toggle: vendor, passenger, swimming, flex, clone. If you need help: \124cff9eb8c9/%s help" -- defaults.COMMAND
+            ["missing"] = "You need to specify which type of automation to toggle: normal, vendor, passenger, swimming, flex, clone. If you need help: \124cff9eb8c9/%s help" -- defaults.COMMAND
         }
     }
 }

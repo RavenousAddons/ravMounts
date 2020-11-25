@@ -11,7 +11,7 @@
 ---
 local _, ravMounts = ...
 ravMounts.name = "Ravenous Mounts"
-ravMounts.version = "2.1.3"
+ravMounts.version = "2.1.4"
 
 -- DEFAULTS
 -- These are only applied when the AddOn is first loaded.
@@ -19,6 +19,7 @@ ravMounts.version = "2.1.3"
 local defaults = {
     COMMAND =               "ravm",
     LOCALE =                "enUS",
+    AUTO_NORMAL_MOUNTS =    false,
     AUTO_VENDOR_MOUNTS =    true,
     AUTO_PASSENGER_MOUNTS = true,
     AUTO_SWIMMING_MOUNTS =  true,
@@ -98,6 +99,7 @@ function ravMounts.mountListHandler()
     RAV_chauffeurMounts = {}
     RAV_allMountsByName = {}
     RAV_allMountsByID = {}
+    RAV_autoNormalMounts = (RAV_autoNormalMounts == nil and defaults.AUTO_NORMAL_MOUNTS or RAV_autoNormalMounts)
     RAV_autoVendorMounts = (RAV_autoVendorMounts == nil and defaults.AUTO_VENDOR_MOUNTS or RAV_autoVendorMounts)
     RAV_autoPassengerMounts = (RAV_autoPassengerMounts == nil and defaults.AUTO_PASSENGER_MOUNTS or RAV_autoPassengerMounts)
     RAV_autoSwimmingMounts = (RAV_autoSwimmingMounts == nil and defaults.AUTO_SWIMMING_MOUNTS or RAV_autoSwimmingMounts)
@@ -130,14 +132,14 @@ function ravMounts.mountListHandler()
             else
                 table.insert(RAV_allMountsByName, mountName)
                 table.insert(RAV_allMountsByID, mountID)
-                if isFlyingMount and isFavorite and not isVendorMount and not isFlyingPassengerMount and not isGroundPassengerMount then
+                if isFlyingMount and (RAV_autoNormalMounts or isFavorite) and not isVendorMount and not isFlyingPassengerMount and not isGroundPassengerMount then
                     if RAV_autoFlexMounts and isFlexMount then
                         table.insert(RAV_groundMounts, mountID)
                     else
                         table.insert(RAV_flyingMounts, mountID)
                     end
                 end
-                if isGroundMount and isFavorite and not isVendorMount and not isFlyingPassengerMount and not isGroundPassengerMount then
+                if isGroundMount and (RAV_autoNormalMounts or isFavorite) and not isVendorMount and not isFlyingPassengerMount and not isGroundPassengerMount then
                     table.insert(RAV_groundMounts, mountID)
                 end
                 if isVendorMount then
@@ -278,7 +280,15 @@ local function slashHandler(message, editbox)
     if command == "version" or command == "v" then
         prettyPrint(string.format(ravMounts.locales[ravMounts.locale].notice.version, ravMounts.version))
     elseif argument and (command == "s" or string.match(command, "setting") or command == "c" or string.match(command, "config") or string.match(command, "auto") or string.match(command, "tog")) then
-        if string.match(argument, "vend") or string.match(argument, "repair") or string.match(argument, "trans") or string.match(argument, "mog") then
+        if string.match(argument, "norm") or string.match(argument, "fly") or string.match(argument, "ground") or string.match(argument, "flying/ground") or string.match(argument, "Flying/Ground") then
+            RAV_autoNormalMounts = not RAV_autoNormalMounts
+            prettyPrint("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.normal .. "\124cffffffff: " .. (RAV_autoNormalMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual), true)
+            if RAV_autoNormalMounts then
+                print(ravMounts.locales[ravMounts.locale].automation.normal[1])
+            else
+                print(ravMounts.locales[ravMounts.locale].automation.normal[2])
+            end
+        elseif string.match(argument, "vend") or string.match(argument, "repair") or string.match(argument, "trans") or string.match(argument, "mog") then
             RAV_autoVendorMounts = not RAV_autoVendorMounts
             prettyPrint("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.vendor .. "\124cffffffff: " .. (RAV_autoVendorMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual), true)
             if RAV_autoVendorMounts then
@@ -325,6 +335,7 @@ local function slashHandler(message, editbox)
     elseif command == "s" or string.match(command, "setting") or command == "c" or string.match(command, "config") then
         ravMounts.mountListHandler()
         prettyPrint(ravMounts.locales[ravMounts.locale].notice.config)
+        print("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.normal .. ":\124r "..(RAV_autoNormalMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual))
         print("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.vendor .. ":\124r "..(RAV_autoVendorMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual))
         print("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.passenger .. ":\124r "..(RAV_autoPassengerMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual))
         print("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.swimming .. ":\124r "..(RAV_autoSwimmingMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual))
