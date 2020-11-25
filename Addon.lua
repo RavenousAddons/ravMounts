@@ -265,6 +265,8 @@ function ravMounts.mountUpHandler(specificType)
         mountSummon(RAV_ahnQirajMounts)
     elseif haveGroundMounts then
         mountSummon(RAV_groundMounts)
+    elseif haveFlyingMounts then
+        mountSummon(RAV_flyingMounts)
     elseif haveChauffeurMounts then
         mountSummon(RAV_chauffeurMounts)
     else
@@ -343,7 +345,7 @@ local function slashHandler(message, editbox)
         print("\124cffffff66" .. ravMounts.locales[ravMounts.locale].config.clone .. ":\124r "..(RAV_autoClone and ravMounts.locales[ravMounts.locale].config.on or ravMounts.locales[ravMounts.locale].config.off))
         print(string.format(ravMounts.locales[ravMounts.locale].help[3], defaults.COMMAND))
         print(string.format(ravMounts.locales[ravMounts.locale].help[4], defaults.COMMAND, defaults.COMMAND, defaults.COMMAND))
-    elseif command == "f" or string.match(command, "forc") or command == "d" or string.match(command, "dat") then
+    elseif command == "f" or string.match(command, "force") or command == "d" or string.match(command, "data") or string.match(command, "cache") then
         ravMounts.mountListHandler()
         prettyPrint(ravMounts.locales[ravMounts.locale].notice.force)
         print("\124cffffff66" ..ravMounts.locales[ravMounts.locale].type.total .. " \124r" .. table.maxn(RAV_allMountsByName))
