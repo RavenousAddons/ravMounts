@@ -248,7 +248,7 @@ function ravMounts.mountUpHandler(specificType)
         mountSummon(RAV_flyingPassengerMounts)
     elseif controlKey and (not flyable or (flyable and altKey)) and haveGroundPassengerMounts then
         mountSummon(RAV_groundPassengerMounts)
-    elseif mounted or inVehicle or shapeshifted then
+    elseif mounted or inVehicle then
         Dismount()
         VehicleExit()
         CancelShapeshiftForm()
