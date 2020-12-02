@@ -9,9 +9,9 @@
 -- https://www.wowinterface.com/downloads/info24005-RavenousMounts.html
 -- https://www.curseforge.com/wow/addons/ravmounts
 ---
-local ADDON_NAME, ravMounts = ...
+local RAV_name, ravMounts = ...
 ravMounts.name = "Ravenous Mounts"
-ravMounts.version = GetAddOnMetadata(ADDON_NAME, "Version")
+ravMounts.version = GetAddOnMetadata(RAV_name, "Version")
 
 -- DEFAULTS
 -- These are only applied when the AddOn is first loaded.
@@ -55,10 +55,8 @@ end
 
 local function IsShapeshifted()
     local _, class, _ = UnitClass("player")
-    local shapeshift = GetShapeshiftForm()
-    if class == "Druid" and shapeshift then
-        return true
-    elseif class == "Shaman" and shapeshift then
+    local shapeshift = GetShapeshiftFormID()
+    if shapeshift == 4 or shapeshift == 5 or shapeshift == 1 or shapeshift == 29 or shapeshift == 31 or shapeshift == 27 or shapeshift == 3 or shapeshift == 2 or shapeshift == 16 or shapeshift == 41 then
         return true
     end
     return false
@@ -337,12 +335,12 @@ local function slashHandler(message, editbox)
     elseif command == "s" or string.match(command, "setting") or command == "c" or string.match(command, "config") then
         ravMounts.mountListHandler()
         prettyPrint(ravMounts.locales[ravMounts.locale].notice.config)
-        print("|cffffff66" .. ravMounts.locales[ravMounts.locale].config.normal .. ":|r "..(RAV_autoNormalMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual))
-        print("|cffffff66" .. ravMounts.locales[ravMounts.locale].config.vendor .. ":|r "..(RAV_autoVendorMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual))
-        print("|cffffff66" .. ravMounts.locales[ravMounts.locale].config.passenger .. ":|r "..(RAV_autoPassengerMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual))
-        print("|cffffff66" .. ravMounts.locales[ravMounts.locale].config.swimming .. ":|r "..(RAV_autoSwimmingMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual))
-        print("|cffffff66" .. ravMounts.locales[ravMounts.locale].config.flex .. ":|r "..(RAV_autoFlexMounts and ravMounts.locales[ravMounts.locale].config.flexboth or ravMounts.locales[ravMounts.locale].config.flexone))
-        print("|cffffff66" .. ravMounts.locales[ravMounts.locale].config.clone .. ":|r "..(RAV_autoClone and ravMounts.locales[ravMounts.locale].config.on or ravMounts.locales[ravMounts.locale].config.off))
+        print("|cffffff66" .. ravMounts.locales[ravMounts.locale].config.normal .. ":|r " .. (RAV_autoNormalMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual))
+        print("|cffffff66" .. ravMounts.locales[ravMounts.locale].config.vendor .. ":|r " .. (RAV_autoVendorMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual))
+        print("|cffffff66" .. ravMounts.locales[ravMounts.locale].config.passenger .. ":|r " .. (RAV_autoPassengerMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual))
+        print("|cffffff66" .. ravMounts.locales[ravMounts.locale].config.swimming .. ":|r " .. (RAV_autoSwimmingMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual))
+        print("|cffffff66" .. ravMounts.locales[ravMounts.locale].config.flex .. ":|r " .. (RAV_autoFlexMounts and ravMounts.locales[ravMounts.locale].config.flexboth or ravMounts.locales[ravMounts.locale].config.flexone))
+        print("|cffffff66" .. ravMounts.locales[ravMounts.locale].config.clone .. ":|r " .. (RAV_autoClone and ravMounts.locales[ravMounts.locale].config.on or ravMounts.locales[ravMounts.locale].config.off))
         print(string.format(ravMounts.locales[ravMounts.locale].help[3], defaults.COMMAND))
         print(string.format(ravMounts.locales[ravMounts.locale].help[4], defaults.COMMAND, defaults.COMMAND, defaults.COMMAND))
     elseif command == "f" or string.match(command, "force") or command == "d" or string.match(command, "data") or string.match(command, "cache") then
@@ -376,7 +374,7 @@ SlashCmdList["RAVMOUNTS"] = slashHandler
 -- Check Installation and Updates on AddOn Load
 local playerName = UnitName("player")
 local function OnEvent(self, event, arg, ...)
-    if arg == ADDON_NAME then
+    if arg == RAV_name then
         if event == "CHAT_MSG_ADDON" and not RAV_hasSeenUpdateMessage then
             local message, _ = ...
             local a, b, c = strsplit(".", ravMounts.version)
@@ -401,10 +399,10 @@ local function OnEvent(self, event, arg, ...)
                 RAV_hasSeenUpdateMessage = false
             end
             RAV_version = ravMounts.version
-            C_ChatInfo.RegisterAddonMessagePrefix(ADDON_NAME)
-            C_ChatInfo.SendAddonMessage(ADDON_NAME, RAV_version, "GUILD")
-            C_ChatInfo.SendAddonMessage(ADDON_NAME, RAV_version, "PARTY")
-            C_ChatInfo.SendAddonMessage(ADDON_NAME, RAV_version, "RAID")
+            C_ChatInfo.RegisterAddonMessagePrefix(RAV_name)
+            C_ChatInfo.SendAddonMessage(RAV_name, RAV_version, "GUILD")
+            C_ChatInfo.SendAddonMessage(RAV_name, RAV_version, "PARTY")
+            C_ChatInfo.SendAddonMessage(RAV_name, RAV_version, "RAID")
         end
     end
 end
