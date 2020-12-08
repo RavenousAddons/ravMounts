@@ -10,6 +10,9 @@ local _, ravMounts = ...
 -- TODO: Find out when Wintergrasp isn't flyable? Or too old to bother with?
 
 local spellForContinent = {
+    -- Shadowlands
+    [2363] = -1, -- Queen's Conservatory (Night Fae)
+
     -- Battle for Azeroth Pathfinder
     [1642] = 278833, -- Zandalar
     [1643] = 278833, -- Kul Tiras
@@ -66,7 +69,11 @@ local spellForContinent = {
 
 local noFlySubzones = {
     -- Unflyable subzones where IsFlyableArea() returns true:
-    ["Nespirah"] = true, ["Неспира"] = true, ["네스피라"] = true, ["奈瑟匹拉"] = true, ["奈斯畢拉"] = true,
+    ["Nespirah"] = true,
+    ["Неспира"] = true,
+    ["네스피라"] = true,
+    ["奈瑟匹拉"] = true,
+    ["奈斯畢拉"] = true,
 }
 
 

@@ -262,6 +262,14 @@ function ravMounts.mountUpHandler(specificType)
     end
 end
 
+-- Send current version to other Ravenous Mounts owners in guild, party, or raid
+local function sendVersionData()
+    C_ChatInfo.SendAddonMessage(RAV_name, RAV_version, "GUILD")
+    C_ChatInfo.SendAddonMessage(RAV_name, RAV_version, "PARTY")
+    C_ChatInfo.SendAddonMessage(RAV_name, RAV_version, "RAID")
+end
+
+-- Handle the slash commands and their possible arguments
 SLASH_RAVMOUNTS1 = "/ravenousmounts"
 SLASH_RAVMOUNTS2 = "/ravmounts"
 SLASH_RAVMOUNTS3 = "/ravm"
@@ -346,6 +354,7 @@ local function slashHandler(message, editbox)
         print("|cffffff66" ..ravMounts.locales[ravMounts.locale].type.vashjir .. " |r" .. table.maxn(RAV_vashjirMounts))
         print("|cffffff66" ..ravMounts.locales[ravMounts.locale].type.ahnqiraj .. " |r" .. table.maxn(RAV_ahnQirajMounts))
         print("|cffffff66" ..ravMounts.locales[ravMounts.locale].type.chauffer .. " |r" .. table.maxn(RAV_chauffeurMounts))
+        sendVersionData()
     elseif command == "h" or string.match(command, "hel") then
         prettyPrint(ravMounts.locales[ravMounts.locale].notice.help)
         print(string.format(ravMounts.locales[ravMounts.locale].help[1], defaults.COMMAND))
@@ -362,10 +371,9 @@ end
 SlashCmdList["RAVMOUNTS"] = slashHandler
 
 -- Check Installation and Updates on AddOn Load
-local playerName = UnitName("player")
 local function OnEvent(self, event, arg, ...)
     if arg == RAV_name then
-        if event == "CHAT_MSG_ADDON" and not RAV_hasSeenUpdateMessage then
+        if event == "CHAT_MSG_ADDON" and RAV_hasSeenUpdateMessage == false then
             local message, _ = ...
             local a, b, c = strsplit(".", ravMounts.version)
             local d, e, f = strsplit(".", message)
@@ -390,13 +398,11 @@ local function OnEvent(self, event, arg, ...)
             end
             RAV_version = ravMounts.version
             C_ChatInfo.RegisterAddonMessagePrefix(RAV_name)
-            C_ChatInfo.SendAddonMessage(RAV_name, RAV_version, "GUILD")
-            C_ChatInfo.SendAddonMessage(RAV_name, RAV_version, "PARTY")
-            C_ChatInfo.SendAddonMessage(RAV_name, RAV_version, "RAID")
+            sendVersionData()
         end
     end
 end
 local f = CreateFrame("Frame")
-f:RegisterEvent("CHAT_MSG_ADDON")
 f:RegisterEvent("ADDON_LOADED")
+f:RegisterEvent("CHAT_MSG_ADDON")
 f:SetScript("OnEvent", OnEvent)
