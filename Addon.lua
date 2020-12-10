@@ -28,6 +28,7 @@ local defaults = {
 }
 
 local faction, _ = UnitFactionGroup("player")
+local guild, _, _, _ = GetGuildInfo("player")
 
 -- Special formatting for messages
 local function prettyPrint(message, full)
@@ -264,9 +265,11 @@ end
 
 -- Send current version to other Ravenous Mounts owners in guild, party, or raid
 local function sendVersionData()
-    C_ChatInfo.SendAddonMessage(RAV_name, RAV_version, "GUILD")
     C_ChatInfo.SendAddonMessage(RAV_name, RAV_version, "PARTY")
     C_ChatInfo.SendAddonMessage(RAV_name, RAV_version, "RAID")
+    if guild then
+        C_ChatInfo.SendAddonMessage(RAV_name, RAV_version, "GUILD")
+    end
 end
 
 -- Handle the slash commands and their possible arguments
