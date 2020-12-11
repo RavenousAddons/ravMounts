@@ -267,6 +267,7 @@ end
 local function sendVersionData()
     C_ChatInfo.SendAddonMessage(RAV_name, RAV_version, "PARTY")
     C_ChatInfo.SendAddonMessage(RAV_name, RAV_version, "RAID")
+    C_ChatInfo.SendAddonMessage(RAV_name, RAV_version, "YELL")
     if guild then
         C_ChatInfo.SendAddonMessage(RAV_name, RAV_version, "GUILD")
     end
