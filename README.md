@@ -2,15 +2,17 @@
 
 # Ravenous Mounts
 
-*Chooses the best Mount for the job without any set-up; it’s all based on your Mount Journal Favorites. Minimal in-game configuration to customise your summoning experience. Can even clone your target's mount (if you have it too)!*
+*Chooses the best Mount for the job without any set-up; it’s all based on your Mount Journal Favorites. Minimal in-game configuration to customise your summoning experience. Can even clone your target's mount (if you have the mount too)!*
 
 ## How does Ravenous Mounts work?
 
-This AddOn is meant as a replacement for the default in-game "Summon Random Favorite Mount" button by expanding what mounts can be summoned, and, like macros, when used with a keybind can be combined with modifier keys to summon special mount types, like vendor or passenger mounts.
+By default, the AddOn will create and maintain a macro for you under General Macros called Ravenous Mounts. The macro will pull icons from your available mounts and updates whenever you change zone (like going into Ahn'Qiraj), when you change Favorites in your Mount Journal, and even if you politely ask it to do so!
+
+This AddOn is meant as a replacement for the default in-game "Summon Random Favorite Mount" button by expanding what mounts can be summoned, and when used with a keybind can be combined with modifier keys to summon special mount types, like vendor or passenger mounts.
 
 `/ravmounts`
 
-When using that command, Ravenous Mounts will loop through your Mount Journal collecting and sorting your mounts into different lists, organised by type. Then, depending on the situation your character is in, summon the optimal mount based on your Favorites in the Mount Journal.
+When using that command, Ravenous Mounts will loop through your Mount Journal collecting and sorting your mounts into different lists, organised by type, then, depending on the situation your character is in, summon the optimal mount based on your Favorites in the Mount Journal.
 
 ## Why?
 
