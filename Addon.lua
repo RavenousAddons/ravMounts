@@ -484,11 +484,11 @@ local function OnEvent(self, event, arg, ...)
             if not RAV_version then
                 prettyPrint(string.format(ravMounts.locales[ravMounts.locale].load.install, ravMounts.name))
             elseif RAV_version ~= ravMounts.version then
-                prettyPrint(string.format(ravMounts.locales[ravMounts.locale].load.update, ravMounts.name, ravMounts.version))
+                prettyPrint(string.format(ravMounts.locales[ravMounts.locale].load.update, ravMounts.version))
             end
             if not RAV_version or RAV_version ~= ravMounts.version then
                 print(string.format(ravMounts.locales[ravMounts.locale].help[1], ravMounts.name))
-                print(string.format(ravMounts.locales[ravMounts.locale].load.both, defaults.COMMAND, ravMounts.name))
+                print(string.format(ravMounts.locales[ravMounts.locale].load.both, defaults.COMMAND))
                 RAV_hasSeenUpdateMessage = false
             end
             RAV_version = ravMounts.version
