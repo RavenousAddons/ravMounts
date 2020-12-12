@@ -108,11 +108,11 @@ local function ensureMacro()
     if ground or flying or vendor or passenger or swimming then
         body = "\n" .. body
         if ground then
-            local name, _ = C_MountJournal.GetMountInfoByID(ground[1])
+            local name, _ = C_MountJournal.GetMountInfoByID(ground[random(#ground)])
             body = name .. body
         end
         if flying then
-            local name, _ = C_MountJournal.GetMountInfoByID(flying[1])
+            local name, _ = C_MountJournal.GetMountInfoByID(flying[random(#flying)])
             if ground then
                 body = "[flyable,nomod:alt][noflyable,mod:alt] " .. name .. "; " .. body
             else
@@ -120,7 +120,7 @@ local function ensureMacro()
             end
         end
         if swimming then
-            local name, _ = C_MountJournal.GetMountInfoByID(swimming[1])
+            local name, _ = C_MountJournal.GetMountInfoByID(swimming[random(#swimming)])
             if ground or flying then
                 body = "[swimming,nomod:alt] " .. name .. "; " .. body
             else
@@ -128,7 +128,7 @@ local function ensureMacro()
             end
         end
         if passenger then
-            local name, _ = C_MountJournal.GetMountInfoByID(passenger[1])
+            local name, _ = C_MountJournal.GetMountInfoByID(passenger[random(#passenger)])
             if ground or flying then
                 body = "[mod:ctrl] " .. name .. "; " .. body
             else
@@ -136,7 +136,7 @@ local function ensureMacro()
             end
         end
         if vendor then
-            local name, _ = C_MountJournal.GetMountInfoByID(vendor[1])
+            local name, _ = C_MountJournal.GetMountInfoByID(vendor[random(#vendor)])
             if ground or flying then
                 body = "[mod:shift] " .. name .. "; " .. body
             else
