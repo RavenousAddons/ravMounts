@@ -359,6 +359,7 @@ local function slashHandler(message, editbox)
     local command, argument = strsplit(" ", message)
     if command == "version" or command == "v" then
         prettyPrint(string.format(ravMounts.locales[ravMounts.locale].notice.version, ravMounts.version))
+        sendVersionData()
     elseif argument and (command == "s" or string.match(command, "setting") or command == "c" or string.match(command, "config") or string.match(command, "auto") or string.match(command, "tog")) then
         if string.match(argument, "norm") or string.match(argument, "fly") or string.match(argument, "ground") or string.match(argument, "flying/ground") or string.match(argument, "Flying/Ground") then
             RAV_autoNormalMounts = not RAV_autoNormalMounts
@@ -413,7 +414,6 @@ local function slashHandler(message, editbox)
         end
         ravMounts.mountListHandler()
     elseif command == "s" or string.match(command, "setting") or command == "c" or string.match(command, "config") then
-        ravMounts.mountListHandler()
         prettyPrint(ravMounts.locales[ravMounts.locale].notice.config)
         print("|cffffff66" .. ravMounts.locales[ravMounts.locale].config.normal .. ":|r " .. (RAV_autoNormalMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual))
         print("|cffffff66" .. ravMounts.locales[ravMounts.locale].config.vendor .. ":|r " .. (RAV_autoVendorMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual))
@@ -436,7 +436,6 @@ local function slashHandler(message, editbox)
         print("|cffffff66" ..ravMounts.locales[ravMounts.locale].type.vashjir .. " |r" .. table.maxn(RAV_vashjirMounts))
         print("|cffffff66" ..ravMounts.locales[ravMounts.locale].type.ahnqiraj .. " |r" .. table.maxn(RAV_ahnQirajMounts))
         print("|cffffff66" ..ravMounts.locales[ravMounts.locale].type.chauffer .. " |r" .. table.maxn(RAV_chauffeurMounts))
-        sendVersionData()
         ensureMacro()
     elseif command == "h" or string.match(command, "hel") then
         prettyPrint(ravMounts.locales[ravMounts.locale].notice.help)
@@ -447,9 +446,7 @@ local function slashHandler(message, editbox)
         print(string.format(ravMounts.locales[ravMounts.locale].help[5], defaults.COMMAND))
         print(string.format(ravMounts.locales[ravMounts.locale].help[6], ravMounts.name))
     else
-        ravMounts.mountListHandler()
         ravMounts.mountUpHandler(command)
-        ensureMacro()
     end
 end
 SlashCmdList["RAVMOUNTS"] = slashHandler
@@ -470,7 +467,6 @@ local function OnEvent(self, event, arg, ...)
             if not ravMounts.locales[ravMounts.locale] then
                 ravMounts.locale = defaults.LOCALE
             end
-            ravMounts.mountListHandler()
             if not RAV_version then
                 prettyPrint(string.format(ravMounts.locales[ravMounts.locale].load.install, ravMounts.name))
             elseif RAV_version ~= ravMounts.version then
@@ -483,6 +479,15 @@ local function OnEvent(self, event, arg, ...)
             RAV_version = ravMounts.version
             C_ChatInfo.RegisterAddonMessagePrefix(RAV_name)
             sendVersionData()
+            ravMounts.mountListHandler()
+            ensureMacro()
+        end
+    else
+        if event == "MOUNT_JOURNAL_SEARCH_UPDATED" then
+            ravMounts.mountListHandler()
+            ensureMacro()
+        elseif event == "ZONE_CHANGED" or event == "ZONE_CHANGED_INDOORS" or event == "ZONE_CHANGED_NEW_AREA" then
+            ravMounts.mountListHandler()
             ensureMacro()
         end
     end
@@ -490,4 +495,8 @@ end
 local f = CreateFrame("Frame")
 f:RegisterEvent("ADDON_LOADED")
 f:RegisterEvent("CHAT_MSG_ADDON")
+f:RegisterEvent("MOUNT_JOURNAL_SEARCH_UPDATED")
+f:RegisterEvent("ZONE_CHANGED")
+f:RegisterEvent("ZONE_CHANGED_INDOORS")
+f:RegisterEvent("ZONE_CHANGED_NEW_AREA")
 f:SetScript("OnEvent", OnEvent)
