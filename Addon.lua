@@ -75,6 +75,72 @@ local function GetCloneMount()
     return id
 end
 
+-- Send current version to other Ravenous Mounts owners in guild, party, or raid
+local function sendVersionData()
+    C_ChatInfo.SendAddonMessage(RAV_name, RAV_version, "YELL")
+    C_ChatInfo.SendAddonMessage(RAV_name, RAV_version, "PARTY")
+    C_ChatInfo.SendAddonMessage(RAV_name, RAV_version, "RAID")
+    if guild then
+        C_ChatInfo.SendAddonMessage(RAV_name, RAV_version, "GUILD")
+    end
+end
+
+-- Check for and (if not there…) create a macro
+local function ensureMacro(ground, flying, vendor, passenger, swimming)
+    local body = "/ravmounts"
+    if ground or flying or vendor or passenger or swimming then
+        body = "\n" .. body
+        if ground then
+            local name, _ = C_MountJournal.GetMountInfoByID(ground[random(#ground)])
+            body = name .. body
+        end
+        if flying then
+            local name, _ = C_MountJournal.GetMountInfoByID(flying[random(#flying)])
+            if ground then
+                body = "[flyable,nomod:alt][noflyable,mod:alt] " .. name .. "; " .. body
+            else
+                body = name .. body
+            end
+        end
+        if swimming then
+            local name, _ = C_MountJournal.GetMountInfoByID(swimming[random(#swimming)])
+            if ground or flying then
+                body = "[swimming,nomod:alt] " .. name .. "; " .. body
+            else
+                body = "[swimming] " .. name .. body
+            end
+        end
+        if passenger then
+            local name, _ = C_MountJournal.GetMountInfoByID(passenger[random(#passenger)])
+            if ground or flying then
+                body = "[mod:ctrl] " .. name .. "; " .. body
+            else
+                body = "[mod:ctrl] " .. name .. body
+            end
+        end
+        if vendor then
+            local name, _ = C_MountJournal.GetMountInfoByID(vendor[random(#vendor)])
+            if ground or flying then
+                body = "[mod:shift] " .. name .. "; " .. body
+            else
+                body = "[mod:shift] " .. name .. body
+            end
+        end
+        body = "#showtooltip " .. body
+    end
+    -- Max: 120 Global, 18 Character (so we'll make ours global)
+    local numberOfMacros, _ = GetNumMacros()
+    -- Edit if it exists, create if not
+    if GetMacroIndexByName(ravMounts.name) > 0 then
+        EditMacro(GetMacroIndexByName(ravMounts.name), ravMounts.name, "INV_Misc_QuestionMark", body)
+    elseif numberOfMacros < 120 then
+        CreateMacro(ravMounts.name, "INV_Misc_QuestionMark", body)
+    elseif not RAV_hasSeenNoSpaceMessage then
+        RAV_hasSeenNoSpaceMessage = truew
+        prettyPrint(ravMounts.locales[ravMounts.locale].notice.nospace)
+    end
+end
+
 -- Collect Data and Sort it
 function ravMounts.mountListHandler()
     -- Reset the global variables to be populated later
@@ -192,8 +258,8 @@ function ravMounts.mountUpHandler(specificType)
     local flyable = ravMounts.IsFlyableArea()
     local submerged = IsSwimming() and not IsFloating()
     local mapID = C_Map.GetMapInfo(1)
-    local inVashjir = (mapID == 610 or mapID == 613 or mapID == 614 or mapID == 615) and true or false
     local inAhnQiraj = (mapID == 717 or mapID == 766) and true or false
+    local inVashjir = (mapID == 610 or mapID == 613 or mapID == 614 or mapID == 615) and true or false
     local shiftKey = IsShiftKeyDown()
     local controlKey = IsControlKeyDown()
     local altKey = IsAltKeyDown()
@@ -207,6 +273,14 @@ function ravMounts.mountUpHandler(specificType)
     local haveAhnQirajMounts = next(RAV_ahnQirajMounts) ~= nil and true or false
     local haveChauffeurMounts = next(RAV_chauffeurMounts) ~= nil and true or false
     local cloneMountID = GetCloneMount()
+
+    -- Build the macro
+    local macroFlying = haveFlyingMounts and RAV_flyingMounts or nil
+    local macroGround = (inAhnQiraj and haveAhnQirajMounts) and RAV_ahnQirajMounts or haveGroundMounts and RAV_groundMounts or haveChauffeurMounts and RAV_chauffeurMounts or nil
+    local macroVendor = haveVendorMounts and RAV_vendorMounts or nil
+    local macroPassenger = haveFlyingPassengerMounts and RAV_flyingPassengerMounts or haveGroundPassengerMounts and RAV_groundPassengerMounts or nil
+    local macroSwimming = (inVashjir and haveVashjirMounts) and RAV_vashjirMounts or haveSwimmingMounts and RAV_swimmingMounts or nil
+    ensureMacro(macroGround, macroFlying, macroVendor, macroPassenger, macroSwimming)
 
     -- Specific Mounts
     if (string.match(specificType, "vend") or string.match(specificType, "repair") or string.match(specificType, "trans") or string.match(specificType, "mog")) and haveVendorMounts then
@@ -260,16 +334,6 @@ function ravMounts.mountUpHandler(specificType)
         mountSummon(RAV_chauffeurMounts)
     else
         prettyPrint(ravMounts.locales[ravMounts.locale].notice.nomounts)
-    end
-end
-
--- Send current version to other Ravenous Mounts owners in guild, party, or raid
-local function sendVersionData()
-    C_ChatInfo.SendAddonMessage(RAV_name, RAV_version, "PARTY")
-    C_ChatInfo.SendAddonMessage(RAV_name, RAV_version, "RAID")
-    C_ChatInfo.SendAddonMessage(RAV_name, RAV_version, "YELL")
-    if guild then
-        C_ChatInfo.SendAddonMessage(RAV_name, RAV_version, "GUILD")
     end
 end
 

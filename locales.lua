@@ -20,7 +20,8 @@ ravMounts.locales = {
             ["version"] = "%s is the current version.", -- ravMounts.version
             ["config"] = "Configuration",
             ["force"] = "Mount Journal data collected, sorted, and ready to go.",
-            ["nomounts"] = "Unfortunately you don't have any mounts that can be called at this time!",
+            ["nomounts"] = "Unfortunately, you don't have any mounts that can be called at this time!",
+            ["nospace"] = "Unforunately, you don't have enough global macro space for the macro to be created!",
             ["help"] = "Information and How to Use"
         },
         ["type"] = {
