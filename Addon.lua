@@ -24,7 +24,8 @@ local defaults = {
     AUTO_PASSENGER_MOUNTS = true,
     AUTO_SWIMMING_MOUNTS =  true,
     AUTO_FLEX_MOUNTS =      true,
-    AUTO_CLONE =            true
+    AUTO_CLONE =            true,
+    AUTO_MACRO =            true
 }
 
 local faction, _ = UnitFactionGroup("player")
@@ -87,79 +88,83 @@ end
 
 -- Check for and (if not there…) create a macro
 local function ensureMacro()
-    local mapID = C_Map.GetMapInfo(1)
-    local inAhnQiraj = (mapID == 717 or mapID == 766) and true or false
-    local inVashjir = (mapID == 610 or mapID == 613 or mapID == 614 or mapID == 615) and true or false
-    local haveFlyingMounts = next(RAV_flyingMounts) ~= nil and true or false
-    local haveGroundMounts = next(RAV_groundMounts) ~= nil and true or false
-    local haveVendorMounts = next(RAV_vendorMounts) ~= nil and true or false
-    local haveFlyingPassengerMounts = next(RAV_flyingPassengerMounts) ~= nil and true or false
-    local haveGroundPassengerMounts = next(RAV_groundPassengerMounts) ~= nil and true or false
-    local haveSwimmingMounts = next(RAV_swimmingMounts) ~= nil and true or false
-    local haveVashjirMounts = next(RAV_vashjirMounts) ~= nil and true or false
-    local haveAhnQirajMounts = next(RAV_ahnQirajMounts) ~= nil and true or false
-    local haveChauffeurMounts = next(RAV_chauffeurMounts) ~= nil and true or false
-    local flying = haveFlyingMounts and RAV_flyingMounts or nil
-    local ground = (inAhnQiraj and haveAhnQirajMounts) and RAV_ahnQirajMounts or haveGroundMounts and RAV_groundMounts or haveChauffeurMounts and RAV_chauffeurMounts or nil
-    local vendor = haveVendorMounts and RAV_vendorMounts or nil
-    local passenger = haveFlyingPassengerMounts and RAV_flyingPassengerMounts or haveGroundPassengerMounts and RAV_groundPassengerMounts or nil
-    local swimming = (inVashjir and haveVashjirMounts) and RAV_vashjirMounts or haveSwimmingMounts and RAV_swimmingMounts or nil
-    local body = "/ravmounts"
-    if ground or flying or vendor or passenger or swimming then
-        body = "\n" .. body
-        if ground then
-            local name, _ = C_MountJournal.GetMountInfoByID(ground[random(#ground)])
-            body = name .. body
-        end
-        if flying then
-            local name, _ = C_MountJournal.GetMountInfoByID(flying[random(#flying)])
+    RAV_autoMacro = (RAV_autoMacro == nil and defaults.AUTO_MACRO or RAV_autoMacro)
+
+    if RAV_autoMacro then
+        local mapID = C_Map.GetMapInfo(1)
+        local inAhnQiraj = (mapID == 717 or mapID == 766) and true or false
+        local inVashjir = (mapID == 610 or mapID == 613 or mapID == 614 or mapID == 615) and true or false
+        local haveFlyingMounts = next(RAV_flyingMounts) ~= nil and true or false
+        local haveGroundMounts = next(RAV_groundMounts) ~= nil and true or false
+        local haveVendorMounts = next(RAV_vendorMounts) ~= nil and true or false
+        local haveFlyingPassengerMounts = next(RAV_flyingPassengerMounts) ~= nil and true or false
+        local haveGroundPassengerMounts = next(RAV_groundPassengerMounts) ~= nil and true or false
+        local haveSwimmingMounts = next(RAV_swimmingMounts) ~= nil and true or false
+        local haveVashjirMounts = next(RAV_vashjirMounts) ~= nil and true or false
+        local haveAhnQirajMounts = next(RAV_ahnQirajMounts) ~= nil and true or false
+        local haveChauffeurMounts = next(RAV_chauffeurMounts) ~= nil and true or false
+        local flying = haveFlyingMounts and RAV_flyingMounts or nil
+        local ground = (inAhnQiraj and haveAhnQirajMounts) and RAV_ahnQirajMounts or haveGroundMounts and RAV_groundMounts or haveChauffeurMounts and RAV_chauffeurMounts or nil
+        local vendor = haveVendorMounts and RAV_vendorMounts or nil
+        local passenger = haveFlyingPassengerMounts and RAV_flyingPassengerMounts or haveGroundPassengerMounts and RAV_groundPassengerMounts or nil
+        local swimming = (inVashjir and haveVashjirMounts) and RAV_vashjirMounts or haveSwimmingMounts and RAV_swimmingMounts or nil
+        local body = "/" .. defaults.COMMAND
+        if ground or flying or vendor or passenger or swimming then
+            body = "\n" .. body
             if ground then
-                body = "[flyable,nomod:alt][noflyable,mod:alt] " .. name .. "; " .. body
-            else
+                local name, _ = C_MountJournal.GetMountInfoByID(ground[random(#ground)])
                 body = name .. body
             end
-        end
-        if swimming then
-            local name, _ = C_MountJournal.GetMountInfoByID(swimming[random(#swimming)])
-            if ground or flying then
-                body = "[swimming,nomod:alt] " .. name .. "; " .. body
-            else
-                body = "[swimming] " .. name .. body
+            if flying then
+                local name, _ = C_MountJournal.GetMountInfoByID(flying[random(#flying)])
+                if ground then
+                    body = "[flyable,nomod:alt][noflyable,mod:alt] " .. name .. "; " .. body
+                else
+                    body = name .. body
+                end
             end
-        end
-        if passenger then
-            local name, _ = C_MountJournal.GetMountInfoByID(passenger[random(#passenger)])
-            if ground or flying then
-                body = "[mod:ctrl] " .. name .. "; " .. body
-            else
-                body = "[mod:ctrl] " .. name .. body
+            if swimming then
+                local name, _ = C_MountJournal.GetMountInfoByID(swimming[random(#swimming)])
+                if ground or flying then
+                    body = "[swimming,nomod:alt] " .. name .. "; " .. body
+                else
+                    body = "[swimming] " .. name .. body
+                end
             end
-        end
-        if vendor then
-            local name, _ = C_MountJournal.GetMountInfoByID(vendor[random(#vendor)])
-            if ground or flying then
-                body = "[mod:shift] " .. name .. "; " .. body
-            else
-                body = "[mod:shift] " .. name .. body
+            if passenger then
+                local name, _ = C_MountJournal.GetMountInfoByID(passenger[random(#passenger)])
+                if ground or flying then
+                    body = "[mod:ctrl] " .. name .. "; " .. body
+                else
+                    body = "[mod:ctrl] " .. name .. body
+                end
             end
+            if vendor then
+                local name, _ = C_MountJournal.GetMountInfoByID(vendor[random(#vendor)])
+                if ground or flying then
+                    body = "[mod:shift] " .. name .. "; " .. body
+                else
+                    body = "[mod:shift] " .. name .. body
+                end
+            end
+            body = "#showtooltip " .. body
         end
-        body = "#showtooltip " .. body
-    end
-    -- Max: 120 Global, 18 Character (so we'll make ours global)
-    local numberOfMacros, _ = GetNumMacros()
-    -- Edit if it exists, create if not
-    if body == RAV_macroBody then
-        -- Do nothing
-    elseif GetMacroIndexByName(ravMounts.name) > 0 then
-        EditMacro(GetMacroIndexByName(ravMounts.name), ravMounts.name, "INV_Misc_QuestionMark", body)
-        RAV_macroBody = body
-    elseif numberOfMacros < 120 then
-        CreateMacro(ravMounts.name, "INV_Misc_QuestionMark", body)
-        RAV_macroBody = body
-    elseif not RAV_hasSeenNoSpaceMessage then
-        -- This isn't saved to remind the player on each load
-        RAV_hasSeenNoSpaceMessage = true
-        prettyPrint(ravMounts.locales[ravMounts.locale].notice.nospace)
+        -- Max: 120 Global, 18 Character (so we'll make ours global)
+        local numberOfMacros, _ = GetNumMacros()
+        -- Edit if it exists, create if not
+        if body == RAV_macroBody then
+            -- Do nothing
+        elseif GetMacroIndexByName(ravMounts.name) > 0 then
+            EditMacro(GetMacroIndexByName(ravMounts.name), ravMounts.name, "INV_Misc_QuestionMark", body)
+            RAV_macroBody = body
+        elseif numberOfMacros < 120 then
+            CreateMacro(ravMounts.name, "INV_Misc_QuestionMark", body)
+            RAV_macroBody = body
+        elseif not RAV_hasSeenNoSpaceMessage then
+            -- This isn't saved to remind the player on each load
+            RAV_hasSeenNoSpaceMessage = true
+            prettyPrint(ravMounts.locales[ravMounts.locale].notice.nospace)
+        end
     end
 end
 
@@ -352,9 +357,9 @@ function ravMounts.mountUpHandler(specificType)
 end
 
 -- Handle the slash commands and their possible arguments
-SLASH_RAVMOUNTS1 = "/ravenousmounts"
+SLASH_RAVMOUNTS1 = "/" .. defaults.COMMAND
 SLASH_RAVMOUNTS2 = "/ravmounts"
-SLASH_RAVMOUNTS3 = "/ravm"
+SLASH_RAVMOUNTS3 = "/ravenousmounts"
 local function slashHandler(message, editbox)
     local command, argument = strsplit(" ", message)
     if command == "version" or command == "v" then
@@ -409,6 +414,14 @@ local function slashHandler(message, editbox)
             else
                 print(ravMounts.locales[ravMounts.locale].automation.clone[2])
             end
+        elseif string.match(argument, "macro") then
+            RAV_autoMacro = not RAV_autoMacro
+            prettyPrint("|cffffff66" .. ravMounts.locales[ravMounts.locale].config.macro .. "|cffffffff: " .. (RAV_autoMacro and ravMounts.locales[ravMounts.locale].config.on or ravMounts.locales[ravMounts.locale].config.off), true)
+            if RAV_autoMacro then
+                print(ravMounts.locales[ravMounts.locale].automation.macro[1])
+            else
+                print(ravMounts.locales[ravMounts.locale].automation.macro[2])
+            end
         else
             print(string.format(ravMounts.locales[ravMounts.locale].automation.missing, defaults.COMMAND))
         end
@@ -421,6 +434,7 @@ local function slashHandler(message, editbox)
         print("|cffffff66" .. ravMounts.locales[ravMounts.locale].config.swimming .. ":|r " .. (RAV_autoSwimmingMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual))
         print("|cffffff66" .. ravMounts.locales[ravMounts.locale].config.flex .. ":|r " .. (RAV_autoFlexMounts and ravMounts.locales[ravMounts.locale].config.flexboth or ravMounts.locales[ravMounts.locale].config.flexone))
         print("|cffffff66" .. ravMounts.locales[ravMounts.locale].config.clone .. ":|r " .. (RAV_autoClone and ravMounts.locales[ravMounts.locale].config.on or ravMounts.locales[ravMounts.locale].config.off))
+        print("|cffffff66" .. ravMounts.locales[ravMounts.locale].config.macro .. ":|r " .. (RAV_autoMacro and ravMounts.locales[ravMounts.locale].config.on or ravMounts.locales[ravMounts.locale].config.off))
         print(string.format(ravMounts.locales[ravMounts.locale].help[3], defaults.COMMAND))
         print(string.format(ravMounts.locales[ravMounts.locale].help[4], defaults.COMMAND, defaults.COMMAND, defaults.COMMAND))
     elseif command == "f" or string.match(command, "force") or command == "d" or string.match(command, "data") or string.match(command, "cache") then
@@ -439,7 +453,7 @@ local function slashHandler(message, editbox)
         ensureMacro()
     elseif command == "h" or string.match(command, "hel") then
         prettyPrint(ravMounts.locales[ravMounts.locale].notice.help)
-        print(string.format(ravMounts.locales[ravMounts.locale].help[1], defaults.COMMAND))
+        print(string.format(ravMounts.locales[ravMounts.locale].help[1], ravMounts.name))
         print(string.format(ravMounts.locales[ravMounts.locale].help[2], defaults.COMMAND))
         print(string.format(ravMounts.locales[ravMounts.locale].help[3], defaults.COMMAND))
         print(string.format(ravMounts.locales[ravMounts.locale].help[4], defaults.COMMAND, defaults.COMMAND, defaults.COMMAND))
@@ -473,6 +487,7 @@ local function OnEvent(self, event, arg, ...)
                 prettyPrint(string.format(ravMounts.locales[ravMounts.locale].load.update, ravMounts.name, ravMounts.version))
             end
             if not RAV_version or RAV_version ~= ravMounts.version then
+                print(string.format(ravMounts.locales[ravMounts.locale].help[1], ravMounts.name))
                 print(string.format(ravMounts.locales[ravMounts.locale].load.both, defaults.COMMAND, ravMounts.name))
                 RAV_hasSeenUpdateMessage = false
             end

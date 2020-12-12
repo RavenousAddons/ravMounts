@@ -3,7 +3,7 @@ local _, ravMounts = ...
 ravMounts.locales = {
     ["enUS"] = {
         ["help"] = {
-            "Type |cff9eb8c9/%s|r to call a Mount, or even better: add it to a macro.", -- defaults.COMMAND
+            "This AddOn creates and maintains a macro called |cff9eb8c9%s|r for you under General Macros.", -- ravMounts.name
             "Check your config: |cff9eb8c9/%s config", -- defaults.COMMAND
             "To toggle settings from your configuration, e.g.",
             "|cff9eb8c9/%s toggle vendor|r or |cff9eb8c9/%s toggle flex|r or |cff9eb8c9/%s toggle clone", -- defaults.COMMAND, defaults.COMMAND, defaults.COMMAND
@@ -43,6 +43,7 @@ ravMounts.locales = {
             ["swimming"] = "Swimming Mounts",
             ["flex"] = "Flexible Mounts",
             ["clone"] = "Clone Mounts",
+            ["macro"] = "Automatic Macro",
             ["auto"] = "Automatically chosen",
             ["manual"] = "Favorite manually",
             ["flexboth"] = "Treated as Flying & Ground",
@@ -74,6 +75,10 @@ ravMounts.locales = {
             ["clone"] = {
                 "Your target/focus' mount with be called instead of following your Favorites.",
                 "The addon will stop cloning your target/focus' mount."
+            },
+            ["macro"] = {
+                "The addon will automatically create/maintain a macro for you.",
+                "The addon will not create/maintain a macro for you."
             },
             ["missing"] = "You need to specify which type of automation to toggle: normal, vendor, passenger, swimming, flex, clone. If you need help: |cff9eb8c9/%s help" -- defaults.COMMAND
         }
