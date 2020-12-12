@@ -13,7 +13,7 @@ ravMounts.locales = {
         ["load"] = {
             ["outofdate"] = "There is an update available for |cff9eb8c9%s|r! Please go to WoWInterface, Curse, or GitHub to download.", -- ravMounts.name
             ["install"] = "Thanks for installing |cff9eb8c9%s|r!", -- ravMounts.name
-            ["update"] = "Thanks for updating |cff9eb8c9%s|r!", -- ravMounts.name
+            ["update"] = "Thanks for updating |cff9eb8c9%s|r to |cff9eb8c9v%s|r!", -- ravMounts.name, ravMounts.version
             ["both"] = "Type |cff9eb8c9/%s help|r to familiarize yourself with |cff9eb8c9%s|r." -- defaults.COMMAND, ravMounts.name
         },
         ["notice"] = {

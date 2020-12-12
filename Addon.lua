@@ -86,16 +86,33 @@ local function sendVersionData()
 end
 
 -- Check for and (if not there…) create a macro
-local function ensureMacro(ground, flying, vendor, passenger, swimming)
+local function ensureMacro()
+    local mapID = C_Map.GetMapInfo(1)
+    local inAhnQiraj = (mapID == 717 or mapID == 766) and true or false
+    local inVashjir = (mapID == 610 or mapID == 613 or mapID == 614 or mapID == 615) and true or false
+    local haveFlyingMounts = next(RAV_flyingMounts) ~= nil and true or false
+    local haveGroundMounts = next(RAV_groundMounts) ~= nil and true or false
+    local haveVendorMounts = next(RAV_vendorMounts) ~= nil and true or false
+    local haveFlyingPassengerMounts = next(RAV_flyingPassengerMounts) ~= nil and true or false
+    local haveGroundPassengerMounts = next(RAV_groundPassengerMounts) ~= nil and true or false
+    local haveSwimmingMounts = next(RAV_swimmingMounts) ~= nil and true or false
+    local haveVashjirMounts = next(RAV_vashjirMounts) ~= nil and true or false
+    local haveAhnQirajMounts = next(RAV_ahnQirajMounts) ~= nil and true or false
+    local haveChauffeurMounts = next(RAV_chauffeurMounts) ~= nil and true or false
+    local flying = haveFlyingMounts and RAV_flyingMounts or nil
+    local ground = (inAhnQiraj and haveAhnQirajMounts) and RAV_ahnQirajMounts or haveGroundMounts and RAV_groundMounts or haveChauffeurMounts and RAV_chauffeurMounts or nil
+    local vendor = haveVendorMounts and RAV_vendorMounts or nil
+    local passenger = haveFlyingPassengerMounts and RAV_flyingPassengerMounts or haveGroundPassengerMounts and RAV_groundPassengerMounts or nil
+    local swimming = (inVashjir and haveVashjirMounts) and RAV_vashjirMounts or haveSwimmingMounts and RAV_swimmingMounts or nil
     local body = "/ravmounts"
     if ground or flying or vendor or passenger or swimming then
         body = "\n" .. body
         if ground then
-            local name, _ = C_MountJournal.GetMountInfoByID(ground[random(#ground)])
+            local name, _ = C_MountJournal.GetMountInfoByID(ground[1])
             body = name .. body
         end
         if flying then
-            local name, _ = C_MountJournal.GetMountInfoByID(flying[random(#flying)])
+            local name, _ = C_MountJournal.GetMountInfoByID(flying[1])
             if ground then
                 body = "[flyable,nomod:alt][noflyable,mod:alt] " .. name .. "; " .. body
             else
@@ -103,7 +120,7 @@ local function ensureMacro(ground, flying, vendor, passenger, swimming)
             end
         end
         if swimming then
-            local name, _ = C_MountJournal.GetMountInfoByID(swimming[random(#swimming)])
+            local name, _ = C_MountJournal.GetMountInfoByID(swimming[1])
             if ground or flying then
                 body = "[swimming,nomod:alt] " .. name .. "; " .. body
             else
@@ -111,7 +128,7 @@ local function ensureMacro(ground, flying, vendor, passenger, swimming)
             end
         end
         if passenger then
-            local name, _ = C_MountJournal.GetMountInfoByID(passenger[random(#passenger)])
+            local name, _ = C_MountJournal.GetMountInfoByID(passenger[1])
             if ground or flying then
                 body = "[mod:ctrl] " .. name .. "; " .. body
             else
@@ -119,7 +136,7 @@ local function ensureMacro(ground, flying, vendor, passenger, swimming)
             end
         end
         if vendor then
-            local name, _ = C_MountJournal.GetMountInfoByID(vendor[random(#vendor)])
+            local name, _ = C_MountJournal.GetMountInfoByID(vendor[1])
             if ground or flying then
                 body = "[mod:shift] " .. name .. "; " .. body
             else
@@ -131,12 +148,17 @@ local function ensureMacro(ground, flying, vendor, passenger, swimming)
     -- Max: 120 Global, 18 Character (so we'll make ours global)
     local numberOfMacros, _ = GetNumMacros()
     -- Edit if it exists, create if not
-    if GetMacroIndexByName(ravMounts.name) > 0 then
+    if body == RAV_macroBody then
+        -- Do nothing
+    elseif GetMacroIndexByName(ravMounts.name) > 0 then
         EditMacro(GetMacroIndexByName(ravMounts.name), ravMounts.name, "INV_Misc_QuestionMark", body)
+        RAV_macroBody = body
     elseif numberOfMacros < 120 then
         CreateMacro(ravMounts.name, "INV_Misc_QuestionMark", body)
+        RAV_macroBody = body
     elseif not RAV_hasSeenNoSpaceMessage then
-        RAV_hasSeenNoSpaceMessage = truew
+        -- This isn't saved to remind the player on each load
+        RAV_hasSeenNoSpaceMessage = true
         prettyPrint(ravMounts.locales[ravMounts.locale].notice.nospace)
     end
 end
@@ -273,14 +295,6 @@ function ravMounts.mountUpHandler(specificType)
     local haveAhnQirajMounts = next(RAV_ahnQirajMounts) ~= nil and true or false
     local haveChauffeurMounts = next(RAV_chauffeurMounts) ~= nil and true or false
     local cloneMountID = GetCloneMount()
-
-    -- Build the macro
-    local macroFlying = haveFlyingMounts and RAV_flyingMounts or nil
-    local macroGround = (inAhnQiraj and haveAhnQirajMounts) and RAV_ahnQirajMounts or haveGroundMounts and RAV_groundMounts or haveChauffeurMounts and RAV_chauffeurMounts or nil
-    local macroVendor = haveVendorMounts and RAV_vendorMounts or nil
-    local macroPassenger = haveFlyingPassengerMounts and RAV_flyingPassengerMounts or haveGroundPassengerMounts and RAV_groundPassengerMounts or nil
-    local macroSwimming = (inVashjir and haveVashjirMounts) and RAV_vashjirMounts or haveSwimmingMounts and RAV_swimmingMounts or nil
-    ensureMacro(macroGround, macroFlying, macroVendor, macroPassenger, macroSwimming)
 
     -- Specific Mounts
     if (string.match(specificType, "vend") or string.match(specificType, "repair") or string.match(specificType, "trans") or string.match(specificType, "mog")) and haveVendorMounts then
@@ -423,6 +437,7 @@ local function slashHandler(message, editbox)
         print("|cffffff66" ..ravMounts.locales[ravMounts.locale].type.ahnqiraj .. " |r" .. table.maxn(RAV_ahnQirajMounts))
         print("|cffffff66" ..ravMounts.locales[ravMounts.locale].type.chauffer .. " |r" .. table.maxn(RAV_chauffeurMounts))
         sendVersionData()
+        ensureMacro()
     elseif command == "h" or string.match(command, "hel") then
         prettyPrint(ravMounts.locales[ravMounts.locale].notice.help)
         print(string.format(ravMounts.locales[ravMounts.locale].help[1], defaults.COMMAND))
@@ -434,6 +449,7 @@ local function slashHandler(message, editbox)
     else
         ravMounts.mountListHandler()
         ravMounts.mountUpHandler(command)
+        ensureMacro()
     end
 end
 SlashCmdList["RAVMOUNTS"] = slashHandler
@@ -458,7 +474,7 @@ local function OnEvent(self, event, arg, ...)
             if not RAV_version then
                 prettyPrint(string.format(ravMounts.locales[ravMounts.locale].load.install, ravMounts.name))
             elseif RAV_version ~= ravMounts.version then
-                prettyPrint(string.format(ravMounts.locales[ravMounts.locale].load.update, ravMounts.name))
+                prettyPrint(string.format(ravMounts.locales[ravMounts.locale].load.update, ravMounts.name, ravMounts.version))
             end
             if not RAV_version or RAV_version ~= ravMounts.version then
                 print(string.format(ravMounts.locales[ravMounts.locale].load.both, defaults.COMMAND, ravMounts.name))
@@ -467,6 +483,7 @@ local function OnEvent(self, event, arg, ...)
             RAV_version = ravMounts.version
             C_ChatInfo.RegisterAddonMessagePrefix(RAV_name)
             sendVersionData()
+            ensureMacro()
         end
     end
 end
