@@ -1,5 +1,5 @@
 ## Interface: 90002
-## Version: 2.2.2-alpha
+## Version: 2.2.2
 
 ## Name: Ravenous Mounts
 ## Title: |cff9eb8c9Ravenous Mounts|r
