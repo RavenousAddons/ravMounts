@@ -280,16 +280,11 @@ end
 function ravMounts.mountUpHandler(specificType)
     -- Simplify the appearance of the logic later by casting our checks to
     -- simple variables
-    local mounted = IsMounted()
-    local inVehicle = UnitInVehicle("player")
     local flyable = ravMounts.IsFlyableArea()
     local submerged = IsSwimming() and not IsFloating()
     local mapID = C_Map.GetMapInfo(1)
     local inAhnQiraj = (mapID == 717 or mapID == 766) and true or false
     local inVashjir = (mapID == 610 or mapID == 613 or mapID == 614 or mapID == 615) and true or false
-    local shiftKey = IsShiftKeyDown()
-    local controlKey = IsControlKeyDown()
-    local altKey = IsAltKeyDown()
     local haveFlyingMounts = next(RAV_flyingMounts) ~= nil and true or false
     local haveGroundMounts = next(RAV_groundMounts) ~= nil and true or false
     local haveVendorMounts = next(RAV_vendorMounts) ~= nil and true or false
@@ -302,7 +297,9 @@ function ravMounts.mountUpHandler(specificType)
     local cloneMountID = GetCloneMount()
 
     -- Specific Mounts
-    if (string.match(specificType, "vend") or string.match(specificType, "repair") or string.match(specificType, "trans") or string.match(specificType, "mog")) and haveVendorMounts then
+    if IsFlying() then
+        -- Do nothing!
+    elseif (string.match(specificType, "vend") or string.match(specificType, "repair") or string.match(specificType, "trans") or string.match(specificType, "mog")) and haveVendorMounts then
         mountSummon(RAV_vendorMounts)
     elseif (string.match(specificType, "2") or string.match(specificType, "two") or string.match(specificType, "multi") or string.match(specificType, "passenger")) and haveFlyingPassengerMounts and flyable then
         mountSummon(RAV_flyingPassengerMounts)
@@ -324,20 +321,20 @@ function ravMounts.mountUpHandler(specificType)
         mountSummon(RAV_chauffeurMounts)
     elseif (specificType == "copy" or specificType == "clone" or RAV_autoClone) and cloneMountID then
         C_MountJournal.SummonByID(cloneMountID)
-    elseif ((shiftKey and altKey) or (shiftKey and controlKey)) and (mounted or inVehicle) then
+    elseif ((IsShiftKeyDown() and IsAltKeyDown()) or (IsShiftKeyDown() and IsControlKeyDown())) and (IsMounted() or UnitInVehicle("player")) then
         DoEmote(EMOTE171_TOKEN)
-    elseif shiftKey and haveVendorMounts then
+    elseif IsShiftKeyDown() and haveVendorMounts then
         mountSummon(RAV_vendorMounts)
-    elseif controlKey and flyable and not altKey and haveFlyingPassengerMounts then
+    elseif IsControlKeyDown() and flyable and not IsAltKeyDown() and haveFlyingPassengerMounts then
         mountSummon(RAV_flyingPassengerMounts)
-    elseif controlKey and (not flyable or (flyable and altKey)) and haveGroundPassengerMounts then
+    elseif IsControlKeyDown() and (not flyable or (flyable and IsAltKeyDown())) and haveGroundPassengerMounts then
         mountSummon(RAV_groundPassengerMounts)
-    elseif mounted or inVehicle then
+    elseif IsMounted() or UnitInVehicle("player") then
         Dismount()
         VehicleExit()
         CancelShapeshiftForm()
         UIErrorsFrame:Clear()
-    elseif haveFlyingMounts and ((flyable and not submerged and not altKey) or (altKey and not flyable)) then
+    elseif haveFlyingMounts and ((flyable and not submerged and not IsAltKeyDown()) or (IsAltKeyDown() and not flyable)) then
         mountSummon(RAV_flyingMounts)
     elseif inVashjir and submerged and haveVashjirMounts then
         mountSummon(RAV_vashjirMounts)
