@@ -78,6 +78,8 @@ If you wish to get in touch with me, hit me up in-game; my BattleTag is WaldenPo
 
 [DJharris71](https://www.curseforge.com/members/djharris71) for loads of bugfixes, mount cloning functionality, and helping greatly in preparing for 9.0.0.
 
+[Killashandra](https://www.wowinterface.com/forums/member.php?u=350162) for the idea to add an IsFlying() check!
+
 ## License
 
 Public Domain
