@@ -1,8 +1,8 @@
 ## Interface: 90002
-## Version: 2.2.4
+## Version: 2.2.5
 
 ## Name: Ravenous Mounts
-## Title: |cff9eb8c9Ravenous Mounts|r
+## Title: Ravenous |cff9eb8c9Mounts|r
 ## Notes: "Chooses the best mount for the job, with simple preferences based on your Favourites."
 ## Author: waldenp0nd
 

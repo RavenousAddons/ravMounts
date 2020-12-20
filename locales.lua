@@ -1,21 +1,27 @@
-local _, ravMounts = ...
-
+local name, ravMounts = ...
+ravMounts.name = "Ravenous Mounts"
+ravMounts.version = GetAddOnMetadata(name, "Version")
+ravMounts.github = "https://github.com/waldenp0nd/ravMounts"
+ravMounts.curseforge = "https://www.curseforge.com/wow/addons/ravmounts"
+ravMounts.wowinterface = "https://www.wowinterface.com/downloads/info24005-RavenousMounts.html"
+ravMounts.discord = "https://discord.gg/dNfqnRf2fq"
+ravMounts.color = "9eb8c9"
 ravMounts.locales = {
     ["enUS"] = {
         ["help"] = {
-            "This AddOn creates and maintains a macro called |cff9eb8c9%s|r for you under General Macros.", -- ravMounts.name
-            "Check your config: |cff9eb8c9/%s config", -- defaults.COMMAND
+            "This AddOn creates and maintains a macro called |cff" .. ravMounts.color .. "%s|r for you under General Macros.", -- ravMounts.name
+            "Check your config: |cff" .. ravMounts.color .. "/%s config|r", -- defaults.COMMAND
             "To toggle settings from your configuration, e.g.",
-            "|cff9eb8c9/%s toggle vendor|r or |cff9eb8c9/%s toggle flex|r or |cff9eb8c9/%s toggle clone", -- defaults.COMMAND, defaults.COMMAND, defaults.COMMAND
-            "To force a recache or see what the AddOn has found: |cff9eb8c9/%s data", -- defaults.COMMAND
-            "Check out |cff9eb8c9%s|r on GitHub, WoWInterface, or Curse for more info and support!", -- ravMounts.name
+            "|cff" .. ravMounts.color .. "/%s toggle vendor|r or |cff" .. ravMounts.color .. "/%s toggle flex|r or |cff" .. ravMounts.color .. "/%s toggle clone|r", -- defaults.COMMAND, defaults.COMMAND, defaults.COMMAND
+            "To force a recache or see what the AddOn has found: |cff" .. ravMounts.color .. "/%s data|r", -- defaults.COMMAND
+            "Check out |cff" .. ravMounts.color .. "%s|r on GitHub, WoWInterface, or Curse for more info and support!", -- ravMounts.name
             "You can also get help directly from the author on Discord: %s" -- ravMounts.discord
         },
         ["load"] = {
-            ["outofdate"] = "There is an update available for |cff9eb8c9%s|r! Please go to GitHub, WoWInterface, or Curse to download.", -- ravMounts.name
-            ["install"] = "Thanks for installing |cff9eb8c9%s|r!", -- ravMounts.name
-            ["update"] = "Thanks for updating to |cff9eb8c9v%s|r!", -- ravMounts.version
-            ["both"] = "Type |cff9eb8c9/%s help|r to familiarize yourself with the addon." -- defaults.COMMAND
+            ["outofdate"] = "There is an update available for |cff" .. ravMounts.color .. "%s|r! Please go to GitHub, WoWInterface, or Curse to download.", -- ravMounts.name
+            ["install"] = "Thanks for installing |cff" .. ravMounts.color .. "%s|r!", -- ravMounts.name
+            ["update"] = "Thanks for updating to |cff" .. ravMounts.color .. "v%s|r!", -- ravMounts.version
+            ["both"] = "Type |cff" .. ravMounts.color .. "/%s help|r to familiarize yourself with the addon." -- defaults.COMMAND
         },
         ["notice"] = {
             ["version"] = "%s is the current version.", -- ravMounts.version
@@ -58,11 +64,11 @@ ravMounts.locales = {
                 "Flying/Ground will only be summoned if they are marked as a Favorite."
             },
             ["vendor"] = {
-                "Vendor Mounts will be called automatically, and if they are marked as a Favorite, they will be |cff9eb8c9included|r in the Ground/Flying Mount summoning list.",
+                "Vendor Mounts will be called automatically, and if they are marked as a Favorite, they will be |cff" .. ravMounts.color .. "included|r in the Ground/Flying Mount summoning list.",
                 "Vendor Mounts will only be summoned if they are marked as a Favorite."
             },
             ["passenger"] = {
-                "Passenger Mounts will be summoned automatically, and if they are marked as a Favorite, they will be |cff9eb8c9included|r in the Ground/Flying Mount summoning list.",
+                "Passenger Mounts will be summoned automatically, and if they are marked as a Favorite, they will be |cff" .. ravMounts.color .. "included|r in the Ground/Flying Mount summoning list.",
                 "Passenger Mounts will only be summoned if they are marked as a Favorite."
             },
             ["swimming"] = {
@@ -81,7 +87,7 @@ ravMounts.locales = {
                 "The addon will automatically create/maintain a macro for you.",
                 "The addon will not create/maintain a macro for you."
             },
-            ["missing"] = "You need to specify which type of automation to toggle: normal, vendor, passenger, swimming, flex, clone. If you need help: |cff9eb8c9/%s help" -- defaults.COMMAND
+            ["missing"] = "You need to specify which type of automation to toggle: normal, vendor, passenger, swimming, flex, clone. If you need help: |cff" .. ravMounts.color .. "/%s help" -- defaults.COMMAND
         }
     }
 }

@@ -7,12 +7,6 @@
 -- License: Public Domain
 ---
 local name, ravMounts = ...
-ravMounts.name = "Ravenous Mounts"
-ravMounts.version = GetAddOnMetadata(name, "Version")
-ravMounts.github = "https://github.com/waldenp0nd/ravMounts"
-ravMounts.curseforge = "https://www.curseforge.com/wow/addons/ravmounts"
-ravMounts.wowinterface = "https://www.wowinterface.com/downloads/info24005-RavenousMounts.html"
-ravMounts.discord = "https://discord.gg/dNfqnRf2fq"
 
 -- DEFAULTS
 -- These are only applied when the AddOn is first loaded.
@@ -37,7 +31,7 @@ local function prettyPrint(message, full)
     if full == false then
         message = message .. ":"
     end
-    local prefix = "|cff9eb8c9" .. ravMounts.name .. (full and " " or ":|r ")
+    local prefix = "|cff" .. ravMounts.color .. ravMounts.name .. (full and " " or ":|r ")
     DEFAULT_CHAT_FRAME:AddMessage(prefix .. message)
 end
 
