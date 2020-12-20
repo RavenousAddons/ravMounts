@@ -102,9 +102,8 @@ local function ensureMacro()
         local haveSwimmingMounts = next(RAV_swimmingMounts) ~= nil and true or false
         local haveVashjirMounts = next(RAV_vashjirMounts) ~= nil and true or false
         local haveAhnQirajMounts = next(RAV_ahnQirajMounts) ~= nil and true or false
-        local haveChauffeurMounts = next(RAV_chauffeurMounts) ~= nil and true or false
         local flying = haveFlyingMounts and RAV_flyingMounts or nil
-        local ground = (inAhnQiraj and haveAhnQirajMounts) and RAV_ahnQirajMounts or haveGroundMounts and RAV_groundMounts or haveChauffeurMounts and RAV_chauffeurMounts or nil
+        local ground = (inAhnQiraj and haveAhnQirajMounts) and RAV_ahnQirajMounts or haveGroundMounts and RAV_groundMounts or nil
         local vendor = haveVendorMounts and RAV_vendorMounts or nil
         local passenger = haveFlyingPassengerMounts and RAV_flyingPassengerMounts or haveGroundPassengerMounts and RAV_groundPassengerMounts or nil
         local swimming = (inVashjir and haveVashjirMounts) and RAV_vashjirMounts or haveSwimmingMounts and RAV_swimmingMounts or nil
@@ -204,7 +203,7 @@ function ravMounts.mountListHandler()
         isVendorMount = (mountID == 280 or mountID == 284 or mountID == 460 or mountID == 1039)
         isFlyingPassengerMount = (mountID == 382 or mountID == 407 or mountID == 455 or mountID == 959 or mountID == 960)
         isGroundPassengerMount = (mountID == 240 or mountID == 254 or mountID == 255 or mountID == 275 or mountID == 286 or mountID == 287 or mountID == 288 or mountID == 289)
-        isFlexMount = (mountID == 219 or mountID == 363 or mountID == 376 or mountID == 421 or mountID == 439 or mountID == 451 or mountID == 455 or mountID == 456 or mountID == 457 or mountID == 458 or mountID == 459 or mountID == 468 or mountID == 522 or mountID == 523 or mountID == 532 or mountID == 594 or mountID == 547 or mountID == 593 or mountID == 764 or mountID == 1222)
+        isFlexMount = (mountID == 219 or mountID == 363 or mountID == 376 or mountID == 421 or mountID == 439 or mountID == 451 or mountID == 455 or mountID == 456 or mountID == 457 or mountID == 458 or mountID == 459 or mountID == 468 or mountID == 522 or mountID == 523 or mountID == 532 or mountID == 594 or mountID == 547 or mountID == 593 or mountID == 764 or mountID == 1222 or mountID == 1404)
         if isCollected then
             -- 0 = Horde, 1 = Alliance
             -- Check for mismatch, means not available
@@ -218,9 +217,8 @@ function ravMounts.mountListHandler()
                 if isFlyingMount and (RAV_autoNormalMounts or isFavorite) and not isVendorMount and not isFlyingPassengerMount and not isGroundPassengerMount then
                     if RAV_autoFlexMounts and isFlexMount then
                         table.insert(RAV_groundMounts, mountID)
-                    else
-                        table.insert(RAV_flyingMounts, mountID)
                     end
+                    table.insert(RAV_flyingMounts, mountID)
                 end
                 if isGroundMount and (RAV_autoNormalMounts or isFavorite) and not isVendorMount and not isFlyingPassengerMount and not isGroundPassengerMount then
                     table.insert(RAV_groundMounts, mountID)
