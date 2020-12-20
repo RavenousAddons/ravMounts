@@ -8,10 +8,11 @@ ravMounts.locales = {
             "To toggle settings from your configuration, e.g.",
             "|cff9eb8c9/%s toggle vendor|r or |cff9eb8c9/%s toggle flex|r or |cff9eb8c9/%s toggle clone", -- defaults.COMMAND, defaults.COMMAND, defaults.COMMAND
             "To force a recache or see what the AddOn has found: |cff9eb8c9/%s data", -- defaults.COMMAND
-            "Check out |cff9eb8c9%s|r on GitHub, WoWInterface, or Curse for more info and support: http://bit.ly/2hZTsAR" -- ravMounts.name
+            "Check out |cff9eb8c9%s|r on GitHub, WoWInterface, or Curse for more info and support!", -- ravMounts.name
+            "You can also get help directly from the author on Discord: %s" -- ravMounts.discord
         },
         ["load"] = {
-            ["outofdate"] = "There is an update available for |cff9eb8c9%s|r! Please go to WoWInterface, Curse, or GitHub to download.", -- ravMounts.name
+            ["outofdate"] = "There is an update available for |cff9eb8c9%s|r! Please go to GitHub, WoWInterface, or Curse to download.", -- ravMounts.name
             ["install"] = "Thanks for installing |cff9eb8c9%s|r!", -- ravMounts.name
             ["update"] = "Thanks for updating to |cff9eb8c9v%s|r!", -- ravMounts.version
             ["both"] = "Type |cff9eb8c9/%s help|r to familiarize yourself with the addon." -- defaults.COMMAND
@@ -21,7 +22,7 @@ ravMounts.locales = {
             ["config"] = "Configuration",
             ["force"] = "Mount Journal data collected, sorted, and ready to go.",
             ["nomounts"] = "Unfortunately, you don't have any mounts that can be called at this time!",
-            ["nospace"] = "Unforunately, you don't have enough global macro space for the macro to be created!",
+            ["nospace"] = "Unfortunately, you don't have enough global macro space for the macro to be created!",
             ["help"] = "Information and How to Use"
         },
         ["type"] = {

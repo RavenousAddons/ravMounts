@@ -5,13 +5,14 @@
 --   Ground, Flying, Swimming, Vendor, Passenger, and Special Zone Mounts!
 -- Author: waldenp0nd
 -- License: Public Domain
--- https://github.com/waldenp0nd/ravMounts
--- https://www.wowinterface.com/downloads/info24005-RavenousMounts.html
--- https://www.curseforge.com/wow/addons/ravmounts
 ---
-local RAV_name, ravMounts = ...
+local name, ravMounts = ...
 ravMounts.name = "Ravenous Mounts"
-ravMounts.version = GetAddOnMetadata(RAV_name, "Version")
+ravMounts.version = GetAddOnMetadata(name, "Version")
+ravMounts.github = "https://github.com/waldenp0nd/ravMounts"
+ravMounts.curseforge = "https://www.curseforge.com/wow/addons/ravmounts"
+ravMounts.wowinterface = "https://www.wowinterface.com/downloads/info24005-RavenousMounts.html"
+ravMounts.discord = "https://discord.gg/dNfqnRf2fq"
 
 -- DEFAULTS
 -- These are only applied when the AddOn is first loaded.
@@ -78,11 +79,11 @@ end
 
 -- Send current version to other Ravenous Mounts owners in guild, party, or raid
 local function sendVersionData()
-    C_ChatInfo.SendAddonMessage(RAV_name, RAV_version, "YELL")
-    C_ChatInfo.SendAddonMessage(RAV_name, RAV_version, "PARTY")
-    C_ChatInfo.SendAddonMessage(RAV_name, RAV_version, "RAID")
+    C_ChatInfo.SendAddonMessage(name, RAV_version, "YELL")
+    C_ChatInfo.SendAddonMessage(name, RAV_version, "PARTY")
+    C_ChatInfo.SendAddonMessage(name, RAV_version, "RAID")
     if guild then
-        C_ChatInfo.SendAddonMessage(RAV_name, RAV_version, "GUILD")
+        C_ChatInfo.SendAddonMessage(name, RAV_version, "GUILD")
     end
 end
 
@@ -111,39 +112,39 @@ local function ensureMacro()
         if ground or flying or vendor or passenger or swimming then
             body = "\n" .. body
             if ground then
-                local name, _ = C_MountJournal.GetMountInfoByID(ground[random(#ground)])
-                body = name .. body
+                local mountName, _ = C_MountJournal.GetMountInfoByID(ground[random(#ground)])
+                body = mountName .. body
             end
             if flying then
-                local name, _ = C_MountJournal.GetMountInfoByID(flying[random(#flying)])
+                local mountName, _ = C_MountJournal.GetMountInfoByID(flying[random(#flying)])
                 if ground then
-                    body = "[flyable,nomod:alt][noflyable,mod:alt] " .. name .. "; " .. body
+                    body = "[flyable,nomod:alt][noflyable,mod:alt] " .. mountName .. "; " .. body
                 else
-                    body = name .. body
+                    body = mountName .. body
                 end
             end
             if swimming then
-                local name, _ = C_MountJournal.GetMountInfoByID(swimming[random(#swimming)])
+                local mountName, _ = C_MountJournal.GetMountInfoByID(swimming[random(#swimming)])
                 if ground or flying then
-                    body = "[swimming,nomod:alt] " .. name .. "; " .. body
+                    body = "[swimming,nomod:alt] " .. mountName .. "; " .. body
                 else
-                    body = "[swimming] " .. name .. body
+                    body = "[swimming] " .. mountName .. body
                 end
             end
             if passenger then
-                local name, _ = C_MountJournal.GetMountInfoByID(passenger[random(#passenger)])
+                local mountName, _ = C_MountJournal.GetMountInfoByID(passenger[random(#passenger)])
                 if ground or flying then
-                    body = "[mod:ctrl] " .. name .. "; " .. body
+                    body = "[mod:ctrl] " .. mountName .. "; " .. body
                 else
-                    body = "[mod:ctrl] " .. name .. body
+                    body = "[mod:ctrl] " .. mountName .. body
                 end
             end
             if vendor then
-                local name, _ = C_MountJournal.GetMountInfoByID(vendor[random(#vendor)])
+                local mountName, _ = C_MountJournal.GetMountInfoByID(vendor[random(#vendor)])
                 if ground or flying then
-                    body = "[mod:shift] " .. name .. "; " .. body
+                    body = "[mod:shift] " .. mountName .. "; " .. body
                 else
-                    body = "[mod:shift] " .. name .. body
+                    body = "[mod:shift] " .. mountName .. body
                 end
             end
             body = "#showtooltip " .. body
@@ -159,9 +160,9 @@ local function ensureMacro()
         elseif numberOfMacros < 120 then
             CreateMacro(ravMounts.name, "INV_Misc_QuestionMark", body)
             RAV_macroBody = body
-        elseif not RAV_hasSeenNoSpaceMessage then
+        elseif not hasSeenNoSpaceMessage then
             -- This isn't saved to remind the player on each load
-            RAV_hasSeenNoSpaceMessage = true
+            hasSeenNoSpaceMessage = true
             prettyPrint(ravMounts.locales[ravMounts.locale].notice.nospace)
         end
     end
@@ -454,24 +455,16 @@ local function slashHandler(message, editbox)
         print(string.format(ravMounts.locales[ravMounts.locale].help[4], defaults.COMMAND, defaults.COMMAND, defaults.COMMAND))
         print(string.format(ravMounts.locales[ravMounts.locale].help[5], defaults.COMMAND))
         print(string.format(ravMounts.locales[ravMounts.locale].help[6], ravMounts.name))
+        print(string.format(ravMounts.locales[ravMounts.locale].help[7], ravMounts.discord))
     else
         ravMounts.mountUpHandler(command)
     end
 end
 SlashCmdList["RAVMOUNTS"] = slashHandler
 
--- Check Installation and Updates on AddOn Load
 local function OnEvent(self, event, arg, ...)
-    if arg == RAV_name then
-        if event == "CHAT_MSG_ADDON" and RAV_hasSeenUpdateMessage == false then
-            local message, _ = ...
-            local a, b, c = strsplit(".", ravMounts.version)
-            local d, e, f = strsplit(".", message)
-            if (d > a) or (d == a and e > b) or (d == a and e == b and f > c) then
-                prettyPrint(string.format(ravMounts.locales[ravMounts.locale].load.outofdate, ravMounts.name))
-                RAV_hasSeenUpdateMessage = true
-            end
-        elseif event == "ADDON_LOADED" then
+    if arg == name then
+        if event == "ADDON_LOADED" then
             ravMounts.locale = GetLocale()
             if not ravMounts.locales[ravMounts.locale] then
                 ravMounts.locale = defaults.LOCALE
@@ -484,13 +477,20 @@ local function OnEvent(self, event, arg, ...)
             if not RAV_version or RAV_version ~= ravMounts.version then
                 print(string.format(ravMounts.locales[ravMounts.locale].help[1], ravMounts.name))
                 print(string.format(ravMounts.locales[ravMounts.locale].load.both, defaults.COMMAND))
-                RAV_hasSeenUpdateMessage = false
+                RAV_seenUpdate = false
             end
             RAV_version = ravMounts.version
-            C_ChatInfo.RegisterAddonMessagePrefix(RAV_name)
+            C_ChatInfo.RegisterAddonMessagePrefix(name)
             sendVersionData()
             ravMounts.mountListHandler()
-            ensureMacro()
+        elseif event == "CHAT_MSG_ADDON" and RAV_seenUpdate == false then
+            local message, _ = ...
+            local a, b, c = strsplit(".", ravMounts.version)
+            local d, e, f = strsplit(".", message)
+            if (d > a) or (d == a and e > b) or (d == a and e == b and f > c) then
+                prettyPrint(string.format(ravMounts.locales[ravMounts.locale].load.outofdate, ravMounts.name))
+                RAV_seenUpdate = true
+            end
         end
     else
         if event == "MOUNT_JOURNAL_SEARCH_UPDATED" then
