@@ -89,16 +89,18 @@ local function ensureMacro()
         local mapID = C_Map.GetMapInfo(1)
         local inAhnQiraj = (mapID == 717 or mapID == 766) and true or false
         local inVashjir = (mapID == 610 or mapID == 613 or mapID == 614 or mapID == 615) and true or false
+        local inMaw = (mapID == 1543) and true or false
         local haveFlyingMounts = next(RAV_flyingMounts) ~= nil and true or false
         local haveGroundMounts = next(RAV_groundMounts) ~= nil and true or false
         local haveVendorMounts = next(RAV_vendorMounts) ~= nil and true or false
         local haveFlyingPassengerMounts = next(RAV_flyingPassengerMounts) ~= nil and true or false
         local haveGroundPassengerMounts = next(RAV_groundPassengerMounts) ~= nil and true or false
         local haveSwimmingMounts = next(RAV_swimmingMounts) ~= nil and true or false
-        local haveVashjirMounts = next(RAV_vashjirMounts) ~= nil and true or false
         local haveAhnQirajMounts = next(RAV_ahnQirajMounts) ~= nil and true or false
+        local haveVashjirMounts = next(RAV_vashjirMounts) ~= nil and true or false
+        local haveMawMounts = next(RAV_mawMounts) ~= nil and true or false
         local flying = haveFlyingMounts and RAV_flyingMounts or nil
-        local ground = (inAhnQiraj and haveAhnQirajMounts) and RAV_ahnQirajMounts or haveGroundMounts and RAV_groundMounts or nil
+        local ground = (inAhnQiraj and haveAhnQirajMounts) and RAV_ahnQirajMounts or (inMaw and haveMawMounts) and RAV_mawMounts or haveGroundMounts and RAV_groundMounts or nil
         local vendor = haveVendorMounts and RAV_vendorMounts or nil
         local passenger = haveFlyingPassengerMounts and RAV_flyingPassengerMounts or haveGroundPassengerMounts and RAV_groundPassengerMounts or nil
         local swimming = (inVashjir and haveVashjirMounts) and RAV_vashjirMounts or haveSwimmingMounts and RAV_swimmingMounts or nil
@@ -171,8 +173,9 @@ function ravMounts.mountListHandler()
     RAV_flyingPassengerMounts = {}
     RAV_groundPassengerMounts = {}
     RAV_swimmingMounts = {}
-    RAV_vashjirMounts = {}
     RAV_ahnQirajMounts = {}
+    RAV_vashjirMounts = {}
+    RAV_mawMounts = {}
     RAV_chauffeurMounts = {}
     RAV_allMountsByName = {}
     RAV_allMountsByID = {}
@@ -192,8 +195,9 @@ function ravMounts.mountListHandler()
         isFlyingMount = (mountType == 247 or mountType == 248)
         isGroundMount = (mountType == 230)
         isSwimmingMount = (mountType == 231 or mountType == 254)
-        isVashjirMount = (mountType == 232)
         isAhnQirajMount = (mountType == 241)
+        isVashjirMount = (mountType == 232)
+        isMawMount = (mountID == 1304 or mountID == 1442)
         isChauffeurMount = (mountType == 284)
         isVendorMount = (mountID == 280 or mountID == 284 or mountID == 460 or mountID == 1039)
         isFlyingPassengerMount = (mountID == 382 or mountID == 407 or mountID == 455 or mountID == 959 or mountID == 960)
@@ -257,11 +261,14 @@ function ravMounts.mountListHandler()
                 if isChauffeurMount then
                     table.insert(RAV_chauffeurMounts, mountID)
                 end
+                if isAhnQirajMount then
+                    table.insert(RAV_ahnQirajMounts, mountID)
+                end
                 if isVashjirMount then
                     table.insert(RAV_vashjirMounts, mountID)
                 end
-                if isAhnQirajMount then
-                    table.insert(RAV_ahnQirajMounts, mountID)
+                if isMawMount then
+                    table.insert(RAV_mawMounts, mountID)
                 end
             end
         end
@@ -278,14 +285,16 @@ function ravMounts.mountUpHandler(specificType)
     local mapID = C_Map.GetMapInfo(1)
     local inAhnQiraj = (mapID == 717 or mapID == 766) and true or false
     local inVashjir = (mapID == 610 or mapID == 613 or mapID == 614 or mapID == 615) and true or false
+    local inMaw = (mapID == 1543) and true or false
     local haveFlyingMounts = next(RAV_flyingMounts) ~= nil and true or false
     local haveGroundMounts = next(RAV_groundMounts) ~= nil and true or false
     local haveVendorMounts = next(RAV_vendorMounts) ~= nil and true or false
     local haveFlyingPassengerMounts = next(RAV_flyingPassengerMounts) ~= nil and true or false
     local haveGroundPassengerMounts = next(RAV_groundPassengerMounts) ~= nil and true or false
     local haveSwimmingMounts = next(RAV_swimmingMounts) ~= nil and true or false
-    local haveVashjirMounts = next(RAV_vashjirMounts) ~= nil and true or false
     local haveAhnQirajMounts = next(RAV_ahnQirajMounts) ~= nil and true or false
+    local haveVashjirMounts = next(RAV_vashjirMounts) ~= nil and true or false
+    local haveMawMounts = next(RAV_mawMounts) ~= nil and true or false
     local haveChauffeurMounts = next(RAV_chauffeurMounts) ~= nil and true or false
     local cloneMountID = GetCloneMount()
 
@@ -335,6 +344,8 @@ function ravMounts.mountUpHandler(specificType)
         mountSummon(RAV_vashjirMounts)
     elseif inAhnQiraj and haveAhnQirajMounts then
         mountSummon(RAV_ahnQirajMounts)
+    elseif inMaw and haveMawMounts then
+        mountSummon(RAV_mawMounts)
     elseif haveGroundMounts then
         mountSummon(RAV_groundMounts)
     elseif haveFlyingMounts then
@@ -358,7 +369,7 @@ local function slashHandler(message, editbox)
     elseif argument and (command == "s" or string.match(command, "setting") or command == "c" or string.match(command, "config") or string.match(command, "auto") or string.match(command, "tog")) then
         if string.match(argument, "norm") or string.match(argument, "fly") or string.match(argument, "ground") or string.match(argument, "flying/ground") or string.match(argument, "Flying/Ground") then
             RAV_autoNormalMounts = not RAV_autoNormalMounts
-            prettyPrint("|cffffff66" .. ravMounts.locales[ravMounts.locale].config.normal .. "|cffffffff: " .. (RAV_autoNormalMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual), true)
+            prettyPrint("|cff" .. ravMounts.yellow .. "" .. ravMounts.locales[ravMounts.locale].config.normal .. "|cffffffff: " .. (RAV_autoNormalMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual), true)
             if RAV_autoNormalMounts then
                 print(ravMounts.locales[ravMounts.locale].automation.normal[1])
             else
@@ -366,7 +377,7 @@ local function slashHandler(message, editbox)
             end
         elseif string.match(argument, "vend") or string.match(argument, "repair") or string.match(argument, "trans") or string.match(argument, "mog") then
             RAV_autoVendorMounts = not RAV_autoVendorMounts
-            prettyPrint("|cffffff66" .. ravMounts.locales[ravMounts.locale].config.vendor .. "|cffffffff: " .. (RAV_autoVendorMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual), true)
+            prettyPrint("|cff" .. ravMounts.yellow .. "" .. ravMounts.locales[ravMounts.locale].config.vendor .. "|cffffffff: " .. (RAV_autoVendorMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual), true)
             if RAV_autoVendorMounts then
                 print(ravMounts.locales[ravMounts.locale].automation.vendor[1])
             else
@@ -374,7 +385,7 @@ local function slashHandler(message, editbox)
             end
         elseif string.match(argument, "2") or string.match(argument, "two") or string.match(argument, "multi") or string.match(argument, "passenger") then
             RAV_autoPassengerMounts = not RAV_autoPassengerMounts
-            prettyPrint("|cffffff66" .. ravMounts.locales[ravMounts.locale].config.passenger .. "|cffffffff: " .. (RAV_autoPassengerMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual), true)
+            prettyPrint("|cff" .. ravMounts.yellow .. "" .. ravMounts.locales[ravMounts.locale].config.passenger .. "|cffffffff: " .. (RAV_autoPassengerMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual), true)
             if RAV_autoPassengerMounts then
                 print(ravMounts.locales[ravMounts.locale].automation.passenger[1])
             else
@@ -382,7 +393,7 @@ local function slashHandler(message, editbox)
             end
         elseif string.match(argument, "swim") then
             RAV_autoSwimmingMounts = not RAV_autoSwimmingMounts
-            prettyPrint("|cffffff66" .. ravMounts.locales[ravMounts.locale].config.swimming .. "|cffffffff: " .. (RAV_autoSwimmingMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual), true)
+            prettyPrint("|cff" .. ravMounts.yellow .. "" .. ravMounts.locales[ravMounts.locale].config.swimming .. "|cffffffff: " .. (RAV_autoSwimmingMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual), true)
             if RAV_autoSwimmingMounts then
                 print(ravMounts.locales[ravMounts.locale].automation.swimming[1])
             else
@@ -390,7 +401,7 @@ local function slashHandler(message, editbox)
             end
         elseif string.match(argument, "flex") then
             RAV_autoFlexMounts = not RAV_autoFlexMounts
-            prettyPrint("|cffffff66" .. ravMounts.locales[ravMounts.locale].config.flex .. "|cffffffff: " .. (RAV_autoFlexMounts and ravMounts.locales[ravMounts.locale].config.flexboth or ravMounts.locales[ravMounts.locale].config.flexone), true)
+            prettyPrint("|cff" .. ravMounts.yellow .. "" .. ravMounts.locales[ravMounts.locale].config.flex .. "|cffffffff: " .. (RAV_autoFlexMounts and ravMounts.locales[ravMounts.locale].config.flexboth or ravMounts.locales[ravMounts.locale].config.flexone), true)
             if RAV_autoFlexMounts then
                 print(ravMounts.locales[ravMounts.locale].automation.flex[1])
             else
@@ -398,7 +409,7 @@ local function slashHandler(message, editbox)
             end
         elseif string.match(argument, "clone") or string.match(argument, "copy") then
             RAV_autoClone = not RAV_autoClone
-            prettyPrint("|cffffff66" .. ravMounts.locales[ravMounts.locale].config.clone .. "|cffffffff: " .. (RAV_autoClone and ravMounts.locales[ravMounts.locale].config.on or ravMounts.locales[ravMounts.locale].config.off), true)
+            prettyPrint("|cff" .. ravMounts.yellow .. "" .. ravMounts.locales[ravMounts.locale].config.clone .. "|cffffffff: " .. (RAV_autoClone and ravMounts.locales[ravMounts.locale].config.on or ravMounts.locales[ravMounts.locale].config.off), true)
             if RAV_autoClone then
                 print(ravMounts.locales[ravMounts.locale].automation.clone[1])
             else
@@ -406,7 +417,7 @@ local function slashHandler(message, editbox)
             end
         elseif string.match(argument, "macro") then
             RAV_autoMacro = not RAV_autoMacro
-            prettyPrint("|cffffff66" .. ravMounts.locales[ravMounts.locale].config.macro .. "|cffffffff: " .. (RAV_autoMacro and ravMounts.locales[ravMounts.locale].config.on or ravMounts.locales[ravMounts.locale].config.off), true)
+            prettyPrint("|cff" .. ravMounts.yellow .. "" .. ravMounts.locales[ravMounts.locale].config.macro .. "|cffffffff: " .. (RAV_autoMacro and ravMounts.locales[ravMounts.locale].config.on or ravMounts.locales[ravMounts.locale].config.off), true)
             if RAV_autoMacro then
                 print(ravMounts.locales[ravMounts.locale].automation.macro[1])
             else
@@ -418,28 +429,25 @@ local function slashHandler(message, editbox)
         ravMounts.mountListHandler()
     elseif command == "s" or string.match(command, "setting") or command == "c" or string.match(command, "config") then
         prettyPrint(ravMounts.locales[ravMounts.locale].notice.config)
-        print("|cffffff66" .. ravMounts.locales[ravMounts.locale].config.normal .. ":|r " .. (RAV_autoNormalMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual))
-        print("|cffffff66" .. ravMounts.locales[ravMounts.locale].config.vendor .. ":|r " .. (RAV_autoVendorMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual))
-        print("|cffffff66" .. ravMounts.locales[ravMounts.locale].config.passenger .. ":|r " .. (RAV_autoPassengerMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual))
-        print("|cffffff66" .. ravMounts.locales[ravMounts.locale].config.swimming .. ":|r " .. (RAV_autoSwimmingMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual))
-        print("|cffffff66" .. ravMounts.locales[ravMounts.locale].config.flex .. ":|r " .. (RAV_autoFlexMounts and ravMounts.locales[ravMounts.locale].config.flexboth or ravMounts.locales[ravMounts.locale].config.flexone))
-        print("|cffffff66" .. ravMounts.locales[ravMounts.locale].config.clone .. ":|r " .. (RAV_autoClone and ravMounts.locales[ravMounts.locale].config.on or ravMounts.locales[ravMounts.locale].config.off))
-        print("|cffffff66" .. ravMounts.locales[ravMounts.locale].config.macro .. ":|r " .. (RAV_autoMacro and ravMounts.locales[ravMounts.locale].config.on or ravMounts.locales[ravMounts.locale].config.off))
+        print("|cff" .. ravMounts.yellow .. "" .. ravMounts.locales[ravMounts.locale].config.normal .. ":|r " .. (RAV_autoNormalMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual))
+        print("|cff" .. ravMounts.yellow .. "" .. ravMounts.locales[ravMounts.locale].config.vendor .. ":|r " .. (RAV_autoVendorMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual))
+        print("|cff" .. ravMounts.yellow .. "" .. ravMounts.locales[ravMounts.locale].config.passenger .. ":|r " .. (RAV_autoPassengerMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual))
+        print("|cff" .. ravMounts.yellow .. "" .. ravMounts.locales[ravMounts.locale].config.swimming .. ":|r " .. (RAV_autoSwimmingMounts and ravMounts.locales[ravMounts.locale].config.auto or ravMounts.locales[ravMounts.locale].config.manual))
+        print("|cff" .. ravMounts.yellow .. "" .. ravMounts.locales[ravMounts.locale].config.flex .. ":|r " .. (RAV_autoFlexMounts and ravMounts.locales[ravMounts.locale].config.flexboth or ravMounts.locales[ravMounts.locale].config.flexone))
+        print("|cff" .. ravMounts.yellow .. "" .. ravMounts.locales[ravMounts.locale].config.clone .. ":|r " .. (RAV_autoClone and ravMounts.locales[ravMounts.locale].config.on or ravMounts.locales[ravMounts.locale].config.off))
+        print("|cff" .. ravMounts.yellow .. "" .. ravMounts.locales[ravMounts.locale].config.macro .. ":|r " .. (RAV_autoMacro and ravMounts.locales[ravMounts.locale].config.on or ravMounts.locales[ravMounts.locale].config.off))
         print(string.format(ravMounts.locales[ravMounts.locale].help[3], defaults.COMMAND))
         print(string.format(ravMounts.locales[ravMounts.locale].help[4], defaults.COMMAND, defaults.COMMAND, defaults.COMMAND))
     elseif command == "f" or string.match(command, "force") or command == "d" or string.match(command, "data") or string.match(command, "cache") then
         ravMounts.mountListHandler()
         prettyPrint(ravMounts.locales[ravMounts.locale].notice.force)
-        print("|cffffff66" ..ravMounts.locales[ravMounts.locale].type.total .. " |r" .. table.maxn(RAV_allMountsByName))
-        print("|cffffff66" ..ravMounts.locales[ravMounts.locale].type.ground .. " |r" .. table.maxn(RAV_groundMounts))
-        print("|cffffff66" ..ravMounts.locales[ravMounts.locale].type.flying .. " |r" .. table.maxn(RAV_flyingMounts))
-        print("|cffffff66" ..ravMounts.locales[ravMounts.locale].type.groundpassenger .. " |r" .. table.maxn(RAV_groundPassengerMounts))
-        print("|cffffff66" ..ravMounts.locales[ravMounts.locale].type.flyingpassenger .. " |r" .. table.maxn(RAV_flyingPassengerMounts))
-        print("|cffffff66" ..ravMounts.locales[ravMounts.locale].type.vendor .. " |r" .. table.maxn(RAV_vendorMounts))
-        print("|cffffff66" ..ravMounts.locales[ravMounts.locale].type.swimming .. " |r" .. table.maxn(RAV_swimmingMounts))
-        print("|cffffff66" ..ravMounts.locales[ravMounts.locale].type.vashjir .. " |r" .. table.maxn(RAV_vashjirMounts))
-        print("|cffffff66" ..ravMounts.locales[ravMounts.locale].type.ahnqiraj .. " |r" .. table.maxn(RAV_ahnQirajMounts))
-        print("|cffffff66" ..ravMounts.locales[ravMounts.locale].type.chauffer .. " |r" .. table.maxn(RAV_chauffeurMounts))
+        print("|cff" .. ravMounts.yellow .. "" ..ravMounts.locales[ravMounts.locale].type.total .. " |r" .. table.maxn(RAV_allMountsByName))
+        print("|cff" .. ravMounts.yellow .. "" ..ravMounts.locales[ravMounts.locale].type.ground .. " |r" .. table.maxn(RAV_groundMounts))
+        print("|cff" .. ravMounts.yellow .. "" ..ravMounts.locales[ravMounts.locale].type.flying .. " |r" .. table.maxn(RAV_flyingMounts))
+        print("|cff" .. ravMounts.yellow .. "" ..ravMounts.locales[ravMounts.locale].type.groundpassenger .. " |r" .. table.maxn(RAV_groundPassengerMounts))
+        print("|cff" .. ravMounts.yellow .. "" ..ravMounts.locales[ravMounts.locale].type.flyingpassenger .. " |r" .. table.maxn(RAV_flyingPassengerMounts))
+        print("|cff" .. ravMounts.yellow .. "" ..ravMounts.locales[ravMounts.locale].type.vendor .. " |r" .. table.maxn(RAV_vendorMounts))
+        print("|cff" .. ravMounts.yellow .. "" ..ravMounts.locales[ravMounts.locale].type.swimming .. " |r" .. table.maxn(RAV_swimmingMounts))
         ensureMacro()
     elseif command == "h" or string.match(command, "hel") then
         prettyPrint(ravMounts.locales[ravMounts.locale].notice.help)
