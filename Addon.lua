@@ -85,7 +85,8 @@ end
 local function ensureMacro()
     RAV_autoMacro = (RAV_autoMacro == nil and defaults.AUTO_MACRO or RAV_autoMacro)
 
-    if RAV_autoMacro then
+    local inCombat = UnitAffectingCombat("player")
+    if not inCombat and RAV_autoMacro then
         local mapID = C_Map.GetMapInfo(1)
         local inAhnQiraj = (mapID == 717 or mapID == 766) and true or false
         local inVashjir = (mapID == 610 or mapID == 613 or mapID == 614 or mapID == 615) and true or false
