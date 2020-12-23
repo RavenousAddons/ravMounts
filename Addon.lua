@@ -80,12 +80,10 @@ local function sendVersionData()
     end
 end
 
--- Check for and (if not there…) create a macro
+-- Check for and create/edit the macro
 local function ensureMacro()
     RAV_autoMacro = (RAV_autoMacro == nil and defaults.AUTO_MACRO or RAV_autoMacro)
-
-    local inCombat = UnitAffectingCombat("player")
-    if not inCombat and RAV_autoMacro then
+    if not UnitAffectingCombat("player") and RAV_autoMacro then
         local mapID = C_Map.GetBestMapForUnit("player")
         local inAhnQiraj = (mapID == 319 or mapID == 320 or mapID == 321) and true or false
         local inVashjir = (mapID == 201 or mapID == 203 or mapID == 204 or mapID == 205 or mapID == 1272) and true or false
