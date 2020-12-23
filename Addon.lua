@@ -43,13 +43,6 @@ local function mountSummon(list)
     end
 end
 
--- Check if floating
--- Thanks to DJharris71 (http://www.wowinterface.com/forums/member.php?userid=301959)
-local function IsFloating()
-    local B, b, _, _, a = "BREATH", GetMirrorTimerInfo(2)
-    return (IsSwimming() and (not (b == B) or (b == B and a > -1)))
-end
-
 -- Get the mount being used by the target or focus (if they're a Player)
 -- Thanks to DJharris71 (http://www.wowinterface.com/forums/member.php?userid=301959)
 local function GetCloneMount()
@@ -87,10 +80,10 @@ local function ensureMacro()
 
     local inCombat = UnitAffectingCombat("player")
     if not inCombat and RAV_autoMacro then
-        local mapID = C_Map.GetMapInfo(1)
-        local inAhnQiraj = (mapID == 717 or mapID == 766) and true or false
-        local inVashjir = (mapID == 610 or mapID == 613 or mapID == 614 or mapID == 615) and true or false
-        local inMaw = (mapID == 1543) and true or false
+        local mapID = C_Map.GetBestMapForUnit("player")
+        local inAhnQiraj = (mapID == 319 or mapID == 320 or mapID == 321) and true or false
+        local inVashjir = (mapID == 201 or mapID == 203 or mapID == 204 or mapID == 205 or mapID == 1272) and true or false
+        local inMaw = (mapID == 1543 or mapID == 1648) and true or false
         local haveFlyingMounts = next(RAV_flyingMounts) ~= nil and true or false
         local haveGroundMounts = next(RAV_groundMounts) ~= nil and true or false
         local haveVendorMounts = next(RAV_vendorMounts) ~= nil and true or false
@@ -282,11 +275,11 @@ function ravMounts.mountUpHandler(specificType)
     -- Simplify the appearance of the logic later by casting our checks to
     -- simple variables
     local flyable = ravMounts.IsFlyableArea()
-    local submerged = IsSwimming() and not IsFloating()
-    local mapID = C_Map.GetMapInfo(1)
-    local inAhnQiraj = (mapID == 717 or mapID == 766) and true or false
-    local inVashjir = (mapID == 610 or mapID == 613 or mapID == 614 or mapID == 615) and true or false
-    local inMaw = (mapID == 1543) and true or false
+    local submerged = IsSwimming()
+    local mapID = C_Map.GetBestMapForUnit("player")
+    local inAhnQiraj = (mapID == 319 or mapID == 320 or mapID == 321) and true or false
+    local inVashjir = (mapID == 201 or mapID == 203 or mapID == 204 or mapID == 205 or mapID == 1272) and true or false
+    local inMaw = (mapID == 1543 or mapID == 1648) and true or false
     local haveFlyingMounts = next(RAV_flyingMounts) ~= nil and true or false
     local haveGroundMounts = next(RAV_groundMounts) ~= nil and true or false
     local haveVendorMounts = next(RAV_vendorMounts) ~= nil and true or false
@@ -337,7 +330,7 @@ function ravMounts.mountUpHandler(specificType)
         VehicleExit()
         CancelShapeshiftForm()
         UIErrorsFrame:Clear()
-    elseif haveFlyingMounts and ((flyable and not submerged and not IsAltKeyDown()) or (IsAltKeyDown() and not flyable)) then
+    elseif flyable and haveFlyingMounts and ((not IsAltKeyDown() and not submerged) or (IsAltKeyDown() and submerged)) then
         mountSummon(RAV_flyingMounts)
     elseif inVashjir and submerged and haveVashjirMounts then
         mountSummon(RAV_vashjirMounts)
