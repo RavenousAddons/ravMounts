@@ -299,6 +299,14 @@ function ravMounts.mountUpHandler(specificType)
     -- Specific Mounts
     if IsFlying() then
         -- Do nothing!
+    elseif ((IsShiftKeyDown() and IsAltKeyDown()) or (IsShiftKeyDown() and IsControlKeyDown())) and (IsMounted() or UnitInVehicle("player")) then
+        DoEmote(EMOTE171_TOKEN)
+    elseif IsShiftKeyDown() and haveVendorMounts then
+        mountSummon(RAV_vendorMounts)
+    elseif IsControlKeyDown() and flyable and not IsAltKeyDown() and haveFlyingPassengerMounts then
+        mountSummon(RAV_flyingPassengerMounts)
+    elseif IsControlKeyDown() and (not flyable or (flyable and IsAltKeyDown())) and haveGroundPassengerMounts then
+        mountSummon(RAV_groundPassengerMounts)
     elseif (string.match(specificType, "vend") or string.match(specificType, "repair") or string.match(specificType, "trans") or string.match(specificType, "mog")) and haveVendorMounts then
         mountSummon(RAV_vendorMounts)
     elseif (string.match(specificType, "2") or string.match(specificType, "two") or string.match(specificType, "multi") or string.match(specificType, "passenger")) and haveFlyingPassengerMounts and flyable then
@@ -321,20 +329,12 @@ function ravMounts.mountUpHandler(specificType)
         mountSummon(RAV_chauffeurMounts)
     elseif (specificType == "copy" or specificType == "clone" or RAV_autoClone) and cloneMountID then
         C_MountJournal.SummonByID(cloneMountID)
-    elseif ((IsShiftKeyDown() and IsAltKeyDown()) or (IsShiftKeyDown() and IsControlKeyDown())) and (IsMounted() or UnitInVehicle("player")) then
-        DoEmote(EMOTE171_TOKEN)
-    elseif IsShiftKeyDown() and haveVendorMounts then
-        mountSummon(RAV_vendorMounts)
-    elseif IsControlKeyDown() and flyable and not IsAltKeyDown() and haveFlyingPassengerMounts then
-        mountSummon(RAV_flyingPassengerMounts)
-    elseif IsControlKeyDown() and (not flyable or (flyable and IsAltKeyDown())) and haveGroundPassengerMounts then
-        mountSummon(RAV_groundPassengerMounts)
     elseif IsMounted() or UnitInVehicle("player") then
         Dismount()
         VehicleExit()
         CancelShapeshiftForm()
         UIErrorsFrame:Clear()
-    elseif flyable and haveFlyingMounts and ((not IsAltKeyDown() and not submerged) or (IsAltKeyDown() and submerged)) then
+    elseif haveFlyingMounts and ((flyable and not IsAltKeyDown() and not submerged) or (not flyable and IsAltKeyDown())) then
         mountSummon(RAV_flyingMounts)
     elseif inVashjir and submerged and haveVashjirMounts then
         mountSummon(RAV_vashjirMounts)
