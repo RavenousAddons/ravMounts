@@ -69,9 +69,9 @@ Options:SetScript("OnShow", function()
         },
         {
             type = "Label",
-            name = "ConfigLabel",
+            name = "OptionsHeading",
             parent = Options,
-            label = L.ConfigLabel,
+            label = L.OptionsHeading,
             offsetY = -16,
         },
         {
@@ -100,9 +100,9 @@ Options:SetScript("OnShow", function()
         },
         {
             type = "Label",
-            name = "FavoritesLabel",
+            name = "FavoritesHeading",
             parent = Options,
-            label = L.FavoritesLabel,
+            label = L.FavoritesHeading,
         },
         {
             type = "CheckBox",
@@ -122,14 +122,6 @@ Options:SetScript("OnShow", function()
         },
         {
             type = "CheckBox",
-            name = "PassengerMounts",
-            parent = Options,
-            label = L.PassengerMounts,
-            tooltip = L.PassengerMountsTooltip,
-            var = "passengerMounts",
-        },
-        {
-            type = "CheckBox",
             name = "VendorMounts",
             parent = Options,
             label = L.VendorMounts,
@@ -137,10 +129,18 @@ Options:SetScript("OnShow", function()
             var = "vendorMounts",
         },
         {
-            type = "Label",
-            name = "CollectedLabel",
+            type = "CheckBox",
+            name = "PassengerMounts",
             parent = Options,
-            label = L.CollectedLabel,
+            label = L.PassengerMounts,
+            tooltip = L.PassengerMountsTooltip,
+            var = "passengerMounts",
+        },
+        {
+            type = "Label",
+            name = "DataHeading",
+            parent = Options,
+            label = L.DataHeading,
         },
         {
             type = "Label",
