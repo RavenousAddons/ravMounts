@@ -14,7 +14,15 @@ function ravMounts_OnEvent(self, event, arg, ...)
     if arg == name then
         if event == "ADDON_LOADED" then
             ravMounts:SetDefaultOptions()
-            ravMounts:CheckVersion()
+            if not RAV_version then
+                ravMounts:PrettyPrint(L.Install)
+            elseif RAV_version ~= ravMounts.version then
+                ravMounts:PrettyPrint(L.Update)
+            end
+            if not RAV_version or RAV_version ~= ravMounts.version then
+                RAV_seenUpdate = false
+            end
+            RAV_version = ravMounts.version
             C_ChatInfo.RegisterAddonMessagePrefix(name)
             ravMounts:SendVersion()
             ravMounts:MountListHandler()
@@ -41,8 +49,9 @@ SlashCmdList["RAVMOUNTS"] = function(message, editbox)
     if command == "version" or command == "v" then
         ravMounts:PrettyPrint(L.Version)
         ravMounts:SendVersion()
-    elseif command == "s" or string.match(command, "setting") or command == "c" or string.match(command, "config") or command == "o" or string.match(command, "option") then
-        InterfaceOptionsFrame_OpenToCategory("RavenousMountsOptions")
+    elseif command == "c" or string.match(command, "con") or command == "o" or string.match(command, "opt") or command == "s" or string.match(command, "sett") or string.match(command, "togg") then
+        InterfaceOptionsFrame_OpenToCategory(ravMounts.Options)
+        InterfaceOptionsFrame_OpenToCategory(ravMounts.Options)
     elseif command == "h" or string.match(command, "help") then
         ravMounts:PrettyPrint(L.Help)
     elseif command == "f" or string.match(command, "force") then

@@ -11,19 +11,6 @@ function ravMounts:PrettyPrint(message, full)
     DEFAULT_CHAT_FRAME:AddMessage(prefix .. message)
 end
 
-function ravMounts:CheckVersion()
-    if not RAV_version then
-        ravMounts:PrettyPrint(L.Install)
-    elseif RAV_version ~= ravMounts.version then
-        ravMounts:PrettyPrint(L.Update)
-    end
-    if not RAV_version or RAV_version ~= ravMounts.version then
-        ravMounts:PrettyPrint(L.Help)
-        RAV_seenUpdate = false
-    end
-    RAV_version = ravMounts.version
-end
-
 function ravMounts:SendVersion()
     local inInstance, _ = IsInInstance()
     if inInstance then
@@ -42,7 +29,7 @@ end
 
 function ravMounts:MountSummon(list)
     local inCombat = UnitAffectingCombat("player")
-    if not inCombat and not IsFlying() and #list > 0 then
+    if not inCombat and #list > 0 then
         C_MountJournal.SummonByID(list[random(#list)])
     end
 end
@@ -230,6 +217,10 @@ end
 -- Check a plethora of conditions and choose the appropriate Mount from the
 -- Mount Journal, and do nothing if conditions are not met
 function ravMounts:MountUpHandler(specificType)
+    -- If we're flying, end here!
+    if IsFlying() then
+        return
+    end
     -- Simplify the appearance of the logic later by casting our checks to
     -- simple variables
     local flyable = ravMounts:IsFlyableArea()

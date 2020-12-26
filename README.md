@@ -26,17 +26,9 @@ Ravenous Mounts comes with a small handful of commands available for you to chec
 
 *Prints out a usage guide much like this one!*
 
-`/ravmounts data`
-
-*Shows you data about your mount lists.*
-
 `/ravmounts config`
 
 *Shows you your configuration settings.*
-
-`/ravmounts toggle vendor`
-
-*Toggles your configuration settings between their two states. Available configuration settings:*
 
 - normal
 - vendor

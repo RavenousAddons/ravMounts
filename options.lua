@@ -3,7 +3,10 @@ local L = ravMounts.L
 
 local pairs = pairs
 
+
+
 local Options = CreateFrame("Frame", "RavenousMountsOptions", InterfaceOptionsFramePanelContainer)
+ravMounts.Options = Options
 Options.controlTable = {}
 Options.name = ravMounts.name
 Options.okay = function(self)
