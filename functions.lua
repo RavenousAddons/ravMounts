@@ -73,7 +73,7 @@ function ravMounts:EnsureMacro()
         local vendor = haveVendorMounts and RAV_data.mounts.vendor or nil
         local passenger = haveFlyingPassengerMounts and RAV_data.mounts.flyingPassenger or haveGroundPassengerMounts and RAV_data.mounts.groundPassenger or nil
         local swimming = (inVashjir and haveVashjirMounts) and RAV_data.mounts.vashjir or haveSwimmingMounts and RAV_data.mounts.swimming or nil
-        local body = "/" .. "ravm"
+        local body = "/" .. ravMounts.command
         if ground or flying or vendor or passenger or swimming then
             body = "\n" .. body
             if ground then
@@ -152,7 +152,7 @@ function ravMounts:MountListHandler()
     local isFlyingMount, isGroundMount, isVendorMount, isFlyingPassengerMount, isGroundPassengerMount, isSwimmingMount, isVashjirMount, isAhnQirajMount, isChauffeurMount, isFlexMount
     -- Let's start looping over our Mount Journal adding Mounts to their
     -- respective groups
-    for mountIndex, mountID in pairs(C_MountJournal.GetMountIDs()) do
+    for _, mountID in pairs(C_MountJournal.GetMountIDs()) do
         local mountName, spellID, _, _, isUsable, _, isFavorite, _, mountFaction, hiddenOnCharacter, isCollected = C_MountJournal.GetMountInfoByID(mountID)
         local _, _, _, _, mountType = C_MountJournal.GetMountInfoExtraByID(mountID)
         isGroundMount = (mountType == 230)
@@ -310,13 +310,9 @@ function ravMounts:RegisterDefaultOption(key, value)
 end
 
 function ravMounts:SetDefaultOptions()
-    ravMounts:RegisterDefaultOption("normalMounts", true)
-    ravMounts:RegisterDefaultOption("vendorMounts", true)
-    ravMounts:RegisterDefaultOption("passengerMounts", true)
-    ravMounts:RegisterDefaultOption("swimmingMounts", true)
-    ravMounts:RegisterDefaultOption("flexMounts", true)
-    ravMounts:RegisterDefaultOption("clone", true)
-    ravMounts:RegisterDefaultOption("macro", true)
+    for k, v in pairs(ravMounts.defaults) do
+        ravMounts:RegisterDefaultOption(k, v)
+    end
 end
 
 function ravMounts:RegisterControl(control, parentFrame)

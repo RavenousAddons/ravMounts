@@ -62,6 +62,6 @@ SlashCmdList["RAVMOUNTS"] = function(message, editbox)
         ravMounts:MountUpHandler(command)
     end
 end
-SLASH_RAVMOUNTS1 = "/ravm"
+SLASH_RAVMOUNTS1 = "/" .. ravMounts.command
 SLASH_RAVMOUNTS2 = "/ravmounts"
 SLASH_RAVMOUNTS3 = "/ravenousmounts"
