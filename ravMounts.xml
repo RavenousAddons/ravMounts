@@ -1,0 +1,18 @@
+<Ui>
+    <Script file="metadata.lua" />
+
+    <Script file="LibFlyable.lua" />
+
+    <Script file="locales.lua" />
+    <Script file="functions.lua" />
+    <Script file="options.lua" />
+
+    <Script file="core.lua" />
+
+    <Frame name="ravMounts">
+        <Scripts>
+            <OnLoad function="ravMounts_OnLoad" />
+            <OnEvent function="ravMounts_OnEvent" />
+        </Scripts>
+    </Frame>
+</Ui>

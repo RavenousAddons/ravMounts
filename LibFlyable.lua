@@ -6,8 +6,7 @@
 -- This is free and unencumbered software released into the public domain.
 -- Feel free to include this file or code from it in your own addons.
 
-local _, ravMounts = ...
--- TODO: Find out when Wintergrasp isn't flyable? Or too old to bother with?
+local name, ravMounts = ...
 
 local spellForContinent = {
     -- Shadowlands
@@ -82,7 +81,7 @@ local GetSubZoneText = GetSubZoneText
 local IsFlyableArea = IsFlyableArea
 local IsSpellKnown = IsSpellKnown
 
-function ravMounts.IsFlyableArea()
+function ravMounts:IsFlyableArea()
     if not IsFlyableArea()
     or noFlySubzones[GetSubZoneText() or ""] then
         return false

@@ -1,18 +1,15 @@
 ## Interface: 90002
-## Version: 2.2.9
+## Version: 2.3.0
 
 ## Name: Ravenous Mounts
 ## Title: Ravenous |cff9eb8c9Mounts|r
-## Notes: "Chooses the best mount for the job, with simple preferences based on your Favourites."
+## Notes: "Chooses the best mount for the job with simple preferences based on your Favourites."
 ## Author: waldenp0nd
 
 ## SavedVariables: RAV_version, RAV_seenUpdate
-## SavedVariablesPerCharacter: RAV_autoNormalMounts, RAV_autoVendorMounts, RAV_autoPassengerMounts, RAV_autoSwimmingMounts, RAV_autoFlexMounts, RAV_autoClone, RAV_autoMacro, RAV_flyingMounts, RAV_groundMounts, RAV_vendorMounts, RAV_flyingPassengerMounts, RAV_groundPassengerMounts, RAV_swimmingMounts, RAV_vashjirMounts, RAV_ahnQirajMounts, RAV_mawMounts, RAV_chauffeurMounts, RAV_allMountsByName, RAV_allMountsByID, RAV_macroBody
+## SavedVariablesPerCharacter: RAV_data, RAV_macroBody
 
 ## X-License: Public Domain
 ## X-Website: https://github.com/waldenp0nd/ravMounts
 
-
-locales.lua
-LibFlyable.lua
-Addon.lua
+ravMounts.xml
