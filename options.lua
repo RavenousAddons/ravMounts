@@ -114,11 +114,11 @@ Options:SetScript("OnShow", function()
         },
         {
             type = "CheckBox",
-            name = "VendorMounts",
+            name = "SwimmingMounts",
             parent = Options,
-            label = L.VendorMounts,
-            tooltip = L.VendorMountsTooltip,
-            var = "vendorMounts",
+            label = L.SwimmingMounts,
+            tooltip = L.SwimmingMountsTooltip,
+            var = "swimmingMounts",
         },
         {
             type = "CheckBox",
@@ -130,11 +130,11 @@ Options:SetScript("OnShow", function()
         },
         {
             type = "CheckBox",
-            name = "SwimmingMounts",
+            name = "VendorMounts",
             parent = Options,
-            label = L.SwimmingMounts,
-            tooltip = L.SwimmingMountsTooltip,
-            var = "swimmingMounts",
+            label = L.VendorMounts,
+            tooltip = L.VendorMountsTooltip,
+            var = "vendorMounts",
         },
         {
             type = "Label",
