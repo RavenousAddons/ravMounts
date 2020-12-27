@@ -6,7 +6,7 @@
 ## Notes: "Chooses the best mount for the job with simple preferences based on your Favourites."
 ## Author: waldenp0nd
 
-## SavedVariables: RAV_version, RAV_seenUpdate
+## SavedVariables: RAV_locale, RAV_version, RAV_seenUpdate
 ## SavedVariablesPerCharacter: RAV_data, RAV_macroBody
 
 ## X-License: Public Domain

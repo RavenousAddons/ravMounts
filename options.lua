@@ -3,8 +3,6 @@ local L = ravMounts.L
 
 local pairs = pairs
 
-
-
 local Options = CreateFrame("Frame", "RavenousMountsOptions", InterfaceOptionsFramePanelContainer)
 ravMounts.Options = Options
 Options.controlTable = {}
@@ -13,6 +11,7 @@ Options.okay = function(self)
     for _, control in pairs(self.controls) do
         RAV_data.options[control.var] = control:GetValue()
     end
+    ReloadUI()
 end
 Options.cancel = function(self)
     for _, control in pairs(self.controls) do
@@ -141,14 +140,10 @@ Options:SetScript("OnShow", function()
             name = "DataHeading",
             parent = Options,
             label = L.DataHeading,
-        },
-        {
-            type = "Label",
-            name = "SubHeadingReload",
-            parent = Options,
-            label = "|cffffffff" .. L.Reload .. "|r",
-            fontObject = "GameFontNormal",
-            offsetY = -8,
+            relativeTo = RightSide,
+            relativePoint = "TOPLEFT",
+            offsetX = -16,
+            offsetY = -77,
         },
         {
             type = "Label",
@@ -156,7 +151,6 @@ Options:SetScript("OnShow", function()
             parent = Options,
             label = L.Total .. ": |cffffffff" .. table.maxn(RAV_data.mounts.allByName) .. "|r",
             fontObject = "GameFontNormal",
-            offsetY = -8,
         },
         {
             type = "Label",
@@ -205,6 +199,13 @@ Options:SetScript("OnShow", function()
             label = L.PassengerFlying .. ": |cffffffff" .. table.maxn(RAV_data.mounts.flyingPassenger) .. "|r",
             fontObject = "GameFontNormal",
             offsetY = -4,
+        },
+        {
+            type = "Label",
+            name = "SubHeadingReload",
+            parent = Options,
+            label = "|cffffffff" .. L.Reload .. "|r",
+            fontObject = "GameFontNormal",
         },
     }
 

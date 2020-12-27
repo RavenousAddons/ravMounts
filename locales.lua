@@ -9,7 +9,7 @@ setmetatable(L, { __index = function(t, k)
     return v
 end })
 
--- English
+-- Default (English)
 L.OptionsHeading = "Configuration:"
 L.Macro = "Automatically create/maintain macro"
 L.MacroTooltip = "When enabled, a macro called |cff" .. ravMounts.color .. ravMounts.name .. "|r will be automatically created and managed for you under General Macros."
@@ -43,7 +43,6 @@ L.Swimming = "Swimming"
 L.Vendor = "Vendor"
 L.PassengerGround = "Passenger (Ground)"
 L.PassengerFlying = "Passenger (Flying)"
-
 
 -- Check locale and assign appropriate
 local CURRENT_LOCALE = GetLocale()
@@ -80,3 +79,6 @@ if CURRENT_LOCALE == "zhCN" then return end
 
 -- Traditional Chinese
 if CURRENT_LOCALE == "zhTW" then return end
+
+-- Swedish
+if CURRENT_LOCALE == "svSE" then return end
