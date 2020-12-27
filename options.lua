@@ -78,16 +78,9 @@ Options:SetScript("OnShow", function()
             name = "Macro",
             parent = Options,
             label = L.Macro,
-            tooltip = string.format(L.MacroTooltip, ravMounts.color, ravMounts.name),
+            tooltip = string.format(L.MacroTooltip, ravMounts.name),
             var = "macro",
-        },
-        {
-            type = "CheckBox",
-            name = "Clone",
-            parent = Options,
-            label = L.Clone,
-            tooltip = L.CloneTooltip,
-            var = "clone",
+            needsRestart = true,
         },
         {
             type = "CheckBox",
@@ -96,6 +89,15 @@ Options:SetScript("OnShow", function()
             label = L.FlexMounts,
             tooltip = L.FlexMountsTooltip,
             var = "flexMounts",
+            needsRestart = true,
+        },
+        {
+            type = "CheckBox",
+            name = "Clone",
+            parent = Options,
+            label = L.Clone,
+            tooltip = L.CloneTooltip,
+            var = "clone",
         },
         {
             type = "Label",
@@ -110,6 +112,7 @@ Options:SetScript("OnShow", function()
             label = L.NormalMounts,
             tooltip = L.NormalMountsTooltip,
             var = "normalMounts",
+            needsRestart = true,
         },
         {
             type = "CheckBox",
@@ -118,6 +121,7 @@ Options:SetScript("OnShow", function()
             label = L.SwimmingMounts,
             tooltip = L.SwimmingMountsTooltip,
             var = "swimmingMounts",
+            needsRestart = true,
         },
         {
             type = "CheckBox",
@@ -126,6 +130,7 @@ Options:SetScript("OnShow", function()
             label = L.VendorMounts,
             tooltip = L.VendorMountsTooltip,
             var = "vendorMounts",
+            needsRestart = true,
         },
         {
             type = "CheckBox",
@@ -134,6 +139,7 @@ Options:SetScript("OnShow", function()
             label = L.PassengerMounts,
             tooltip = L.PassengerMountsTooltip,
             var = "passengerMounts",
+            needsRestart = true,
         },
         {
             type = "Label",
