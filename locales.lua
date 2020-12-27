@@ -20,7 +20,6 @@ L.Support3 = "You can also get help directly from the author on Discord: |r%s|cf
 L.NoMounts = "Unfortunately, you don't have any mounts that can be called at this time!"
 L.NoMacroSpace = "Unfortunately, you don't have enough global macro space for the macro to be created!"
 L.Force = "Mount Journal data collected, sorted, and ready to go!"
-L.Reload = "Updates when you reload."
 L.Total = "Total"
 L.Ground = "Ground"
 L.Flying = "Flying"

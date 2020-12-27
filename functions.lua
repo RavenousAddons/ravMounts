@@ -316,11 +316,11 @@ function ravMounts:SetDefaultOptions()
 end
 
 function ravMounts:RegisterControl(control, parentFrame)
-    if ( ( not parentFrame ) or ( not control ) ) then
-        return;
+    if (not parentFrame) or (not control) then
+        return
     end
-    parentFrame.controls = parentFrame.controls or {};
-    tinsert(parentFrame.controls, control);
+    parentFrame.controls = parentFrame.controls or {}
+    tinsert(parentFrame.controls, control)
 end
 
 local prevControl
@@ -335,11 +335,18 @@ function ravMounts:CreateLabel(cfg)
 
     local label = cfg.parent:CreateFontString(cfg.name, "ARTWORK", cfg.fontObject)
     label:SetPoint(cfg.initialPoint, cfg.relativeTo, cfg.relativePoint, cfg.offsetX, cfg.offsetY)
-    label:SetText(cfg.label)
+    if cfg.labelInsert then
+        label.label = cfg.label
+        label.labelInsert = cfg.labelInsert
+        label:SetText(string.format(cfg.label, table.maxn(RAV_data.mounts[cfg.labelInsert])))
+    else
+        label:SetText(cfg.label)
+    end
     if cfg.width then
         label:SetWidth(cfg.width)
     end
 
+    ravMounts:RegisterControl(label, cfg.parent)
     prevControl = label
     return label
 end
@@ -370,13 +377,14 @@ function ravMounts:CreateCheckBox(cfg)
     end
 
     checkBox:SetScript("OnClick", function(self)
-        local checked = self:GetChecked()
-        checkBox.value = checked
+        checkBox.value = self:GetChecked()
         if cfg.needsRestart then
             checkBox.restart = not checkBox.restart
         end
+        RAV_data.options[checkBox.var] = checkBox:GetChecked()
         ravMounts:MountListHandler()
         ravMounts:EnsureMacro()
+        ravMounts.Options:Refresh()
     end)
 
     ravMounts:RegisterControl(checkBox, cfg.parent)

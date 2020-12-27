@@ -80,7 +80,6 @@ Options:SetScript("OnShow", function()
             label = L.Macro,
             tooltip = string.format(L.MacroTooltip, ravMounts.name),
             var = "macro",
-            needsRestart = true,
         },
         {
             type = "CheckBox",
@@ -89,7 +88,6 @@ Options:SetScript("OnShow", function()
             label = L.FlexMounts,
             tooltip = L.FlexMountsTooltip,
             var = "flexMounts",
-            needsRestart = true,
         },
         {
             type = "CheckBox",
@@ -112,7 +110,6 @@ Options:SetScript("OnShow", function()
             label = L.NormalMounts,
             tooltip = L.NormalMountsTooltip,
             var = "normalMounts",
-            needsRestart = true,
         },
         {
             type = "CheckBox",
@@ -121,7 +118,6 @@ Options:SetScript("OnShow", function()
             label = L.SwimmingMounts,
             tooltip = L.SwimmingMountsTooltip,
             var = "swimmingMounts",
-            needsRestart = true,
         },
         {
             type = "CheckBox",
@@ -130,7 +126,6 @@ Options:SetScript("OnShow", function()
             label = L.VendorMounts,
             tooltip = L.VendorMountsTooltip,
             var = "vendorMounts",
-            needsRestart = true,
         },
         {
             type = "CheckBox",
@@ -139,7 +134,6 @@ Options:SetScript("OnShow", function()
             label = L.PassengerMounts,
             tooltip = L.PassengerMountsTooltip,
             var = "passengerMounts",
-            needsRestart = true,
         },
         {
             type = "Label",
@@ -182,63 +176,63 @@ Options:SetScript("OnShow", function()
             type = "Label",
             name = "SubHeadingTotal",
             parent = Options,
-            label = L.Total .. ": |cffffffff" .. table.maxn(RAV_data.mounts.allByName) .. "|r",
+            label = L.Total .. ": |cffffffff%s|r",
+            labelInsert = "allByName",
             fontObject = "GameFontNormal",
         },
         {
             type = "Label",
             name = "SubHeadingGround",
             parent = Options,
-            label = L.Ground .. ": |cffffffff" .. table.maxn(RAV_data.mounts.ground) .. "|r",
+            label = L.Ground .. ": |cffffffff%s|r",
+            labelInsert = "ground",
             fontObject = "GameFontNormal",
-            offsetY = -4,
+            offsetY = -6,
         },
         {
             type = "Label",
             name = "SubHeadingFlying",
             parent = Options,
-            label = L.Flying .. ": |cffffffff" .. table.maxn(RAV_data.mounts.flying) .. "|r",
+            label = L.Flying .. ": |cffffffff%s|r",
+            labelInsert = "flying",
             fontObject = "GameFontNormal",
-            offsetY = -4,
+            offsetY = -6,
         },
         {
             type = "Label",
             name = "SubHeadingSwimming",
             parent = Options,
-            label = L.Swimming .. ": |cffffffff" .. table.maxn(RAV_data.mounts.swimming) .. "|r",
+            label = L.Swimming .. ": |cffffffff%s|r",
+            labelInsert = "swimming",
             fontObject = "GameFontNormal",
-            offsetY = -4,
+            offsetY = -6,
         },
         {
             type = "Label",
             name = "SubHeadingVendor",
             parent = Options,
-            label = L.Vendor .. ": |cffffffff" .. table.maxn(RAV_data.mounts.vendor) .. "|r",
+            label = L.Vendor .. ": |cffffffff%s|r",
+            labelInsert = "vendor",
             fontObject = "GameFontNormal",
-            offsetY = -4,
+            offsetY = -6,
         },
         {
             type = "Label",
             name = "SubHeadingPassengerGround",
             parent = Options,
-            label = L.PassengerGround .. ": |cffffffff" .. table.maxn(RAV_data.mounts.groundPassenger) .. "|r",
+            label = L.PassengerGround .. ": |cffffffff%s|r",
+            labelInsert = "groundPassenger",
             fontObject = "GameFontNormal",
-            offsetY = -4,
+            offsetY = -6,
         },
         {
             type = "Label",
             name = "SubHeadingPassengerFlying",
             parent = Options,
-            label = L.PassengerFlying .. ": |cffffffff" .. table.maxn(RAV_data.mounts.flyingPassenger) .. "|r",
+            label = L.PassengerFlying .. ": |cffffffff%s|r",
+            labelInsert = "flyingPassenger",
             fontObject = "GameFontNormal",
-            offsetY = -4,
-        },
-        {
-            type = "Label",
-            name = "SubHeadingReload",
-            parent = Options,
-            label = "|cffffffff" .. L.Reload .. "|r",
-            fontObject = "GameFontNormal",
+            offsetY = -6,
         },
     }
 
@@ -252,8 +246,13 @@ Options:SetScript("OnShow", function()
 
     function Options:Refresh()
         for _, control in pairs(self.controls) do
-            control:SetValue(control)
-            control.oldValue = control:GetValue()
+            if control.Text then
+                control:SetValue(control)
+                control.oldValue = control:GetValue()
+            elseif control.labelInsert then
+                control:SetText(string.format(control.label, table.maxn(RAV_data.mounts[control.labelInsert])))
+                control.oldValue = control:GetText()
+            end
         end
     end
 

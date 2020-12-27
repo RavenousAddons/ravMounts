@@ -35,12 +35,10 @@ function ravMounts_OnEvent(self, event, arg, ...)
                 RAV_seenUpdate = true
             end
         end
-    elseif event == "MOUNT_JOURNAL_SEARCH_UPDATED" then
+    elseif event == "MOUNT_JOURNAL_SEARCH_UPDATED" or event == "ZONE_CHANGED" or event == "ZONE_CHANGED_INDOORS" or event == "ZONE_CHANGED_NEW_AREA" then
         ravMounts:MountListHandler()
         ravMounts:EnsureMacro()
-    elseif event == "ZONE_CHANGED" or event == "ZONE_CHANGED_INDOORS" or event == "ZONE_CHANGED_NEW_AREA" then
-        ravMounts:MountListHandler()
-        ravMounts:EnsureMacro()
+        ravMounts.Options:Refresh()
     end
 end
 
