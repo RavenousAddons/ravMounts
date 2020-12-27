@@ -354,6 +354,7 @@ function ravMounts:CreateCheckBox(cfg)
     checkBox.GetValue = function(self) return checkBox:GetChecked() end
     checkBox.SetValue = function(self) checkBox:SetChecked(RAV_data.options[cfg.var]) end
     checkBox.var = cfg.var
+    checkBox.restart = false
 
     if cfg.tooltip then
         checkBox.tooltipText = cfg.tooltip
@@ -362,6 +363,7 @@ function ravMounts:CreateCheckBox(cfg)
     checkBox:SetScript("OnClick", function(self)
         local checked = self:GetChecked()
         checkBox.value = checked
+        checkBox.restart = not checkBox.restart
         ravMounts:MountListHandler()
         ravMounts:EnsureMacro()
     end)

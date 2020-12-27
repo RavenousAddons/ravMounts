@@ -11,7 +11,11 @@ Options.okay = function(self)
     for _, control in pairs(self.controls) do
         RAV_data.options[control.var] = control:GetValue()
     end
-    ReloadUI()
+    for _, control in pairs(self.controls) do
+        if control.restart then
+            ReloadUI()
+        end
+    end
 end
 Options.cancel = function(self)
     for _, control in pairs(self.controls) do
