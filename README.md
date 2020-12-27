@@ -10,7 +10,7 @@ By default, the AddOn will create and maintain a macro for you under General Mac
 
 This AddOn is meant as a replacement for the default in-game "Summon Random Favorite Mount" button by expanding what mounts can be summoned, and when used with a keybind can be combined with modifier keys to summon special mount types, like vendor or passenger mounts.
 
-`/ravmounts`
+`/ravm`
 
 When using that command, Ravenous Mounts will loop through your Mount Journal collecting and sorting your mounts into different lists, organised by type, then, depending on the situation your character is in, summon the optimal mount based on your Favorites in the Mount Journal.
 
@@ -22,33 +22,27 @@ The default button in the Mount Journal isn't sufficient or smart enough. Raveno
 
 Ravenous Mounts comes with a small handful of commands available for you to check configuration, toggle settings, and see data about your mount lists. Here's a couple of commands illustrated:
 
-`/ravmounts help`
+`/ravm help`
 
 *Prints out a usage guide much like this one!*
 
-`/ravmounts config`
+`/ravm config`
 
 *Shows you your configuration settings.*
 
-- normal
-- vendor
-- passenger
-- swimming
-- flex
-- clone
-
-`/ravmounts passenger`
+`/ravm passenger`
 
 *Forces Ravenous Mounts to call a specific type of mount, regardless of the situation you're in. Available types:*
 
-- flying
 - ground
+- flying
 - swimming
 - vendor
-- flying passenger
 - ground passenger
-- vash'jir
-- ahn'qiraj
+- flying passenger
+- ahnqiraj
+- vashjir
+- maw
 - chauffeur
 
 As mentioned above, Ravenous Mounts also checks for modifier keys being pressed when the command is run—these keys change what type of mount will be summoned:

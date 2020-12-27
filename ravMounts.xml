@@ -1,12 +1,9 @@
 <Ui>
     <Script file="metadata.lua" />
-
-    <Script file="LibFlyable.lua" />
-
     <Script file="locales.lua" />
+    <Script file="LibFlyable.lua" />
     <Script file="functions.lua" />
     <Script file="options.lua" />
-
     <Script file="core.lua" />
 
     <Frame name="ravMounts">

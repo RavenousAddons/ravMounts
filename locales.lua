@@ -10,9 +10,27 @@ setmetatable(L, { __index = function(t, k)
 end })
 
 -- Default (English)
+L.Version = "%s is the current version." -- ravMounts.version
+L.OutOfDate = "There is an update available for |cff%s%s|r! Please go to GitHub, WoWInterface, or Curse to download the latest version." -- ravMounts.color, ravMounts.name
+L.Install = "Thanks for installing |cff%s%s|r!" -- ravMounts.color, ravMounts.name
+L.Update = "Thanks for updating to |cff%sv%s|r!" -- ravMounts.color, ravMounts.version
+L.Support1 = "This AddOn creates and maintains a macro called |r%s|cffffffff for you under |rGeneral Macros|cffffffff." -- ravMounts.name
+L.Support2 = "Check out the AddOn on |rGitHub|cffffffff, |rWoWInterface|cffffffff, or |rCurse|cffffffff for more info and support!"
+L.Support3 = "You can also get help directly from the author on Discord: |r%s|cffffffff" -- ravMounts.discord
+L.NoMounts = "Unfortunately, you don't have any mounts that can be called at this time!"
+L.NoMacroSpace = "Unfortunately, you don't have enough global macro space for the macro to be created!"
+L.Force = "Mount Journal data collected, sorted, and ready to go!"
+L.Reload = "* Updates when you reload."
+L.Total = "Total"
+L.Ground = "Ground"
+L.Flying = "Flying"
+L.Swimming = "Swimming"
+L.Vendor = "Vendor"
+L.PassengerGround = "Passenger (Ground)"
+L.PassengerFlying = "Passenger (Flying)"
 L.OptionsHeading = "Configuration:"
 L.Macro = "Automatically create/maintain macro"
-L.MacroTooltip = "When enabled, a macro called |cff" .. ravMounts.color .. ravMounts.name .. "|r will be automatically created and managed for you under General Macros."
+L.MacroTooltip = "When enabled, a macro called |cff%s%s|r will be automatically created and managed for you under General Macros." -- ravMounts.color, ravMounts.name
 L.Clone = "Clone target/focus' mount"
 L.CloneTooltip = "When enabled, your target/focus' mount will be summoned, if you have it too."
 L.FlexMounts = "Flexible mounts"
@@ -26,23 +44,8 @@ L.PassengerMounts = "Passenger mounts (Ground & Flying)"
 L.PassengerMountsTooltip = "When enabled, only Passenger mounts marked as favorites will be summoned."
 L.VendorMounts = "Vendor mounts"
 L.VendorMountsTooltip = "When enabled, only Vendor mounts marked as favorites will be summoned."
+L.SupportHeading = "Help and Support:"
 L.DataHeading = "Collected Data:"
-L.Version = ravMounts.version .. " is the current version."
-L.OutOfDate = "There is an update available for |cff" .. ravMounts.color .. ravMounts.name .. "|r! Please go to GitHub, WoWInterface, or Curse to download the latest version."
-L.Install = "Thanks for installing |cff" .. ravMounts.color .. ravMounts.name .. "|r!"
-L.Update = "Thanks for updating to |cff" .. ravMounts.color .. "v" .. ravMounts.version .. "|r!"
-L.Help = "Information and How to Use|r\nThis addon creates and maintains a macro called |cff" .. ravMounts.color .. ravMounts.name .. "|r for you under General Macros.\nCheck your config: |cff" .. ravMounts.color .. "/" .. ravMounts.command .. " config|r\nCheck out the addon on GitHub, WoWInterface, or Curse for more info and support!\nYou can also get help directly from the author on Discord: " .. ravMounts.discord
-L.NoMounts = "Unfortunately, you don't have any mounts that can be called at this time!"
-L.NoMacroSpace = "Unfortunately, you don't have enough global macro space for the macro to be created!"
-L.Force = "Mount Journal data collected, sorted, and ready to go!"
-L.Reload = "* Updates when you reload."
-L.Total = "Total"
-L.Ground = "Ground"
-L.Flying = "Flying"
-L.Swimming = "Swimming"
-L.Vendor = "Vendor"
-L.PassengerGround = "Passenger (Ground)"
-L.PassengerFlying = "Passenger (Flying)"
 
 -- Check locale and assign appropriate
 local CURRENT_LOCALE = GetLocale()

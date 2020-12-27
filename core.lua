@@ -15,9 +15,9 @@ function ravMounts_OnEvent(self, event, arg, ...)
         if event == "ADDON_LOADED" then
             ravMounts:SetDefaultOptions()
             if not RAV_version then
-                ravMounts:PrettyPrint(L.Install)
+                ravMounts:PrettyPrint(string.format(L.Install, ravMounts.color, ravMounts.name))
             elseif RAV_version ~= ravMounts.version then
-                ravMounts:PrettyPrint(L.Update)
+                ravMounts:PrettyPrint(string.format(L.Update, ravMounts.color, ravMounts.version))
             end
             if not RAV_version or RAV_version ~= ravMounts.version then
                 RAV_seenUpdate = false
@@ -31,7 +31,7 @@ function ravMounts_OnEvent(self, event, arg, ...)
             local a, b, c = strsplit(".", ravMounts.version)
             local d, e, f = strsplit(".", message)
             if (d > a) or (d == a and e > b) or (d == a and e == b and f > c) then
-                ravMounts:PrettyPrint(L.OutOfDate)
+                ravMounts:PrettyPrint(string.format(L.OutOfDate, ravMounts.color, ravMounts.name))
                 RAV_seenUpdate = true
             end
         end
@@ -47,13 +47,11 @@ end
 SlashCmdList["RAVMOUNTS"] = function(message, editbox)
     local command, argument = strsplit(" ", message)
     if command == "version" or command == "v" then
-        ravMounts:PrettyPrint(L.Version)
+        ravMounts:PrettyPrint(string.format(L.Version, ravMounts.version))
         ravMounts:SendVersion()
-    elseif command == "c" or string.match(command, "con") or command == "o" or string.match(command, "opt") or command == "s" or string.match(command, "sett") or string.match(command, "togg") then
+    elseif command == "c" or string.match(command, "con") or command == "h" or string.match(command, "help") or command == "o" or string.match(command, "opt") or command == "s" or string.match(command, "sett") or string.match(command, "togg") then
         InterfaceOptionsFrame_OpenToCategory(ravMounts.Options)
         InterfaceOptionsFrame_OpenToCategory(ravMounts.Options)
-    elseif command == "h" or string.match(command, "help") then
-        ravMounts:PrettyPrint(L.Help)
     elseif command == "f" or string.match(command, "force") then
         ravMounts:PrettyPrint(L.Force)
         ravMounts:MountListHandler()

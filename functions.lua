@@ -336,6 +336,9 @@ function ravMounts:CreateLabel(cfg)
     local label = cfg.parent:CreateFontString(cfg.name, "ARTWORK", cfg.fontObject)
     label:SetPoint(cfg.initialPoint, cfg.relativeTo, cfg.relativePoint, cfg.offsetX, cfg.offsetY)
     label:SetText(cfg.label)
+    if cfg.width then
+        label:SetWidth(cfg.width)
+    end
 
     prevControl = label
     return label

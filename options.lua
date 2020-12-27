@@ -1,12 +1,10 @@
 local name, ravMounts = ...
 local L = ravMounts.L
 
-local pairs = pairs
-
-local Options = CreateFrame("Frame", "RavenousMountsOptions", InterfaceOptionsFramePanelContainer)
-ravMounts.Options = Options
-Options.controlTable = {}
+local Options = CreateFrame("Frame", name .. "Options", InterfaceOptionsFramePanelContainer)
 Options.name = ravMounts.name
+Options.controlTable = {}
+ravMounts.Options = Options
 Options.okay = function(self)
     for _, control in pairs(self.controls) do
         RAV_data.options[control.var] = control:GetValue()
@@ -40,16 +38,16 @@ InterfaceOptions_AddCategory(Options)
 
 Options:Hide()
 Options:SetScript("OnShow", function()
-    local panelWidth = Options:GetWidth()/2
+    local panelWidth = Options:GetWidth() / 2
 
     local LeftSide = CreateFrame("Frame", "LeftSide", Options)
-    LeftSide:SetHeight(Options:GetHeight())
     LeftSide:SetWidth(panelWidth)
+    LeftSide:SetHeight(Options:GetHeight())
     LeftSide:SetPoint("TOPLEFT", Options)
 
     local RightSide = CreateFrame("Frame", "RightSide", Options)
-    RightSide:SetHeight(Options:GetHeight())
     RightSide:SetWidth(panelWidth)
+    RightSide:SetHeight(Options:GetHeight())
     RightSide:SetPoint("TOPRIGHT", Options)
 
     local UIControls = {
@@ -61,7 +59,6 @@ Options:SetScript("OnShow", function()
             relativeTo = LeftSide,
             relativePoint = "TOPLEFT",
             offsetX = 16,
-            offsetY = -16,
         },
         {
             type = "Label",
@@ -75,14 +72,13 @@ Options:SetScript("OnShow", function()
             name = "OptionsHeading",
             parent = Options,
             label = L.OptionsHeading,
-            offsetY = -16,
         },
         {
             type = "CheckBox",
             name = "Macro",
             parent = Options,
             label = L.Macro,
-            tooltip = L.MacroTooltip,
+            tooltip = string.format(L.MacroTooltip, ravMounts.color, ravMounts.name),
             var = "macro",
         },
         {
@@ -141,12 +137,39 @@ Options:SetScript("OnShow", function()
         },
         {
             type = "Label",
+            name = "SupportHeading",
+            parent = Options,
+            label = L.SupportHeading,
+        },
+        {
+            type = "Label",
+            name = "SubHeadingSupport1",
+            parent = Options,
+            label = "|cffffffff" .. string.format(L.Support1, ravMounts.name) .. "|r",
+            fontObject = "GameFontNormal",
+        },
+        {
+            type = "Label",
+            name = "SubHeadingSupport2",
+            parent = Options,
+            label = "|cffffffff" .. L.Support2 .. "|r",
+            fontObject = "GameFontNormal",
+        },
+        {
+            type = "Label",
+            name = "SubHeadingSupport3",
+            parent = Options,
+            label = "|cffffffff" .. string.format(L.Support3, ravMounts.discord) .. "|r",
+            fontObject = "GameFontNormal",
+        },
+        {
+            type = "Label",
             name = "DataHeading",
             parent = Options,
             label = L.DataHeading,
             relativeTo = RightSide,
             relativePoint = "TOPLEFT",
-            offsetX = -16,
+            offsetX = 16,
             offsetY = -77,
         },
         {
