@@ -1,7 +1,19 @@
 local name, ravMounts = ...
 local L = ravMounts.L
+local mountTypes = ravMounts.data.mountTypes
+local mountIDs = ravMounts.data.mountIDs
+local mapIDs = ravMounts.data.mapIDs
 
 local faction, _ = UnitFactionGroup("player")
+
+local function contains(table, input)
+    for index, value in ipairs(table) do
+        if value == input then
+            return true
+        end
+    end
+    return false
+end
 
 function ravMounts:PrettyPrint(message, full)
     if full == false then
@@ -53,21 +65,32 @@ function ravMounts:GetCloneMount()
     return id
 end
 
+-- Simplify the appearance of the logic later by casting our checks to
+-- simple variables
+local flyable, cloneMountID, submerged, mapID, inAhnQiraj, inVashjir, inMaw, haveGroundMounts, haveFlyingMounts, haveGroundPassengerMounts, haveFlyingPassengerMounts, haveVendorMounts, haveSwimmingMounts, haveAhnQirajMounts, haveVashjirMounts, haveMawMounts, haveChauffeurMounts
+function ravMounts:AssignVariables()
+    flyable = ravMounts:IsFlyableArea()
+    cloneMountID = ravMounts:GetCloneMount()
+    submerged = IsSwimming()
+    mapID = C_Map.GetBestMapForUnit("player")
+    inAhnQiraj = contains(mapIDs.ahnqiraj, mapID)
+    inVashjir = contains(mapIDs.vashjir, mapID)
+    inMaw = contains(mapIDs.maw, mapID)
+    haveGroundMounts = next(RAV_data.mounts.ground) ~= nil and true or false
+    haveFlyingMounts = next(RAV_data.mounts.flying) ~= nil and true or false
+    haveGroundPassengerMounts = next(RAV_data.mounts.groundPassenger) ~= nil and true or false
+    haveFlyingPassengerMounts = next(RAV_data.mounts.flyingPassenger) ~= nil and true or false
+    haveVendorMounts = next(RAV_data.mounts.vendor) ~= nil and true or false
+    haveSwimmingMounts = next(RAV_data.mounts.swimming) ~= nil and true or false
+    haveAhnQirajMounts = next(RAV_data.mounts.ahnqiraj) ~= nil and true or false
+    haveVashjirMounts = next(RAV_data.mounts.vashjir) ~= nil and true or false
+    haveMawMounts = next(RAV_data.mounts.maw) ~= nil and true or false
+    haveChauffeurMounts = next(RAV_data.mounts.chauffeur) ~= nil and true or false
+end
+
 function ravMounts:EnsureMacro()
     if not UnitAffectingCombat("player") and RAV_data.options.macro then
-        local mapID = C_Map.GetBestMapForUnit("player")
-        local inAhnQiraj = (mapID == 319 or mapID == 320 or mapID == 321) and true or false
-        local inVashjir = (mapID == 201 or mapID == 203 or mapID == 204 or mapID == 205 or mapID == 1272) and true or false
-        local inMaw = (mapID == 1543 or mapID == 1648) and true or false
-        local haveGroundMounts = next(RAV_data.mounts.ground) ~= nil and true or false
-        local haveFlyingMounts = next(RAV_data.mounts.flying) ~= nil and true or false
-        local haveGroundPassengerMounts = next(RAV_data.mounts.groundPassenger) ~= nil and true or false
-        local haveFlyingPassengerMounts = next(RAV_data.mounts.flyingPassenger) ~= nil and true or false
-        local haveVendorMounts = next(RAV_data.mounts.vendor) ~= nil and true or false
-        local haveSwimmingMounts = next(RAV_data.mounts.swimming) ~= nil and true or false
-        local haveAhnQirajMounts = next(RAV_data.mounts.ahnqiraj) ~= nil and true or false
-        local haveVashjirMounts = next(RAV_data.mounts.vashjir) ~= nil and true or false
-        local haveMawMounts = next(RAV_data.mounts.maw) ~= nil and true or false
+        ravMounts:AssignVariables()
         local flying = haveFlyingMounts and RAV_data.mounts.flying or nil
         local ground = (inAhnQiraj and haveAhnQirajMounts) and RAV_data.mounts.ahnqiraj or (inMaw and haveMawMounts) and RAV_data.mounts.maw or haveGroundMounts and RAV_data.mounts.ground or nil
         local vendor = haveVendorMounts and RAV_data.mounts.vendor or nil
@@ -149,23 +172,22 @@ function ravMounts:MountListHandler()
     RAV_data.mounts.vashjir = {}
     RAV_data.mounts.maw = {}
     RAV_data.mounts.chauffeur = {}
-    local isFlyingMount, isGroundMount, isVendorMount, isFlyingPassengerMount, isGroundPassengerMount, isSwimmingMount, isVashjirMount, isAhnQirajMount, isChauffeurMount, isFlexMount
     -- Let's start looping over our Mount Journal adding Mounts to their
     -- respective groups
     for _, mountID in pairs(C_MountJournal.GetMountIDs()) do
         local mountName, spellID, _, _, isUsable, _, isFavorite, _, mountFaction, hiddenOnCharacter, isCollected = C_MountJournal.GetMountInfoByID(mountID)
         local _, _, _, _, mountType = C_MountJournal.GetMountInfoExtraByID(mountID)
-        isGroundMount = (mountType == 230)
-        isFlyingMount = (mountType == 247 or mountType == 248)
-        isSwimmingMount = (mountType == 231 or mountType == 254)
-        isAhnQirajMount = (mountType == 241)
-        isVashjirMount = (mountType == 232)
-        isChauffeurMount = (mountType == 284)
-        isMawMount = (mountID == 1304 or mountID == 1442)
-        isVendorMount = (mountID == 280 or mountID == 284 or mountID == 460 or mountID == 1039)
-        isFlyingPassengerMount = (mountID == 382 or mountID == 407 or mountID == 455 or mountID == 959 or mountID == 960)
-        isGroundPassengerMount = (mountID == 240 or mountID == 254 or mountID == 255 or mountID == 275 or mountID == 286 or mountID == 287 or mountID == 288 or mountID == 289)
-        isFlexMount = (mountID == 219 or mountID == 363 or mountID == 376 or mountID == 421 or mountID == 439 or mountID == 451 or mountID == 455 or mountID == 456 or mountID == 457 or mountID == 458 or mountID == 459 or mountID == 468 or mountID == 522 or mountID == 523 or mountID == 532 or mountID == 594 or mountID == 547 or mountID == 593 or mountID == 764 or mountID == 1222 or mountID == 1404)
+        local isGroundMount = contains(mountTypes.ground, mountType)
+        local isFlyingMount = contains(mountTypes.flying, mountType)
+        local isSwimmingMount = contains(mountTypes.swimming, mountType)
+        local isAhnQirajMount = contains(mountTypes.ahnqiraj, mountType)
+        local isVashjirMount = contains(mountTypes.vashjir, mountType)
+        local isChauffeurMount = contains(mountTypes.chauffeur, mountType)
+        local isVendorMount = contains(mountIDs.vendor, mountID)
+        local isMawMount = contains(mountIDs.maw, mountID)
+        local isFlyingPassengerMount = contains(mountIDs.flyingPassenger, mountID)
+        local isGroundPassengerMount = contains(mountIDs.groundPassenger, mountID)
+        local isFlexMount = contains(mountIDs.flex, mountID)
         if isCollected then
             -- 0 = Horde, 1 = Alliance
             -- Check for mismatch, means not available
@@ -221,25 +243,7 @@ function ravMounts:MountUpHandler(specificType)
     if IsFlying() then
         return
     end
-    -- Simplify the appearance of the logic later by casting our checks to
-    -- simple variables
-    local flyable = ravMounts:IsFlyableArea()
-    local cloneMountID = ravMounts:GetCloneMount()
-    local submerged = IsSwimming()
-    local mapID = C_Map.GetBestMapForUnit("player")
-    local inAhnQiraj = (mapID == 319 or mapID == 320 or mapID == 321) and true or false
-    local inVashjir = (mapID == 201 or mapID == 203 or mapID == 204 or mapID == 205 or mapID == 1272) and true or false
-    local inMaw = (mapID == 1543 or mapID == 1648) and true or false
-    local haveGroundMounts = next(RAV_data.mounts.ground) ~= nil and true or false
-    local haveFlyingMounts = next(RAV_data.mounts.flying) ~= nil and true or false
-    local haveGroundPassengerMounts = next(RAV_data.mounts.groundPassenger) ~= nil and true or false
-    local haveFlyingPassengerMounts = next(RAV_data.mounts.flyingPassenger) ~= nil and true or false
-    local haveVendorMounts = next(RAV_data.mounts.vendor) ~= nil and true or false
-    local haveSwimmingMounts = next(RAV_data.mounts.swimming) ~= nil and true or false
-    local haveAhnQirajMounts = next(RAV_data.mounts.ahnqiraj) ~= nil and true or false
-    local haveVashjirMounts = next(RAV_data.mounts.vashjir) ~= nil and true or false
-    local haveMawMounts = next(RAV_data.mounts.maw) ~= nil and true or false
-    local haveChauffeurMounts = next(RAV_data.mounts.chauffeur) ~= nil and true or false
+    ravMounts:AssignVariables()
 
     if ((IsShiftKeyDown() and IsAltKeyDown()) or (IsShiftKeyDown() and IsControlKeyDown())) and (IsMounted() or UnitInVehicle("player")) then
         DoEmote(EMOTE171_TOKEN)
@@ -335,10 +339,10 @@ function ravMounts:CreateLabel(cfg)
 
     local label = cfg.parent:CreateFontString(cfg.name, "ARTWORK", cfg.fontObject)
     label:SetPoint(cfg.initialPoint, cfg.relativeTo, cfg.relativePoint, cfg.offsetX, cfg.offsetY)
-    if cfg.labelInsert then
+    if cfg.countMounts then
         label.label = cfg.label
-        label.labelInsert = cfg.labelInsert
-        label:SetText(string.format(cfg.label, table.maxn(RAV_data.mounts[cfg.labelInsert])))
+        label.countMounts = cfg.countMounts
+        label:SetText(string.format(cfg.label, table.maxn(RAV_data.mounts[cfg.countMounts])))
     else
         label:SetText(cfg.label)
     end
@@ -397,8 +401,8 @@ function ravMounts:RefreshControls(controls)
         if control.Text then
             control:SetValue(control)
             control.oldValue = control:GetValue()
-        elseif control.labelInsert then
-            control:SetText(string.format(control.label, table.maxn(RAV_data.mounts[control.labelInsert])))
+        elseif control.countMounts then
+            control:SetText(string.format(control.label, table.maxn(RAV_data.mounts[control.countMounts])))
             control.oldValue = control:GetText()
         end
     end

@@ -32,8 +32,8 @@ Options.refresh = function(self)
         if control.Text then
             control:SetValue(control)
             control.oldValue = control:GetValue()
-        elseif control.labelInsert then
-            control:SetText(string.format(control.label, table.maxn(RAV_data.mounts[control.labelInsert])))
+        elseif control.countMounts then
+            control:SetText(string.format(control.label, table.maxn(RAV_data.mounts[control.countMounts])))
             control.oldValue = control:GetText()
         end
     end
@@ -84,6 +84,7 @@ Options:SetScript("OnShow", function()
             label = L.Macro,
             tooltip = string.format(L.MacroTooltip, ravMounts.name),
             var = "macro",
+            offsetY = -12,
         },
         {
             type = "CheckBox",
@@ -114,6 +115,7 @@ Options:SetScript("OnShow", function()
             label = L.NormalMounts,
             tooltip = L.NormalMountsTooltip,
             var = "normalMounts",
+            offsetY = -12,
         },
         {
             type = "CheckBox",
@@ -181,7 +183,7 @@ Options:SetScript("OnShow", function()
             name = "SubHeadingTotal",
             parent = Options,
             label = L.Total .. ": |cffffffff%s|r",
-            labelInsert = "allByName",
+            countMounts = "allByName",
             fontObject = "GameFontNormal",
         },
         {
@@ -189,7 +191,7 @@ Options:SetScript("OnShow", function()
             name = "SubHeadingGround",
             parent = Options,
             label = L.Ground .. ": |cffffffff%s|r",
-            labelInsert = "ground",
+            countMounts = "ground",
             fontObject = "GameFontNormal",
             offsetY = -6,
         },
@@ -198,7 +200,7 @@ Options:SetScript("OnShow", function()
             name = "SubHeadingFlying",
             parent = Options,
             label = L.Flying .. ": |cffffffff%s|r",
-            labelInsert = "flying",
+            countMounts = "flying",
             fontObject = "GameFontNormal",
             offsetY = -6,
         },
@@ -207,7 +209,7 @@ Options:SetScript("OnShow", function()
             name = "SubHeadingSwimming",
             parent = Options,
             label = L.Swimming .. ": |cffffffff%s|r",
-            labelInsert = "swimming",
+            countMounts = "swimming",
             fontObject = "GameFontNormal",
             offsetY = -6,
         },
@@ -216,7 +218,7 @@ Options:SetScript("OnShow", function()
             name = "SubHeadingVendor",
             parent = Options,
             label = L.Vendor .. ": |cffffffff%s|r",
-            labelInsert = "vendor",
+            countMounts = "vendor",
             fontObject = "GameFontNormal",
             offsetY = -6,
         },
@@ -225,7 +227,7 @@ Options:SetScript("OnShow", function()
             name = "SubHeadingPassengerGround",
             parent = Options,
             label = L.PassengerGround .. ": |cffffffff%s|r",
-            labelInsert = "groundPassenger",
+            countMounts = "groundPassenger",
             fontObject = "GameFontNormal",
             offsetY = -6,
         },
@@ -234,7 +236,35 @@ Options:SetScript("OnShow", function()
             name = "SubHeadingPassengerFlying",
             parent = Options,
             label = L.PassengerFlying .. ": |cffffffff%s|r",
-            labelInsert = "flyingPassenger",
+            countMounts = "flyingPassenger",
+            fontObject = "GameFontNormal",
+            offsetY = -6,
+        },
+        {
+            type = "Label",
+            name = "SubHeadingAhnQiraj",
+            parent = Options,
+            label = L.AhnQiraj .. ": |cffffffff%s|r",
+            countMounts = "ahnqiraj",
+            fontObject = "GameFontNormal",
+            offsetY = -6,
+        },
+        {
+            type = "Label",
+            name = "SubHeadingVashjir",
+            parent = Options,
+            label = L.Vashjir .. ": |cffffffff%s|r",
+            countMounts = "vashjir",
+            fontObject = "GameFontNormal",
+            offsetY = -6,
+        },
+        {
+            type = "Label",
+            name = "SubHeadingMaw",
+            parent = Options,
+            label = L.Maw .. ": |cffffffff%s|r",
+            countMounts = "maw",
+            maps = {1543, 1648},
             fontObject = "GameFontNormal",
             offsetY = -6,
         },
