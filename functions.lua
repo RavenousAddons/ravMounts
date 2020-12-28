@@ -384,10 +384,22 @@ function ravMounts:CreateCheckBox(cfg)
         RAV_data.options[checkBox.var] = checkBox:GetChecked()
         ravMounts:MountListHandler()
         ravMounts:EnsureMacro()
-        ravMounts.Options:Refresh()
+        ravMounts:RefreshControls(ravMounts.Options.controls)
     end)
 
     ravMounts:RegisterControl(checkBox, cfg.parent)
     prevControl = checkBox
     return checkBox
+end
+
+function ravMounts:RefreshControls(controls)
+    for _, control in pairs(controls) do
+        if control.Text then
+            control:SetValue(control)
+            control.oldValue = control:GetValue()
+        elseif control.labelInsert then
+            control:SetText(string.format(control.label, table.maxn(RAV_data.mounts[control.labelInsert])))
+            control.oldValue = control:GetText()
+        end
+    end
 end

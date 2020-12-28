@@ -38,7 +38,9 @@ function ravMounts_OnEvent(self, event, arg, ...)
     elseif event == "MOUNT_JOURNAL_SEARCH_UPDATED" or event == "ZONE_CHANGED" or event == "ZONE_CHANGED_INDOORS" or event == "ZONE_CHANGED_NEW_AREA" then
         ravMounts:MountListHandler()
         ravMounts:EnsureMacro()
-        ravMounts.Options:Refresh()
+        if ravMounts.Options.controls then
+            ravMounts:RefreshControls(ravMounts.Options.controls)
+        end
     end
 end
 
@@ -54,6 +56,7 @@ SlashCmdList["RAVMOUNTS"] = function(message, editbox)
         ravMounts:PrettyPrint(L.Force)
         ravMounts:MountListHandler()
         ravMounts:EnsureMacro()
+        ravMounts:RefreshControls(ravMounts.Options.controls)
     else
         ravMounts:MountUpHandler(command)
     end

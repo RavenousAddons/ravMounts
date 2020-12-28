@@ -4,7 +4,6 @@ local L = ravMounts.L
 local Options = CreateFrame("Frame", name .. "Options", InterfaceOptionsFramePanelContainer)
 Options.name = ravMounts.name
 Options.controlTable = {}
-ravMounts.Options = Options
 Options.okay = function(self)
     for _, control in pairs(self.controls) do
         RAV_data.options[control.var] = control:GetValue()
@@ -30,8 +29,13 @@ Options.default = function(self)
 end
 Options.refresh = function(self)
     for _, control in pairs(self.controls) do
-        control:SetValue()
-        control.oldValue = control:GetValue()
+        if control.Text then
+            control:SetValue(control)
+            control.oldValue = control:GetValue()
+        elseif control.labelInsert then
+            control:SetText(string.format(control.label, table.maxn(RAV_data.mounts[control.labelInsert])))
+            control.oldValue = control:GetText()
+        end
     end
 end
 InterfaceOptions_AddCategory(Options)
@@ -244,18 +248,7 @@ Options:SetScript("OnShow", function()
         end
     end
 
-    function Options:Refresh()
-        for _, control in pairs(self.controls) do
-            if control.Text then
-                control:SetValue(control)
-                control.oldValue = control:GetValue()
-            elseif control.labelInsert then
-                control:SetText(string.format(control.label, table.maxn(RAV_data.mounts[control.labelInsert])))
-                control.oldValue = control:GetText()
-            end
-        end
-    end
-
-    Options:Refresh()
+    ravMounts:RefreshControls(Options.controls)
     Options:SetScript("OnShow", nil)
 end)
+ravMounts.Options = Options
