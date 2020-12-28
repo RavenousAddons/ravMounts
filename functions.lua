@@ -5,6 +5,8 @@ local mountIDs = ravMounts.data.mountIDs
 local mapIDs = ravMounts.data.mapIDs
 
 local faction, _ = UnitFactionGroup("player")
+local flyable, cloneMountID, submerged, mapID, inAhnQiraj, inVashjir, inMaw, haveGroundMounts, haveFlyingMounts, haveGroundPassengerMounts, haveFlyingPassengerMounts, haveVendorMounts, haveSwimmingMounts, haveAhnQirajMounts, haveVashjirMounts, haveMawMounts, haveChauffeurMounts
+local prevControl
 
 local function contains(table, input)
     for index, value in ipairs(table) do
@@ -65,9 +67,6 @@ function ravMounts:GetCloneMount()
     return id
 end
 
--- Simplify the appearance of the logic later by casting our checks to
--- simple variables
-local flyable, cloneMountID, submerged, mapID, inAhnQiraj, inVashjir, inMaw, haveGroundMounts, haveFlyingMounts, haveGroundPassengerMounts, haveFlyingPassengerMounts, haveVendorMounts, haveSwimmingMounts, haveAhnQirajMounts, haveVashjirMounts, haveMawMounts, haveChauffeurMounts
 function ravMounts:AssignVariables()
     flyable = ravMounts:IsFlyableArea()
     cloneMountID = ravMounts:GetCloneMount()
@@ -244,7 +243,6 @@ function ravMounts:MountUpHandler(specificType)
         return
     end
     ravMounts:AssignVariables()
-
     if ((IsShiftKeyDown() and IsAltKeyDown()) or (IsShiftKeyDown() and IsControlKeyDown())) and (IsMounted() or UnitInVehicle("player")) then
         DoEmote(EMOTE171_TOKEN)
     elseif IsShiftKeyDown() and haveVendorMounts then
@@ -326,8 +324,6 @@ function ravMounts:RegisterControl(control, parentFrame)
     parentFrame.controls = parentFrame.controls or {}
     tinsert(parentFrame.controls, control)
 end
-
-local prevControl
 
 function ravMounts:CreateLabel(cfg)
     cfg.initialPoint = cfg.initialPoint or "TOPLEFT"
