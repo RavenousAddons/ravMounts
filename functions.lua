@@ -93,7 +93,7 @@ function ravMounts:EnsureMacro()
         local flying = haveFlyingMounts and RAV_data.mounts.flying or nil
         local ground = (inAhnQiraj and haveAhnQirajMounts) and RAV_data.mounts.ahnqiraj or (inMaw and haveMawMounts) and RAV_data.mounts.maw or haveGroundMounts and RAV_data.mounts.ground or nil
         local vendor = haveVendorMounts and RAV_data.mounts.vendor or nil
-        local passenger = haveFlyingPassengerMounts and RAV_data.mounts.flyingPassenger or haveGroundPassengerMounts and RAV_data.mounts.groundPassenger or nil
+        local passenger = (flyable and haveFlyingPassengerMounts) and RAV_data.mounts.flyingPassenger or haveGroundPassengerMounts and RAV_data.mounts.groundPassenger or nil
         local swimming = (inVashjir and haveVashjirMounts) and RAV_data.mounts.vashjir or haveSwimmingMounts and RAV_data.mounts.swimming or nil
         local body = "/" .. ravMounts.command
         if ground or flying or vendor or passenger or swimming then

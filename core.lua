@@ -56,7 +56,9 @@ SlashCmdList["RAVMOUNTS"] = function(message, editbox)
         ravMounts:PrettyPrint(L.Force)
         ravMounts:MountListHandler()
         ravMounts:EnsureMacro()
-        ravMounts:RefreshControls(ravMounts.Options.controls)
+        if ravMounts.Options and ravMounts.Options.controls then
+            ravMounts:RefreshControls(ravMounts.Options.controls)
+        end
     else
         ravMounts:MountUpHandler(command)
     end
