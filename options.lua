@@ -42,17 +42,23 @@ InterfaceOptions_AddCategory(Options)
 
 Options:Hide()
 Options:SetScript("OnShow", function()
-    local panelWidth = Options:GetWidth() / 2
+    local fullWidth = Options:GetWidth() - 32
+    local panelWidth = fullWidth / 2 - 16
 
-    local LeftSide = CreateFrame("Frame", "LeftSide", Options)
-    LeftSide:SetWidth(panelWidth)
-    LeftSide:SetHeight(Options:GetHeight())
-    LeftSide:SetPoint("TOPLEFT", Options)
+    local HeaderPanel = CreateFrame("Frame", "HeaderPanel", Options)
+    HeaderPanel:SetPoint("TOPLEFT", Options, "TOPLEFT", 16, -16)
+    HeaderPanel:SetWidth(fullWidth)
+    HeaderPanel:SetHeight(32)
 
-    local RightSide = CreateFrame("Frame", "RightSide", Options)
-    RightSide:SetWidth(panelWidth)
-    RightSide:SetHeight(Options:GetHeight())
-    RightSide:SetPoint("TOPRIGHT", Options)
+    local LeftPanel = CreateFrame("Frame", "LeftPanel", Options)
+    LeftPanel:SetPoint("TOPLEFT", HeaderPanel, "BOTTOMLEFT", 0, -16)
+    LeftPanel:SetWidth(panelWidth)
+    LeftPanel:SetHeight(Options:GetHeight() - HeaderPanel:GetHeight() - 16)
+
+    local RightPanel = CreateFrame("Frame", "RightPanel", Options)
+    RightPanel:SetPoint("TOPRIGHT", HeaderPanel, "BOTTOMRIGHT", 0, -16)
+    RightPanel:SetWidth(panelWidth)
+    RightPanel:SetHeight(Options:GetHeight() - HeaderPanel:GetHeight() - 16)
 
     local UIControls = {
         {
@@ -60,9 +66,9 @@ Options:SetScript("OnShow", function()
             name = "Heading",
             parent = Options,
             label = ravMounts.name .. " v" .. ravMounts.version,
-            relativeTo = LeftSide,
+            relativeTo = HeaderPanel,
             relativePoint = "TOPLEFT",
-            offsetX = 16,
+            offsetY = 0,
         },
         {
             type = "Label",
@@ -76,6 +82,8 @@ Options:SetScript("OnShow", function()
             name = "OptionsHeading",
             parent = Options,
             label = L.OptionsHeading,
+            relativeTo = LeftPanel,
+            relativePoint = "TOPLEFT",
         },
         {
             type = "CheckBox",
@@ -173,10 +181,8 @@ Options:SetScript("OnShow", function()
             name = "DataHeading",
             parent = Options,
             label = L.DataHeading,
-            relativeTo = RightSide,
+            relativeTo = RightPanel,
             relativePoint = "TOPLEFT",
-            offsetX = 16,
-            offsetY = -77,
         },
         {
             type = "Label",

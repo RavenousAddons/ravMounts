@@ -11,7 +11,7 @@ local prevControl
 local function contains(table, input)
     for index, value in ipairs(table) do
         if value == input then
-            return true
+            return index
         end
     end
     return false
@@ -39,32 +39,6 @@ function ravMounts:SendVersion()
     if guildName then
         C_ChatInfo.SendAddonMessage(name, RAV_version, "GUILD")
     end
-end
-
-function ravMounts:MountSummon(list)
-    local inCombat = UnitAffectingCombat("player")
-    if not inCombat and #list > 0 then
-        C_MountJournal.SummonByID(list[random(#list)])
-    end
-end
-
-function ravMounts:GetCloneMount()
-    local id = false
-    local clone = UnitIsPlayer("target") and "target" or UnitIsPlayer("focus") and "focus" or false
-    if clone then
-        for buffIndex = 1, 40 do
-            for mountIndex = 1, table.maxn(RAV_data.mounts.allByName) do
-                if UnitBuff(clone, buffIndex) == RAV_data.mounts.allByName[mountIndex] then
-                    id = RAV_data.mounts.allByID[mountIndex]
-                    break
-                end
-            end
-            if id then
-                break
-            end
-        end
-    end
-    return id
 end
 
 function ravMounts:AssignVariables()
@@ -153,6 +127,140 @@ function ravMounts:EnsureMacro()
             ravMounts:PrettyPrint(L.NoMacroSpace)
         end
     end
+end
+
+function ravMounts:RegisterDefaultOption(key, value)
+    if RAV_data == nil then
+        RAV_data = {}
+    end
+    if RAV_data.options == nil then
+        RAV_data.options = {}
+    end
+    if RAV_data.options[key] == nil then
+        RAV_data.options[key] = value
+    end
+end
+
+function ravMounts:SetDefaultOptions()
+    for k, v in pairs(ravMounts.defaults) do
+        ravMounts:RegisterDefaultOption(k, v)
+    end
+end
+
+function ravMounts:RegisterControl(control, parentFrame)
+    if (not parentFrame) or (not control) then
+        return
+    end
+    parentFrame.controls = parentFrame.controls or {}
+    tinsert(parentFrame.controls, control)
+end
+
+function ravMounts:CreateLabel(cfg)
+    cfg.initialPoint = cfg.initialPoint or "TOPLEFT"
+    cfg.relativePoint = cfg.relativePoint or "BOTTOMLEFT"
+    cfg.offsetX = cfg.offsetX or 0
+    cfg.offsetY = cfg.offsetY or -16
+    cfg.relativeTo = cfg.relativeTo or prevControl
+    cfg.fontObject = cfg.fontObject or "GameFontNormalLarge"
+
+    local label = cfg.parent:CreateFontString(cfg.name, "ARTWORK", cfg.fontObject)
+    label:SetPoint(cfg.initialPoint, cfg.relativeTo, cfg.relativePoint, cfg.offsetX, cfg.offsetY)
+    if cfg.countMounts then
+        label.label = cfg.label
+        label.countMounts = cfg.countMounts
+        label:SetText(string.format(cfg.label, table.maxn(RAV_data.mounts[cfg.countMounts])))
+    else
+        label:SetText(cfg.label)
+    end
+    if cfg.width then
+        label:SetWidth(cfg.width)
+    end
+
+    ravMounts:RegisterControl(label, cfg.parent)
+    prevControl = label
+    return label
+end
+
+function ravMounts:CreateCheckBox(cfg)
+    cfg.initialPoint = cfg.initialPoint or "TOPLEFT"
+    cfg.relativePoint = cfg.relativePoint or "BOTTOMLEFT"
+    cfg.offsetX = cfg.offsetX or 0
+    cfg.offsetY = cfg.offsetY or -6
+    cfg.relativeTo = cfg.relativeTo or prevControl
+
+    local checkBox = CreateFrame("CheckButton", cfg.name, cfg.parent, "InterfaceOptionsCheckButtonTemplate")
+    checkBox:SetPoint(cfg.initialPoint, cfg.relativeTo, cfg.relativePoint, cfg.offsetX, cfg.offsetY)
+    checkBox.Text:SetText(cfg.label)
+    checkBox.GetValue = function(self)
+        return checkBox:GetChecked()
+    end
+    checkBox.SetValue = function(self)
+        checkBox:SetChecked(RAV_data.options[cfg.var])
+    end
+    checkBox.var = cfg.var
+
+    if cfg.needsRestart then
+        checkBox.restart = false
+    end
+
+    if cfg.tooltip then
+        if cfg.needsRestart then
+            cfg.tooltip = cfg.tooltip .. "\n" .. RED_FONT_COLOR:WrapTextInColorCode(REQUIRES_RELOAD)
+        end
+        checkBox.tooltipText = cfg.tooltip
+    end
+
+    checkBox:SetScript("OnClick", function(self)
+        checkBox.value = self:GetChecked()
+        if cfg.needsRestart then
+            checkBox.restart = not checkBox.restart
+        end
+        RAV_data.options[checkBox.var] = checkBox:GetChecked()
+        ravMounts:MountListHandler()
+        ravMounts:EnsureMacro()
+        ravMounts:RefreshControls(ravMounts.Options.controls)
+    end)
+
+    ravMounts:RegisterControl(checkBox, cfg.parent)
+    prevControl = checkBox
+    return checkBox
+end
+
+function ravMounts:RefreshControls(controls)
+    for _, control in pairs(controls) do
+        if control.Text then
+            control:SetValue(control)
+            control.oldValue = control:GetValue()
+        elseif control.countMounts then
+            control:SetText(string.format(control.label, table.maxn(RAV_data.mounts[control.countMounts])))
+            control.oldValue = control:GetText()
+        end
+    end
+end
+
+function ravMounts:MountSummon(list)
+    if not UnitAffectingCombat("player") and #list > 0 then
+        local iter = 10 -- magic number (can random fail us so much?)
+        local n = random(#list)
+        while not select(5, C_MountJournal.GetMountInfoByID(list[n])) and iter > 0 do
+            n = random(#list)
+            iter = iter - 1
+        end
+        C_MountJournal.SummonByID(list[n])
+    end
+end
+
+function ravMounts:GetCloneMount()
+    local clone = UnitIsPlayer("target") and "target" or UnitIsPlayer("focus") and "focus" or false
+    if clone then
+        for buffIndex = 1, 40 do
+            local mountIndex = contains(RAV_data.mounts.allByName, UnitBuff(clone, buffIndex))
+            if mountIndex then
+                return RAV_data.mounts.allByID[mountIndex]
+            end
+        end
+    end
+    return false
 end
 
 -- Collect Data and Sort it
@@ -296,110 +404,5 @@ function ravMounts:MountUpHandler(specificType)
         ravMounts:MountSummon(RAV_data.mounts.chauffeur)
     else
         ravMounts:PrettyPrint(L.NoMounts)
-    end
-end
-
-function ravMounts:RegisterDefaultOption(key, value)
-    if RAV_data == nil then
-        RAV_data = {}
-    end
-    if RAV_data.options == nil then
-        RAV_data.options = {}
-    end
-    if RAV_data.options[key] == nil then
-        RAV_data.options[key] = value
-    end
-end
-
-function ravMounts:SetDefaultOptions()
-    for k, v in pairs(ravMounts.defaults) do
-        ravMounts:RegisterDefaultOption(k, v)
-    end
-end
-
-function ravMounts:RegisterControl(control, parentFrame)
-    if (not parentFrame) or (not control) then
-        return
-    end
-    parentFrame.controls = parentFrame.controls or {}
-    tinsert(parentFrame.controls, control)
-end
-
-function ravMounts:CreateLabel(cfg)
-    cfg.initialPoint = cfg.initialPoint or "TOPLEFT"
-    cfg.relativePoint = cfg.relativePoint or "BOTTOMLEFT"
-    cfg.offsetX = cfg.offsetX or 0
-    cfg.offsetY = cfg.offsetY or -16
-    cfg.relativeTo = cfg.relativeTo or prevControl
-    cfg.fontObject = cfg.fontObject or "GameFontNormalLarge"
-
-    local label = cfg.parent:CreateFontString(cfg.name, "ARTWORK", cfg.fontObject)
-    label:SetPoint(cfg.initialPoint, cfg.relativeTo, cfg.relativePoint, cfg.offsetX, cfg.offsetY)
-    if cfg.countMounts then
-        label.label = cfg.label
-        label.countMounts = cfg.countMounts
-        label:SetText(string.format(cfg.label, table.maxn(RAV_data.mounts[cfg.countMounts])))
-    else
-        label:SetText(cfg.label)
-    end
-    if cfg.width then
-        label:SetWidth(cfg.width)
-    end
-
-    ravMounts:RegisterControl(label, cfg.parent)
-    prevControl = label
-    return label
-end
-
-function ravMounts:CreateCheckBox(cfg)
-    cfg.initialPoint = cfg.initialPoint or "TOPLEFT"
-    cfg.relativePoint = cfg.relativePoint or "BOTTOMLEFT"
-    cfg.offsetX = cfg.offsetX or 0
-    cfg.offsetY = cfg.offsetY or -6
-    cfg.relativeTo = cfg.relativeTo or prevControl
-
-    local checkBox = CreateFrame("CheckButton", cfg.name, cfg.parent, "InterfaceOptionsCheckButtonTemplate")
-    checkBox:SetPoint(cfg.initialPoint, cfg.relativeTo, cfg.relativePoint, cfg.offsetX, cfg.offsetY)
-    checkBox.Text:SetText(cfg.label)
-    checkBox.GetValue = function(self) return checkBox:GetChecked() end
-    checkBox.SetValue = function(self) checkBox:SetChecked(RAV_data.options[cfg.var]) end
-    checkBox.var = cfg.var
-
-    if cfg.needsRestart then
-        checkBox.restart = false
-    end
-
-    if cfg.tooltip then
-        if cfg.needsRestart then
-            cfg.tooltip = cfg.tooltip .. "\n" .. RED_FONT_COLOR:WrapTextInColorCode(REQUIRES_RELOAD)
-        end
-        checkBox.tooltipText = cfg.tooltip
-    end
-
-    checkBox:SetScript("OnClick", function(self)
-        checkBox.value = self:GetChecked()
-        if cfg.needsRestart then
-            checkBox.restart = not checkBox.restart
-        end
-        RAV_data.options[checkBox.var] = checkBox:GetChecked()
-        ravMounts:MountListHandler()
-        ravMounts:EnsureMacro()
-        ravMounts:RefreshControls(ravMounts.Options.controls)
-    end)
-
-    ravMounts:RegisterControl(checkBox, cfg.parent)
-    prevControl = checkBox
-    return checkBox
-end
-
-function ravMounts:RefreshControls(controls)
-    for _, control in pairs(controls) do
-        if control.Text then
-            control:SetValue(control)
-            control.oldValue = control:GetValue()
-        elseif control.countMounts then
-            control:SetText(string.format(control.label, table.maxn(RAV_data.mounts[control.countMounts])))
-            control.oldValue = control:GetText()
-        end
     end
 end

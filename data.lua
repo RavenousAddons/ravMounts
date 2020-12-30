@@ -10,15 +10,74 @@ ravMounts.data = {
         chauffeur = {284},
     },
     mountIDs = {
-        vendor = {280, 284, 460, 1039},
-        groundPassenger = {240, 254, 255, 275, 286, 287, 288, 289},
-        flyingPassenger = {382, 407, 455, 959, 960},
-        flex = {219, 363, 376, 421, 439, 451, 455, 456, 457, 458, 459, 468, 522, 523, 532, 594, 547, 593, 764, 1222, 1404},
-        maw = {1304, 1442},
+        vendor = {
+            280, -- Traveler's Tundra Mammoth
+            284, -- Traveler's Tundra Mammoth
+            460, -- Grand Expedition Yak
+            1039, -- Mighty Caravan Brutosaur
+        },
+        groundPassenger = {
+            240, -- Mechano-Hog (Horde)
+            254, -- Black War Mammoth (Alliance)
+            255, -- Black War Mammoth (Horde)
+            275, -- Mekgineer's Chopper (Alliance)
+            286, -- Grand Black War Mammoth (Alliance)
+            287, -- Grand Black War Mammoth (Horde)
+            288, -- Grand Ice Mammoth (Horde)
+            289, -- Grand Ice Mammoth (Alliance)
+        },
+        flyingPassenger = {
+            382, -- X-53 Touring Rocket
+            407, -- Sandstone Drake
+            455, -- Obsidian Nightwing
+            959, -- Stormwind Skychaser (Alliance)
+            960, -- Orgrimmar Interceptor (Horde)
+        },
+        flex = {
+            219, -- Headless Horseman's Mount
+            363, -- Invincible
+            376, -- Celestial Steed
+            421, -- Winged Guardian
+            439, -- Tyrael's Charger
+            451, -- Jeweled Onyx Panther
+            455, -- Obsidian Nightwing
+            456, -- Sapphire Panther
+            457, -- Jade Panther
+            458, -- Ruby Panther
+            459, -- Sunstone Panther
+            468, -- Imperial Quilen
+            522, -- Sky Golem
+            523, -- Swift Windsteed
+            532, -- Ghastly Charger
+            594, -- Grinning Reaver
+            547, -- Hearthsteed
+            593, -- Warforged Nightmare
+            764, -- Grove Warden
+            1222, -- Vulpine Familiar
+            1404, -- Silverwind Larion
+        },
+        maw = {
+            1304, -- Mawsworn Soulhunter
+            1442, -- Corridor Creeper
+        },
     },
     mapIDs = {
-        ahnqiraj = {247, 319, 320, 321},
-        vashjir = {201, 203, 204, 205, 1272},
-        maw = {1543, 1648},
+        ahnqiraj = {
+            247, -- Ruins of Ahn'Qiraj
+            319, -- Ahn'Qiraj - The Hive Undergrounds
+            320, -- Ahn'Qiraj - The Temple Gates
+            321, -- Ahn'Qiraj - Vault of C'Thun
+        },
+        vashjir = {
+            201, -- Kelp'thar Forest
+            203, -- Vashj'ir
+            204, -- Abyssal Depths
+            205, -- Shimmering Expanse
+            1272, -- Vashj'ir
+        },
+        maw = {
+            1543, -- The Maw
+            1648, -- The Maw
+        },
     },
 }
