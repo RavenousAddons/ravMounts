@@ -1,6 +1,15 @@
 local name, ravMounts = ...
 
 ravMounts.data = {
+    defaults = {
+        macro = true,
+        clone = true,
+        flexMounts = "both",
+        normalMounts = true,
+        swimmingMounts = true,
+        vendorMounts = true,
+        passengerMounts = true,
+    },
     mountTypes = {
         ground = {230},
         flying = {247, 248},

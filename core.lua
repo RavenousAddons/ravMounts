@@ -14,6 +14,7 @@ function ravMounts_OnEvent(self, event, arg, ...)
     if arg == name then
         if event == "ADDON_LOADED" then
             ravMounts:SetDefaultOptions()
+            InterfaceOptions_AddCategory(ravMounts.Options)
             if not RAV_version then
                 ravMounts:PrettyPrint(string.format(L.Install, ravMounts.color, ravMounts.name))
             elseif RAV_version ~= ravMounts.version then

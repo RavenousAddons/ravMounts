@@ -1,6 +1,18 @@
 local name, ravMounts = ...
 local L = ravMounts.L
 
+local large = 16
+local medium = 12
+local small = 6
+
+local function checkForRestart(controls)
+    for _, control in pairs(controls) do
+        if control.restart then
+            ReloadUI()
+        end
+    end
+end
+
 local Options = CreateFrame("Frame", name .. "Options", InterfaceOptionsFramePanelContainer)
 Options.name = ravMounts.name
 Options.controlTable = {}
@@ -8,11 +20,13 @@ Options.okay = function(self)
     for _, control in pairs(self.controls) do
         RAV_data.options[control.var] = control:GetValue()
     end
+    checkForRestart(self.controls)
+end
+Options.default = function(self)
     for _, control in pairs(self.controls) do
-        if control.restart then
-            ReloadUI()
-        end
+        RAV_data.options[control.var] = true
     end
+    checkForRestart(self.controls)
 end
 Options.cancel = function(self)
     for _, control in pairs(self.controls) do
@@ -21,44 +35,29 @@ Options.cancel = function(self)
         end
     end
 end
-Options.default = function(self)
-    for _, control in pairs(self.controls) do
-        RAV_data.options[control.var] = true
-    end
-    ReloadUI()
-end
 Options.refresh = function(self)
-    for _, control in pairs(self.controls) do
-        if control.Text then
-            control:SetValue(control)
-            control.oldValue = control:GetValue()
-        elseif control.countMounts then
-            control:SetText(string.format(control.label, table.maxn(RAV_data.mounts[control.countMounts])))
-            control.oldValue = control:GetText()
-        end
-    end
+    ravMounts:RefreshControls(self.controls)
 end
-InterfaceOptions_AddCategory(Options)
 
 Options:Hide()
 Options:SetScript("OnShow", function()
-    local fullWidth = Options:GetWidth() - 32
-    local panelWidth = fullWidth / 2 - 16
+    local fullWidth = Options:GetWidth() - (large * 3)
+    local panelWidth = fullWidth / 2 - large
 
     local HeaderPanel = CreateFrame("Frame", "HeaderPanel", Options)
-    HeaderPanel:SetPoint("TOPLEFT", Options, "TOPLEFT", 16, -16)
+    HeaderPanel:SetPoint("TOPLEFT", Options, "TOPLEFT", large, large * -1)
     HeaderPanel:SetWidth(fullWidth)
-    HeaderPanel:SetHeight(32)
+    HeaderPanel:SetHeight(large * 2)
 
     local LeftPanel = CreateFrame("Frame", "LeftPanel", Options)
-    LeftPanel:SetPoint("TOPLEFT", HeaderPanel, "BOTTOMLEFT", 0, -16)
+    LeftPanel:SetPoint("TOPLEFT", HeaderPanel, "BOTTOMLEFT", 0, large * -1)
     LeftPanel:SetWidth(panelWidth)
-    LeftPanel:SetHeight(Options:GetHeight() - HeaderPanel:GetHeight() - 16)
+    LeftPanel:SetHeight(Options:GetHeight() - HeaderPanel:GetHeight() - large)
 
     local RightPanel = CreateFrame("Frame", "RightPanel", Options)
-    RightPanel:SetPoint("TOPRIGHT", HeaderPanel, "BOTTOMRIGHT", 0, -16)
+    RightPanel:SetPoint("TOPRIGHT", HeaderPanel, "BOTTOMRIGHT", 0, large * -1)
     RightPanel:SetWidth(panelWidth)
-    RightPanel:SetHeight(Options:GetHeight() - HeaderPanel:GetHeight() - 16)
+    RightPanel:SetHeight(Options:GetHeight() - HeaderPanel:GetHeight() - large)
 
     local UIControls = {
         {
@@ -92,15 +91,7 @@ Options:SetScript("OnShow", function()
             label = L.Macro,
             tooltip = string.format(L.MacroTooltip, ravMounts.name),
             var = "macro",
-            offsetY = -12,
-        },
-        {
-            type = "CheckBox",
-            name = "FlexMounts",
-            parent = Options,
-            label = L.FlexMounts,
-            tooltip = L.FlexMountsTooltip,
-            var = "flexMounts",
+            offsetY = medium * -1,
         },
         {
             type = "CheckBox",
@@ -123,7 +114,7 @@ Options:SetScript("OnShow", function()
             label = L.NormalMounts,
             tooltip = L.NormalMountsTooltip,
             var = "normalMounts",
-            offsetY = -12,
+            offsetY = medium * -1,
         },
         {
             type = "CheckBox",
@@ -150,10 +141,24 @@ Options:SetScript("OnShow", function()
             var = "passengerMounts",
         },
         {
+            type = "DropDown",
+            name = "FlexMounts",
+            parent = Options,
+            label = L.FlexMounts,
+            var = "flexMounts",
+            options = {
+                "both",
+                "ground",
+                "flying",
+            },
+            offsetX = large * -1,
+        },
+        {
             type = "Label",
             name = "SupportHeading",
             parent = Options,
             label = L.SupportHeading,
+            offsetX = large,
         },
         {
             type = "Label",
@@ -199,7 +204,7 @@ Options:SetScript("OnShow", function()
             label = L.Ground .. ": |cffffffff%s|r",
             countMounts = "ground",
             fontObject = "GameFontNormal",
-            offsetY = -6,
+            offsetY = small * -1,
         },
         {
             type = "Label",
@@ -208,7 +213,7 @@ Options:SetScript("OnShow", function()
             label = L.Flying .. ": |cffffffff%s|r",
             countMounts = "flying",
             fontObject = "GameFontNormal",
-            offsetY = -6,
+            offsetY = small * -1,
         },
         {
             type = "Label",
@@ -217,7 +222,7 @@ Options:SetScript("OnShow", function()
             label = L.Swimming .. ": |cffffffff%s|r",
             countMounts = "swimming",
             fontObject = "GameFontNormal",
-            offsetY = -6,
+            offsetY = small * -1,
         },
         {
             type = "Label",
@@ -226,7 +231,7 @@ Options:SetScript("OnShow", function()
             label = L.Vendor .. ": |cffffffff%s|r",
             countMounts = "vendor",
             fontObject = "GameFontNormal",
-            offsetY = -6,
+            offsetY = small * -1,
         },
         {
             type = "Label",
@@ -235,7 +240,7 @@ Options:SetScript("OnShow", function()
             label = L.PassengerGround .. ": |cffffffff%s|r",
             countMounts = "groundPassenger",
             fontObject = "GameFontNormal",
-            offsetY = -6,
+            offsetY = small * -1,
         },
         {
             type = "Label",
@@ -244,7 +249,7 @@ Options:SetScript("OnShow", function()
             label = L.PassengerFlying .. ": |cffffffff%s|r",
             countMounts = "flyingPassenger",
             fontObject = "GameFontNormal",
-            offsetY = -6,
+            offsetY = small * -1,
         },
         {
             type = "Label",
@@ -253,7 +258,7 @@ Options:SetScript("OnShow", function()
             label = L.AhnQiraj .. ": |cffffffff%s|r",
             countMounts = "ahnqiraj",
             fontObject = "GameFontNormal",
-            offsetY = -6,
+            offsetY = small * -1,
         },
         {
             type = "Label",
@@ -262,7 +267,7 @@ Options:SetScript("OnShow", function()
             label = L.Vashjir .. ": |cffffffff%s|r",
             countMounts = "vashjir",
             fontObject = "GameFontNormal",
-            offsetY = -6,
+            offsetY = small * -1,
         },
         {
             type = "Label",
@@ -272,7 +277,7 @@ Options:SetScript("OnShow", function()
             countMounts = "maw",
             maps = {1543, 1648},
             fontObject = "GameFontNormal",
-            offsetY = -6,
+            offsetY = small * -1,
         },
     }
 
@@ -281,6 +286,8 @@ Options:SetScript("OnShow", function()
             ravMounts:CreateLabel(control)
         elseif control.type == "CheckBox" then
             ravMounts:CreateCheckBox(control)
+        elseif control.type == "DropDown" then
+            ravMounts:CreateDropDown(control)
         end
     end
 

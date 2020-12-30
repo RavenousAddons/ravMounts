@@ -7,6 +7,8 @@ local mapIDs = ravMounts.data.mapIDs
 local faction, _ = UnitFactionGroup("player")
 local flyable, cloneMountID, submerged, mapID, inAhnQiraj, inVashjir, inMaw, haveGroundMounts, haveFlyingMounts, haveGroundPassengerMounts, haveFlyingPassengerMounts, haveVendorMounts, haveSwimmingMounts, haveAhnQirajMounts, haveVashjirMounts, haveMawMounts, haveChauffeurMounts
 local prevControl
+local dropDown
+local options = {}
 
 local function contains(table, input)
     for index, value in ipairs(table) do
@@ -139,10 +141,13 @@ function ravMounts:RegisterDefaultOption(key, value)
     if RAV_data.options[key] == nil then
         RAV_data.options[key] = value
     end
+    if RAV_data.options.flexMounts == true or RAV_data.options.flexMounts == false then
+        RAV_data.options.flexMounts = nil
+    end
 end
 
 function ravMounts:SetDefaultOptions()
-    for k, v in pairs(ravMounts.defaults) do
+    for k, v in pairs(ravMounts.data.defaults) do
         ravMounts:RegisterDefaultOption(k, v)
     end
 end
@@ -166,7 +171,6 @@ function ravMounts:CreateLabel(cfg)
     local label = cfg.parent:CreateFontString(cfg.name, "ARTWORK", cfg.fontObject)
     label:SetPoint(cfg.initialPoint, cfg.relativeTo, cfg.relativePoint, cfg.offsetX, cfg.offsetY)
     if cfg.countMounts then
-        label.label = cfg.label
         label.countMounts = cfg.countMounts
         label:SetText(string.format(cfg.label, table.maxn(RAV_data.mounts[cfg.countMounts])))
     else
@@ -175,6 +179,8 @@ function ravMounts:CreateLabel(cfg)
     if cfg.width then
         label:SetWidth(cfg.width)
     end
+    label.label = cfg.label
+    label.type = cfg.type
 
     ravMounts:RegisterControl(label, cfg.parent)
     prevControl = label
@@ -198,6 +204,8 @@ function ravMounts:CreateCheckBox(cfg)
         checkBox:SetChecked(RAV_data.options[cfg.var])
     end
     checkBox.var = cfg.var
+    checkBox.label = cfg.label
+    checkBox.type = cfg.type
 
     if cfg.needsRestart then
         checkBox.restart = false
@@ -226,11 +234,54 @@ function ravMounts:CreateCheckBox(cfg)
     return checkBox
 end
 
+function ravMounts:CreateDropDown(cfg)
+    cfg.initialPoint = cfg.initialPoint or "TOPLEFT"
+    cfg.relativePoint = cfg.relativePoint or "BOTTOMLEFT"
+    cfg.offsetX = cfg.offsetX or 0
+    cfg.offsetY = cfg.offsetY or -6
+    cfg.relativeTo = cfg.relativeTo or prevControl
+
+    dropDown = CreateFrame("Frame", cfg.name, cfg.parent, "UIDropDownMenuTemplate")
+    dropDown:SetPoint(cfg.initialPoint, cfg.relativeTo, cfg.relativePoint, cfg.offsetX, cfg.offsetY)
+    UIDropDownMenu_SetWidth(dropDown, 180)
+    UIDropDownMenu_SetText(dropDown, cfg.label)
+    dropDown.var = cfg.var
+    dropDown.label = cfg.label
+    dropDown.type = cfg.type
+
+    UIDropDownMenu_Initialize(dropDown, function(self)
+        for _, value in ipairs(cfg.options) do
+            local info = UIDropDownMenu_CreateInfo()
+            info.text = value:gsub("^%l", string.upper)
+            info.checked = RAV_data.options[dropDown.var] == value and true or false
+            info.func = function(option)
+                RAV_data.options[dropDown.var] = option.value:lower()
+                info.checked = true
+                CloseDropDownMenus()
+                ravMounts:MountListHandler()
+                ravMounts:EnsureMacro()
+                ravMounts:RefreshControls(ravMounts.Options.controls)
+            end
+            UIDropDownMenu_AddButton(info)
+            options[value] = info
+        end
+    end)
+
+    ravMounts:RegisterControl(dropDown, cfg.parent)
+    prevControl = dropDown
+    return dropDown
+end
+
 function ravMounts:RefreshControls(controls)
-    for _, control in pairs(controls) do
-        if control.Text then
+    for i, control in pairs(controls) do
+        if control.type == "CheckBox" then
             control:SetValue(control)
             control.oldValue = control:GetValue()
+        elseif control.type == "DropDown" then
+            UIDropDownMenu_SetText(dropDown, control.label .. ": " .. RAV_data.options[control.var]:gsub("^%l", string.upper))
+            -- for _, option in pairs(options) do
+            --     print(option.text)
+            -- end
         elseif control.countMounts then
             control:SetText(string.format(control.label, table.maxn(RAV_data.mounts[control.countMounts])))
             control.oldValue = control:GetText()
@@ -306,10 +357,16 @@ function ravMounts:MountListHandler()
                 table.insert(RAV_data.mounts.allByName, mountName)
                 table.insert(RAV_data.mounts.allByID, mountID)
                 if isFlyingMount and (not RAV_data.options.normalMounts or isFavorite) and not isVendorMount and not isFlyingPassengerMount and not isGroundPassengerMount then
-                    if RAV_data.options.flexMounts and isFlexMount then
-                        table.insert(RAV_data.mounts.ground, mountID)
+                    if isFlexMount then
+                        if RAV_data.options.flexMounts == "both" or RAV_data.options.flexMounts == "ground" then
+                            table.insert(RAV_data.mounts.ground, mountID)
+                        end
+                        if RAV_data.options.flexMounts == "both" or RAV_data.options.flexMounts == "flying" then
+                            table.insert(RAV_data.mounts.flying, mountID)
+                        end
+                    else
+                        table.insert(RAV_data.mounts.flying, mountID)
                     end
-                    table.insert(RAV_data.mounts.flying, mountID)
                 end
                 if isGroundMount and (isFavorite or not RAV_data.options.normalMounts) and not isVendorMount and not isFlyingPassengerMount and not isGroundPassengerMount then
                     table.insert(RAV_data.mounts.ground, mountID)
