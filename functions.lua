@@ -260,14 +260,14 @@ function ravMounts:CreateDropDown(cfg)
         for _, value in ipairs(cfg.options) do
             local info = UIDropDownMenu_CreateInfo()
             info.text = value:gsub("^%l", string.upper)
-            if value ~= "none" and cfg.group == "mountModifier" then
+            info.checked = RAV_data.options[cfg.var] == value and true or false
+            if not info.checked and value ~= "none" and cfg.group == "mountModifier" then
                 for _, mountModifier in ipairs(mountModifiers) do
                     if RAV_data.options[mountModifier] == value then
                         info.disabled = true
                     end
                 end
             end
-            info.checked = RAV_data.options[cfg.var] == value and true or false
             info.func = function(option, arg1, arg2, checked)
                 RAV_data.options[cfg.var] = option.value:lower()
                 info.checked = true
