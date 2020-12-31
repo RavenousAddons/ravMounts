@@ -41,23 +41,22 @@ end
 
 Options:Hide()
 Options:SetScript("OnShow", function()
-    local fullWidth = Options:GetWidth() - (large * 3)
-    local panelWidth = fullWidth / 2 - large
+    local fullWidth = Options:GetWidth() - (large * 2)
 
     local HeaderPanel = CreateFrame("Frame", "HeaderPanel", Options)
     HeaderPanel:SetPoint("TOPLEFT", Options, "TOPLEFT", large, large * -1)
     HeaderPanel:SetWidth(fullWidth)
-    HeaderPanel:SetHeight(large * 2)
+    HeaderPanel:SetHeight(large * 3)
 
     local LeftPanel = CreateFrame("Frame", "LeftPanel", Options)
     LeftPanel:SetPoint("TOPLEFT", HeaderPanel, "BOTTOMLEFT", 0, large * -1)
-    LeftPanel:SetWidth(panelWidth)
-    LeftPanel:SetHeight(Options:GetHeight() - HeaderPanel:GetHeight() - large)
+    LeftPanel:SetWidth(fullWidth / 5 * 3 - large)
+    LeftPanel:SetHeight(Options:GetHeight() - HeaderPanel:GetHeight() - (large * 2))
 
     local RightPanel = CreateFrame("Frame", "RightPanel", Options)
     RightPanel:SetPoint("TOPRIGHT", HeaderPanel, "BOTTOMRIGHT", 0, large * -1)
-    RightPanel:SetWidth(panelWidth)
-    RightPanel:SetHeight(Options:GetHeight() - HeaderPanel:GetHeight() - large)
+    RightPanel:SetWidth(fullWidth / 5 * 2 - large)
+    RightPanel:SetHeight(Options:GetHeight() - HeaderPanel:GetHeight() - (large * 2))
 
     local UIControls = {
         {
@@ -83,6 +82,7 @@ Options:SetScript("OnShow", function()
             label = L.OptionsHeading,
             relativeTo = LeftPanel,
             relativePoint = "TOPLEFT",
+            offsetY = 0,
         },
         {
             type = "CheckBox",
@@ -102,10 +102,25 @@ Options:SetScript("OnShow", function()
             var = "clone",
         },
         {
+            type = "DropDown",
+            name = "FlexMounts",
+            parent = Options,
+            label = L.FlexMounts,
+            var = "flexMounts",
+            options = {
+                "both",
+                "ground",
+                "flying",
+            },
+            width = 180,
+            offsetX = large * -1,
+        },
+        {
             type = "Label",
             name = "FavoritesHeading",
             parent = Options,
             label = L.FavoritesHeading,
+            offsetX = large,
         },
         {
             type = "CheckBox",
@@ -117,12 +132,23 @@ Options:SetScript("OnShow", function()
             offsetY = medium * -1,
         },
         {
-            type = "CheckBox",
-            name = "SwimmingMounts",
+            type = "DropDown",
+            name = "NormalMountModifier",
             parent = Options,
-            label = L.SwimmingMounts,
-            tooltip = L.SwimmingMountsTooltip,
-            var = "swimmingMounts",
+            initialPoint = "TOPLEFT",
+            relativePoint = "TOPRIGHT",
+            offsetX = 140,
+            offsetY = 0,
+            ignorePlacement = true,
+            label = L.Modifier,
+            group = "mountModifier",
+            var = "normalMountModifier",
+            options = {
+                "none",
+                "alt",
+                "ctrl",
+                "shift",
+            },
         },
         {
             type = "CheckBox",
@@ -131,6 +157,25 @@ Options:SetScript("OnShow", function()
             label = L.VendorMounts,
             tooltip = L.VendorMountsTooltip,
             var = "vendorMounts",
+        },
+        {
+            type = "DropDown",
+            name = "VendorMountModifier",
+            parent = Options,
+            initialPoint = "TOPLEFT",
+            relativePoint = "TOPRIGHT",
+            offsetX = 140,
+            offsetY = 0,
+            ignorePlacement = true,
+            label = L.Modifier,
+            group = "mountModifier",
+            var = "vendorMountModifier",
+            options = {
+                "none",
+                "alt",
+                "ctrl",
+                "shift",
+            },
         },
         {
             type = "CheckBox",
@@ -142,23 +187,36 @@ Options:SetScript("OnShow", function()
         },
         {
             type = "DropDown",
-            name = "FlexMounts",
+            name = "PassengerMountModifier",
             parent = Options,
-            label = L.FlexMounts,
-            var = "flexMounts",
+            initialPoint = "TOPLEFT",
+            relativePoint = "TOPRIGHT",
+            offsetX = 140,
+            offsetY = 0,
+            ignorePlacement = true,
+            label = L.Modifier,
+            group = "mountModifier",
+            var = "passengerMountModifier",
             options = {
-                "both",
-                "ground",
-                "flying",
+                "none",
+                "alt",
+                "ctrl",
+                "shift",
             },
-            offsetX = large * -1,
+        },
+        {
+            type = "CheckBox",
+            name = "SwimmingMounts",
+            parent = Options,
+            label = L.SwimmingMounts,
+            tooltip = L.SwimmingMountsTooltip,
+            var = "swimmingMounts",
         },
         {
             type = "Label",
             name = "SupportHeading",
             parent = Options,
             label = L.SupportHeading,
-            offsetX = large,
         },
         {
             type = "Label",
@@ -188,6 +246,7 @@ Options:SetScript("OnShow", function()
             label = L.DataHeading,
             relativeTo = RightPanel,
             relativePoint = "TOPLEFT",
+            offsetY = 0,
         },
         {
             type = "Label",

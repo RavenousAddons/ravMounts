@@ -6,9 +6,12 @@ ravMounts.data = {
         clone = true,
         flexMounts = "both",
         normalMounts = true,
-        swimmingMounts = true,
+        normalMountModifier = "alt",
         vendorMounts = true,
+        vendorMountModifier = "shift",
         passengerMounts = true,
+        passengerMountModifier = "ctrl",
+        swimmingMounts = true,
     },
     mountTypes = {
         ground = {230},

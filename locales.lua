@@ -42,12 +42,13 @@ L.NormalMounts = "Ground/Flying mounts"
 L.NormalMountsTooltip = "When enabled, only Ground/Flying mounts marked as favorites will be summoned."
 L.SwimmingMounts = "Swimming mounts"
 L.SwimmingMountsTooltip = "When enabled, only Swimming mounts marked as favorites will be summoned."
-L.PassengerMounts = "Passenger mounts (Ground & Flying)"
+L.PassengerMounts = "Passenger mounts"
 L.PassengerMountsTooltip = "When enabled, only Passenger mounts marked as favorites will be summoned."
 L.VendorMounts = "Vendor mounts"
 L.VendorMountsTooltip = "When enabled, only Vendor mounts marked as favorites will be summoned."
 L.SupportHeading = "Help and Support:"
 L.DataHeading = "Collected Data:"
+L.Modifier = "Modifier"
 
 -- Check locale and assign appropriate
 local CURRENT_LOCALE = GetLocale()
