@@ -9,7 +9,16 @@ setmetatable(L, { __index = function(t, k)
     return v
 end })
 
+-- Automatic
+local mapIDs = ravMounts.data.mapIDs
+L.AhnQiraj = C_Map.GetMapInfo(mapIDs.ahnqiraj[#mapIDs.ahnqiraj]).name
+L.Vashjir = C_Map.GetMapInfo(mapIDs.vashjir[#mapIDs.vashjir]).name
+L.Maw = C_Map.GetMapInfo(mapIDs.maw[#mapIDs.maw]).name
+
 -- Default (English)
+L.Modifier = "Modifier"
+L.Mount = "mount"
+L.Mounts = "mounts"
 L.Version = "%s is the current version." -- ravMounts.version
 L.OutOfDate = "There is an update available for |cff%s%s|r! Please go to GitHub, WoWInterface, or Curse to download the latest version." -- ravMounts.color, ravMounts.name
 L.Install = "Thanks for installing |cff%s%s|r!" -- ravMounts.color, ravMounts.name
@@ -27,28 +36,18 @@ L.Swimming = "Swimming"
 L.Vendor = "Vendor"
 L.PassengerGround = "Passenger (Ground)"
 L.PassengerFlying = "Passenger (Flying)"
-L.AhnQiraj = "Ahn'Qiraj"
-L.Vashjir = "Vashj'ir"
-L.Maw = "The Maw"
+L.Flex = "Flexible"
 L.OptionsHeading = "Configuration:"
 L.Macro = "Automatically create/maintain macro"
 L.MacroTooltip = "When enabled, a macro called |cffffffff%s|r will be automatically created and managed for you under |cffffffffGeneral Macros|r." -- ravMounts.name
 L.Clone = "Clone target/focus' mount"
 L.CloneTooltip = "When enabled, your target/focus' mount will be summoned, if you have it too."
-L.FlexMounts = "Flexible Mounts"
+L.FlexMounts = "Flexible " .. L.Mounts
 L.FlexMountsTooltip = "Choose which summoning lists \"flexible\" mounts will be included in."
 L.FavoritesHeading = "Types which use Favorites:"
-L.NormalMounts = "Ground/Flying mounts"
-L.NormalMountsTooltip = "When enabled, only Ground/Flying mounts marked as favorites will be summoned."
-L.SwimmingMounts = "Swimming mounts"
-L.SwimmingMountsTooltip = "When enabled, only Swimming mounts marked as favorites will be summoned."
-L.PassengerMounts = "Passenger mounts"
-L.PassengerMountsTooltip = "When enabled, only Passenger mounts marked as favorites will be summoned."
-L.VendorMounts = "Vendor mounts"
-L.VendorMountsTooltip = "When enabled, only Vendor mounts marked as favorites will be summoned."
+L.MountsTooltip = "When enabled, only %s marked as favorites will be summoned." -- type
 L.SupportHeading = "Help and Support:"
 L.DataHeading = "Collected Data:"
-L.Modifier = "Modifier"
 
 -- Check locale and assign appropriate
 local CURRENT_LOCALE = GetLocale()

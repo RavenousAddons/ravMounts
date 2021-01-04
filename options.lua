@@ -1,9 +1,9 @@
 local name, ravMounts = ...
 local L = ravMounts.L
 
-local large = 16
-local medium = 12
 local small = 6
+local medium = 12
+local large = 16
 
 local function checkForRestart(controls)
     for _, control in pairs(controls) do
@@ -105,7 +105,7 @@ Options:SetScript("OnShow", function()
             type = "DropDown",
             name = "FlexMounts",
             parent = Options,
-            label = L.FlexMounts,
+            label = L.Flex .. " " .. L.Mounts,
             var = "flexMounts",
             options = {
                 "both",
@@ -126,8 +126,8 @@ Options:SetScript("OnShow", function()
             type = "CheckBox",
             name = "NormalMounts",
             parent = Options,
-            label = L.NormalMounts,
-            tooltip = L.NormalMountsTooltip,
+            label = L.Ground .. "/" .. L.Flying .. " " .. L.Mounts,
+            tooltip = string.format(L.MountsTooltip, L.NormalMounts),
             var = "normalMounts",
             offsetY = medium * -1,
         },
@@ -154,8 +154,8 @@ Options:SetScript("OnShow", function()
             type = "CheckBox",
             name = "VendorMounts",
             parent = Options,
-            label = L.VendorMounts,
-            tooltip = L.VendorMountsTooltip,
+            label = L.Vendor .. " " .. L.Mounts,
+            tooltip = string.format(L.MountsTooltip, L.VendorMounts),
             var = "vendorMounts",
         },
         {
@@ -181,8 +181,8 @@ Options:SetScript("OnShow", function()
             type = "CheckBox",
             name = "PassengerMounts",
             parent = Options,
-            label = L.PassengerMounts,
-            tooltip = L.PassengerMountsTooltip,
+            label = L.Passenger .. " " .. L.Mounts,
+            tooltip = string.format(L.MountsTooltip, L.PassengerMounts),
             var = "passengerMounts",
         },
         {
@@ -208,8 +208,8 @@ Options:SetScript("OnShow", function()
             type = "CheckBox",
             name = "SwimmingMounts",
             parent = Options,
-            label = L.SwimmingMounts,
-            tooltip = L.SwimmingMountsTooltip,
+            label = L.Swimming .. " " .. L.Mounts,
+            tooltip = string.format(L.MountsTooltip, L.SwimmingMounts),
             var = "swimmingMounts",
         },
         {
@@ -297,7 +297,7 @@ Options:SetScript("OnShow", function()
             name = "SubHeadingPassengerGround",
             parent = Options,
             label = L.PassengerGround .. ": |cffffffff%s|r",
-            countMounts = "groundPassenger",
+            countMounts = "passengerGround",
             fontObject = "GameFontNormal",
             offsetY = small * -1,
         },
@@ -306,7 +306,7 @@ Options:SetScript("OnShow", function()
             name = "SubHeadingPassengerFlying",
             parent = Options,
             label = L.PassengerFlying .. ": |cffffffff%s|r",
-            countMounts = "flyingPassenger",
+            countMounts = "passengerFlying",
             fontObject = "GameFontNormal",
             offsetY = small * -1,
         },

@@ -6,7 +6,7 @@ local mountIDs = ravMounts.data.mountIDs
 local mapIDs = ravMounts.data.mapIDs
 
 local faction, _ = UnitFactionGroup("player")
-local flyable, cloneMountID, mapID, inAhnQiraj, inVashjir, inMaw, haveGroundMounts, haveFlyingMounts, haveGroundPassengerMounts, haveFlyingPassengerMounts, haveVendorMounts, haveSwimmingMounts, haveAhnQirajMounts, haveVashjirMounts, haveMawMounts, haveChauffeurMounts, normalMountModifier, vendorMountModifier, passengerMountModifier, normalMountModifier, vendorMountModifier, passengerMountModifier
+local flyable, cloneMountID, mapID, inAhnQiraj, inVashjir, inMaw, haveGroundMounts, haveFlyingMounts, havePassengerGroundMounts, havePassengerFlyingMounts, haveVendorMounts, haveSwimmingMounts, haveAhnQirajMounts, haveVashjirMounts, haveMawMounts, haveChauffeurMounts, normalMountModifier, vendorMountModifier, passengerMountModifier, normalMountModifier, vendorMountModifier, passengerMountModifier
 local prevControl
 local dropdowns = {}
 
@@ -58,8 +58,8 @@ function ravMounts:AssignVariables()
     inMaw = contains(mapIDs.maw, mapID)
     haveGroundMounts = next(RAV_data.mounts.ground) ~= nil and true or false
     haveFlyingMounts = next(RAV_data.mounts.flying) ~= nil and true or false
-    haveGroundPassengerMounts = next(RAV_data.mounts.groundPassenger) ~= nil and true or false
-    haveFlyingPassengerMounts = next(RAV_data.mounts.flyingPassenger) ~= nil and true or false
+    havePassengerGroundMounts = next(RAV_data.mounts.passengerGround) ~= nil and true or false
+    havePassengerFlyingMounts = next(RAV_data.mounts.passengerFlying) ~= nil and true or false
     haveVendorMounts = next(RAV_data.mounts.vendor) ~= nil and true or false
     haveSwimmingMounts = next(RAV_data.mounts.swimming) ~= nil and true or false
     haveAhnQirajMounts = next(RAV_data.mounts.ahnqiraj) ~= nil and true or false
@@ -77,7 +77,7 @@ function ravMounts:EnsureMacro()
         local flying = haveFlyingMounts and RAV_data.mounts.flying or nil
         local ground = (inAhnQiraj and haveAhnQirajMounts) and RAV_data.mounts.ahnqiraj or (inMaw and haveMawMounts) and RAV_data.mounts.maw or haveGroundMounts and RAV_data.mounts.ground or nil
         local vendor = haveVendorMounts and RAV_data.mounts.vendor or nil
-        local passenger = (flyable and haveFlyingPassengerMounts) and RAV_data.mounts.flyingPassenger or haveGroundPassengerMounts and RAV_data.mounts.groundPassenger or nil
+        local passenger = (flyable and havePassengerFlyingMounts) and RAV_data.mounts.passengerFlying or havePassengerGroundMounts and RAV_data.mounts.passengerGround or nil
         local swimming = (inVashjir and haveVashjirMounts) and RAV_data.mounts.vashjir or haveSwimmingMounts and RAV_data.mounts.swimming or nil
         local body = "/" .. ravMounts.command
         if ground or flying or vendor or passenger or swimming then
@@ -334,9 +334,9 @@ function ravMounts:MountListHandler()
     RAV_data.mounts.allByID = {}
     RAV_data.mounts.ground = {}
     RAV_data.mounts.flying = {}
-    RAV_data.mounts.groundPassenger = {}
-    RAV_data.mounts.flyingPassenger = {}
     RAV_data.mounts.vendor = {}
+    RAV_data.mounts.passengerGround = {}
+    RAV_data.mounts.passengerFlying = {}
     RAV_data.mounts.swimming = {}
     RAV_data.mounts.ahnqiraj = {}
     RAV_data.mounts.vashjir = {}
@@ -349,14 +349,14 @@ function ravMounts:MountListHandler()
         local _, _, _, _, mountType = C_MountJournal.GetMountInfoExtraByID(mountID)
         local isGroundMount = contains(mountTypes.ground, mountType)
         local isFlyingMount = contains(mountTypes.flying, mountType)
+        local isVendorMount = contains(mountIDs.vendor, mountID)
+        local isPassengerGroundMount = contains(mountIDs.passengerGround, mountID)
+        local isPassengerFlyingMount = contains(mountIDs.passengerFlying, mountID)
         local isSwimmingMount = contains(mountTypes.swimming, mountType)
         local isAhnQirajMount = contains(mountTypes.ahnqiraj, mountType)
         local isVashjirMount = contains(mountTypes.vashjir, mountType)
-        local isChauffeurMount = contains(mountTypes.chauffeur, mountType)
-        local isVendorMount = contains(mountIDs.vendor, mountID)
         local isMawMount = contains(mountIDs.maw, mountID)
-        local isFlyingPassengerMount = contains(mountIDs.flyingPassenger, mountID)
-        local isGroundPassengerMount = contains(mountIDs.groundPassenger, mountID)
+        local isChauffeurMount = contains(mountTypes.chauffeur, mountType)
         local isFlexMount = contains(mountIDs.flex, mountID)
         if isCollected then
             -- 0 = Horde, 1 = Alliance
@@ -368,7 +368,7 @@ function ravMounts:MountListHandler()
             else
                 table.insert(RAV_data.mounts.allByName, mountName)
                 table.insert(RAV_data.mounts.allByID, mountID)
-                if isFlyingMount and (not RAV_data.options.normalMounts or isFavorite) and not isVendorMount and not isFlyingPassengerMount and not isGroundPassengerMount then
+                if isFlyingMount and (not RAV_data.options.normalMounts or isFavorite) and not isVendorMount and not isPassengerFlyingMount and not isPassengerGroundMount then
                     if isFlexMount then
                         if RAV_data.options.flexMounts == "both" or RAV_data.options.flexMounts == "ground" then
                             table.insert(RAV_data.mounts.ground, mountID)
@@ -380,17 +380,17 @@ function ravMounts:MountListHandler()
                         table.insert(RAV_data.mounts.flying, mountID)
                     end
                 end
-                if isGroundMount and (isFavorite or not RAV_data.options.normalMounts) and not isVendorMount and not isFlyingPassengerMount and not isGroundPassengerMount then
+                if isGroundMount and (isFavorite or not RAV_data.options.normalMounts) and not isVendorMount and not isPassengerFlyingMount and not isPassengerGroundMount then
                     table.insert(RAV_data.mounts.ground, mountID)
                 end
                 if isVendorMount and (isFavorite or not RAV_data.options.vendorMounts) then
                     table.insert(RAV_data.mounts.vendor, mountID)
                 end
-                if isFlyingPassengerMount and (isFavorite or not RAV_data.options.passengerMounts) then
-                    table.insert(RAV_data.mounts.flyingPassenger, mountID)
+                if isPassengerFlyingMount and (isFavorite or not RAV_data.options.passengerMounts) then
+                    table.insert(RAV_data.mounts.passengerFlying, mountID)
                 end
-                if isGroundPassengerMount and (isFavorite or not RAV_data.options.passengerMounts) then
-                    table.insert(RAV_data.mounts.groundPassenger, mountID)
+                if isPassengerGroundMount and (isFavorite or not RAV_data.options.passengerMounts) then
+                    table.insert(RAV_data.mounts.passengerGround, mountID)
                 end
                 if isSwimmingMount and (isFavorite or not RAV_data.options.swimmingMounts) then
                     table.insert(RAV_data.mounts.swimming, mountID)
@@ -421,12 +421,12 @@ function ravMounts:MountUpHandler(specificType)
     ravMounts:AssignVariables()
     if (string.match(specificType, "vend") or string.match(specificType, "repair") or string.match(specificType, "trans") or string.match(specificType, "mog")) and haveVendorMounts then
         ravMounts:MountSummon(RAV_data.mounts.vendor)
-    elseif (string.match(specificType, "2") or string.match(specificType, "two") or string.match(specificType, "multi") or string.match(specificType, "passenger")) and haveFlyingPassengerMounts and flyable then
-        ravMounts:MountSummon(RAV_data.mounts.flyingPassenger)
-    elseif string.match(specificType, "fly") and (string.match(specificType, "2") or string.match(specificType, "two") or string.match(specificType, "multi") or string.match(specificType, "passenger")) and haveFlyingPassengerMounts then
-        ravMounts:MountSummon(RAV_data.mounts.flyingPassenger)
-    elseif (string.match(specificType, "2") or string.match(specificType, "two") or string.match(specificType, "multi") or string.match(specificType, "passenger")) and haveGroundPassengerMounts then
-        ravMounts:MountSummon(RAV_data.mounts.groundPassenger)
+    elseif (string.match(specificType, "2") or string.match(specificType, "two") or string.match(specificType, "multi") or string.match(specificType, "passenger")) and havePassengerFlyingMounts and flyable then
+        ravMounts:MountSummon(RAV_data.mounts.passengerFlying)
+    elseif string.match(specificType, "fly") and (string.match(specificType, "2") or string.match(specificType, "two") or string.match(specificType, "multi") or string.match(specificType, "passenger")) and havePassengerFlyingMounts then
+        ravMounts:MountSummon(RAV_data.mounts.passengerFlying)
+    elseif (string.match(specificType, "2") or string.match(specificType, "two") or string.match(specificType, "multi") or string.match(specificType, "passenger")) and havePassengerGroundMounts then
+        ravMounts:MountSummon(RAV_data.mounts.passengerGround)
     elseif string.match(specificType, "swim") and haveSwimmingMounts then
         ravMounts:MountSummon(RAV_data.mounts.swimming)
     elseif (specificType == "vj" or string.match(specificType, "vash") or string.match(specificType, "jir")) and haveVashjirMounts then
@@ -456,10 +456,10 @@ function ravMounts:MountUpHandler(specificType)
         return
     elseif haveVendorMounts and vendorMountModifier then
         ravMounts:MountSummon(RAV_data.mounts.vendor)
-    elseif haveFlyingPassengerMounts and flyable and passengerMountModifier and not normalMountModifier then
-        ravMounts:MountSummon(RAV_data.mounts.flyingPassenger)
-    elseif haveGroundPassengerMounts and passengerMountModifier and (not flyable or (flyable and normalMountModifier)) then
-        ravMounts:MountSummon(RAV_data.mounts.groundPassenger)
+    elseif havePassengerFlyingMounts and flyable and passengerMountModifier and not normalMountModifier then
+        ravMounts:MountSummon(RAV_data.mounts.passengerFlying)
+    elseif havePassengerGroundMounts and passengerMountModifier and (not flyable or (flyable and normalMountModifier)) then
+        ravMounts:MountSummon(RAV_data.mounts.passengerGround)
     elseif haveFlyingMounts and ((flyable and not normalMountModifier and not IsSwimming()) or (not flyable and normalMountModifier)) then
         ravMounts:MountSummon(RAV_data.mounts.flying)
     elseif inVashjir and IsSwimming() and haveVashjirMounts then
@@ -480,4 +480,34 @@ function ravMounts:MountUpHandler(specificType)
         ravMounts:PrettyPrint(L.NoMounts)
         return
     end
+end
+
+
+function ravMounts:MountListLabelling()
+    local mountListLabels = {
+        ["vendor"] = L.Vendor,
+        ["passengerGround"] = L.PassengerGround,
+        ["passengerFlying"] = L.PassengerFlying,
+        ["flex"] = L.Flex,
+    }
+    GameTooltip:HookScript("OnTooltipSetSpell", function(self)
+        local spellID = select(2, self:GetSpell())
+        if spellID then
+            for i = 1, self:NumLines() do
+                if string.match(_G["GameTooltipTextLeft"..i]:GetText(), ravMounts.name) then
+                    return
+                end
+            end
+            for type, label in pairs(mountListLabels) do
+                for _, mountID in ipairs(ravMounts.data.mountIDs[type]) do
+                    local _, lookup, _ = C_MountJournal.GetMountInfoByID(mountID)
+                    if lookup == spellID then
+                        self:AddLine("|cff" .. ravMounts.color .. ravMounts.name .. ":|r " .. label, 1, 1, 1)
+                        self:Show()
+                        return
+                    end
+                end
+            end
+        end
+    end)
 end

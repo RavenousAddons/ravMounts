@@ -28,7 +28,7 @@ ravMounts.data = {
             460, -- Grand Expedition Yak
             1039, -- Mighty Caravan Brutosaur
         },
-        groundPassenger = {
+        passengerGround = {
             240, -- Mechano-Hog (Horde)
             254, -- Black War Mammoth (Alliance)
             255, -- Black War Mammoth (Horde)
@@ -38,7 +38,7 @@ ravMounts.data = {
             288, -- Grand Ice Mammoth (Horde)
             289, -- Grand Ice Mammoth (Alliance)
         },
-        flyingPassenger = {
+        passengerFlying = {
             382, -- X-53 Touring Rocket
             407, -- Sandstone Drake
             455, -- Obsidian Nightwing

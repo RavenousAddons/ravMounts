@@ -27,6 +27,7 @@ function ravMounts_OnEvent(self, event, arg, ...)
             C_ChatInfo.RegisterAddonMessagePrefix(name)
             ravMounts:SendVersion()
             ravMounts:MountListHandler()
+            ravMounts:MountListLabelling()
         elseif event == "CHAT_MSG_ADDON" and RAV_seenUpdate == false then
             local message, _ = ...
             local a, b, c = strsplit(".", ravMounts.version)
