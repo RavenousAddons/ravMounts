@@ -510,4 +510,36 @@ function ravMounts:MountListLabelling()
             end
         end
     end)
+
+    hooksecurefunc(GameTooltip, "SetUnitBuff", function(self,...)
+        local spellID = select(10, UnitBuff(...))
+        if spellID then
+            for type, label in pairs(mountListLabels) do
+                for _, mountID in ipairs(ravMounts.data.mountIDs[type]) do
+                    local _, lookup, _ = C_MountJournal.GetMountInfoByID(mountID)
+                    if lookup == spellID then
+                        self:AddLine("|cff" .. ravMounts.color .. ravMounts.name .. ":|r " .. label, 1, 1, 1)
+                        self:Show()
+                        return
+                    end
+                end
+            end
+        end
+    end)
+
+    hooksecurefunc(GameTooltip, "SetUnitAura", function(self,...)
+        local spellID = select(10, UnitAura(...))
+        if spellID then
+            for type, label in pairs(mountListLabels) do
+                for _, mountID in ipairs(ravMounts.data.mountIDs[type]) do
+                    local _, lookup, _ = C_MountJournal.GetMountInfoByID(mountID)
+                    if lookup == spellID then
+                        self:AddLine("|cff" .. ravMounts.color .. ravMounts.name .. ":|r " .. label, 1, 1, 1)
+                        self:Show()
+                        return
+                    end
+                end
+            end
+        end
+    end)
 end

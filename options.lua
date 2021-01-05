@@ -127,7 +127,7 @@ Options:SetScript("OnShow", function()
             name = "NormalMounts",
             parent = Options,
             label = L.Ground .. "/" .. L.Flying .. " " .. L.Mounts,
-            tooltip = string.format(L.MountsTooltip, L.NormalMounts),
+            tooltip = string.format(L.MountsTooltip, L.Ground .. "/" .. L.Flying .. " " .. L.Mounts),
             var = "normalMounts",
             offsetY = medium * -1,
         },
@@ -155,7 +155,7 @@ Options:SetScript("OnShow", function()
             name = "VendorMounts",
             parent = Options,
             label = L.Vendor .. " " .. L.Mounts,
-            tooltip = string.format(L.MountsTooltip, L.VendorMounts),
+            tooltip = string.format(L.MountsTooltip, L.Vendor .. " " .. L.Mounts),
             var = "vendorMounts",
         },
         {
@@ -182,7 +182,7 @@ Options:SetScript("OnShow", function()
             name = "PassengerMounts",
             parent = Options,
             label = L.Passenger .. " " .. L.Mounts,
-            tooltip = string.format(L.MountsTooltip, L.PassengerMounts),
+            tooltip = string.format(L.MountsTooltip, L.Passenger .. " " .. L.Mounts),
             var = "passengerMounts",
         },
         {
@@ -209,7 +209,7 @@ Options:SetScript("OnShow", function()
             name = "SwimmingMounts",
             parent = Options,
             label = L.Swimming .. " " .. L.Mounts,
-            tooltip = string.format(L.MountsTooltip, L.SwimmingMounts),
+            tooltip = string.format(L.MountsTooltip, L.Swimming .. " " .. L.Mounts),
             var = "swimmingMounts",
         },
         {
