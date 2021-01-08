@@ -165,21 +165,21 @@ function ravMounts:EnsureMacro()
 end
 
 function ravMounts:RegisterDefaultOption(key, value)
+    if RAV_data.options[key] == nil then
+        RAV_data.options[key] = value
+    end
+end
+
+function ravMounts:SetDefaultOptions()
     if RAV_data == nil then
         RAV_data = {}
     end
     if RAV_data.options == nil then
         RAV_data.options = {}
     end
-    if RAV_data.options[key] == nil then
-        RAV_data.options[key] = value
-    end
     if RAV_data.options.flexMounts == true or RAV_data.options.flexMounts == false then
         RAV_data.options.flexMounts = nil
     end
-end
-
-function ravMounts:SetDefaultOptions()
     for k, v in pairs(defaults) do
         ravMounts:RegisterDefaultOption(k, v)
     end
@@ -190,7 +190,7 @@ function ravMounts:RegisterControl(control, parentFrame)
         return
     end
     parentFrame.controls = parentFrame.controls or {}
-    tinsert(parentFrame.controls, control)
+    table.insert(parentFrame.controls, control)
 end
 
 function ravMounts:CreateLabel(cfg)
