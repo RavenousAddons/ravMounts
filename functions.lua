@@ -9,11 +9,16 @@ local faction, _ = UnitFactionGroup("player")
 local flyable, cloneMountID, mapID, inAhnQiraj, inVashjir, inMaw, haveGroundMounts, haveFlyingMounts, havePassengerGroundMounts, havePassengerFlyingMounts, haveVendorMounts, haveSwimmingMounts, haveAhnQirajMounts, haveVashjirMounts, haveMawMounts, haveChauffeurMounts, normalMountModifier, vendorMountModifier, passengerMountModifier, normalMountModifier, vendorMountModifier, passengerMountModifier
 local prevControl
 local dropdowns = {}
-
 local mountModifiers = {
     "normalMountModifier",
     "vendorMountModifier",
     "passengerMountModifier",
+}
+local tooltipLabels = {
+    ["vendor"] = L.Vendor,
+    ["passengerGround"] = L.PassengerGround,
+    ["passengerFlying"] = L.PassengerFlying,
+    ["flex"] = L.Flex,
 }
 
 local function contains(table, input)
@@ -25,12 +30,35 @@ local function contains(table, input)
     return false
 end
 
-function ravMounts:PrettyPrint(message, full)
-    if full == false then
-        message = message .. ":"
+local function addTooltipFromSpell(tooltip, spellID)
+    local type, cloneable
+    for mountType, label in pairs(tooltipLabels) do
+        for _, mountID in ipairs(ravMounts.data.mountIDs[mountType]) do
+            local _, lookup, _ = C_MountJournal.GetMountInfoByID(mountID)
+            if lookup == spellID then
+                type = label
+                break
+            end
+        end
+        if type then
+            break
+        end
     end
-    local prefix = "|cff" .. ravMounts.color .. ravMounts.name .. (full and " " or ":|r ")
-    DEFAULT_CHAT_FRAME:AddMessage(prefix .. message)
+    for _, mountID in ipairs(RAV_data.mounts.allByID) do
+        local _, lookup, _ = C_MountJournal.GetMountInfoByID(mountID)
+        if lookup == spellID then
+            cloneable = true
+            break
+        end
+    end
+    if type or cloneable then
+        tooltip:AddLine("|cff" .. ravMounts.color .. ravMounts.name .. ":|r " .. (type and type or "") .. ((type and cloneable) and ", " or "") .. (cloneable and L.Cloneable or ""), 1, 1, 1)
+    end
+    tooltip:Show()
+end
+
+function ravMounts:PrettyPrint(message)
+    DEFAULT_CHAT_FRAME:AddMessage("|cff" .. ravMounts.color .. ravMounts.name .. ":|r " .. message)
 end
 
 function ravMounts:SendVersion()
@@ -207,13 +235,7 @@ function ravMounts:CreateCheckBox(cfg)
     checkBox:SetPoint(cfg.initialPoint, cfg.relativeTo, cfg.relativePoint, cfg.offsetX, cfg.offsetY)
     checkBox.Text:SetText(cfg.label)
     if cfg.tooltip then
-        if cfg.needsRestart then
-            cfg.tooltip = cfg.tooltip .. "\n" .. RED_FONT_COLOR:WrapTextInColorCode(REQUIRES_RELOAD)
-        end
         checkBox.tooltipText = cfg.tooltip
-    end
-    if cfg.needsRestart then
-        checkBox.restart = false
     end
 
     checkBox.GetValue = function(self)
@@ -225,9 +247,6 @@ function ravMounts:CreateCheckBox(cfg)
 
     checkBox:SetScript("OnClick", function(self)
         checkBox.value = self:GetChecked()
-        if cfg.needsRestart then
-            checkBox.restart = not checkBox.restart
-        end
         RAV_data.options[checkBox.var] = checkBox:GetChecked()
         ravMounts:MountListHandler()
         ravMounts:EnsureMacro()
@@ -482,14 +501,7 @@ function ravMounts:MountUpHandler(specificType)
     end
 end
 
-
-function ravMounts:MountListLabelling()
-    local mountListLabels = {
-        ["vendor"] = L.Vendor,
-        ["passengerGround"] = L.PassengerGround,
-        ["passengerFlying"] = L.PassengerFlying,
-        ["flex"] = L.Flex,
-    }
+function ravMounts:TooltipLabels()
     GameTooltip:HookScript("OnTooltipSetSpell", function(self)
         local spellID = select(2, self:GetSpell())
         if spellID then
@@ -498,48 +510,21 @@ function ravMounts:MountListLabelling()
                     return
                 end
             end
-            for type, label in pairs(mountListLabels) do
-                for _, mountID in ipairs(ravMounts.data.mountIDs[type]) do
-                    local _, lookup, _ = C_MountJournal.GetMountInfoByID(mountID)
-                    if lookup == spellID then
-                        self:AddLine("|cff" .. ravMounts.color .. ravMounts.name .. ":|r " .. label, 1, 1, 1)
-                        self:Show()
-                        return
-                    end
-                end
-            end
+            addTooltipFromSpell(self, spellID)
         end
     end)
 
     hooksecurefunc(GameTooltip, "SetUnitBuff", function(self,...)
         local spellID = select(10, UnitBuff(...))
         if spellID then
-            for type, label in pairs(mountListLabels) do
-                for _, mountID in ipairs(ravMounts.data.mountIDs[type]) do
-                    local _, lookup, _ = C_MountJournal.GetMountInfoByID(mountID)
-                    if lookup == spellID then
-                        self:AddLine("|cff" .. ravMounts.color .. ravMounts.name .. ":|r " .. label, 1, 1, 1)
-                        self:Show()
-                        return
-                    end
-                end
-            end
+            addTooltipFromSpell(self, spellID)
         end
     end)
 
     hooksecurefunc(GameTooltip, "SetUnitAura", function(self,...)
         local spellID = select(10, UnitAura(...))
         if spellID then
-            for type, label in pairs(mountListLabels) do
-                for _, mountID in ipairs(ravMounts.data.mountIDs[type]) do
-                    local _, lookup, _ = C_MountJournal.GetMountInfoByID(mountID)
-                    if lookup == spellID then
-                        self:AddLine("|cff" .. ravMounts.color .. ravMounts.name .. ":|r " .. label, 1, 1, 1)
-                        self:Show()
-                        return
-                    end
-                end
-            end
+            addTooltipFromSpell(self, spellID)
         end
     end)
 end

@@ -38,6 +38,7 @@ L.Passenger = "Passenger"
 L.PassengerGround = L.Passenger .. " (" .. L.Ground .. ")"
 L.PassengerFlying = L.Passenger .. " (" .. L.Flying .. ")"
 L.Flex = "Flexible"
+L.Cloneable = "Cloneable"
 L.OptionsHeading = "Configuration:"
 L.Macro = "Automatically create/maintain macro"
 L.MacroTooltip = "When enabled, a macro called |cffffffff%s|r will be automatically created and managed for you under |cffffffffGeneral Macros|r." -- ravMounts.name

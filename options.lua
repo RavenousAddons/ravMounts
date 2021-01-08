@@ -5,14 +5,6 @@ local small = 6
 local medium = 12
 local large = 16
 
-local function checkForRestart(controls)
-    for _, control in pairs(controls) do
-        if control.restart then
-            ReloadUI()
-        end
-    end
-end
-
 local Options = CreateFrame("Frame", name .. "Options", InterfaceOptionsFramePanelContainer)
 Options.name = ravMounts.name
 Options.controlTable = {}
@@ -20,13 +12,11 @@ Options.okay = function(self)
     for _, control in pairs(self.controls) do
         RAV_data.options[control.var] = control:GetValue()
     end
-    checkForRestart(self.controls)
 end
 Options.default = function(self)
     for _, control in pairs(self.controls) do
         RAV_data.options[control.var] = true
     end
-    checkForRestart(self.controls)
 end
 Options.cancel = function(self)
     for _, control in pairs(self.controls) do
