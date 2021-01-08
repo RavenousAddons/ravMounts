@@ -30,7 +30,8 @@ local function contains(table, input)
     return false
 end
 
-local function addTooltipFromSpell(tooltip, spellID)
+local function addTooltipFromSpell(tooltip, spellID, showCloneable)
+    if showCloneable == nil then showCloneable = true end
     local type, cloneable
     for mountType, label in pairs(tooltipLabels) do
         for _, mountID in ipairs(ravMounts.data.mountIDs[mountType]) do
@@ -51,8 +52,8 @@ local function addTooltipFromSpell(tooltip, spellID)
             break
         end
     end
-    if type or cloneable then
-        tooltip:AddLine("|cff" .. ravMounts.color .. ravMounts.name .. ":|r " .. (type and type or "") .. ((type and cloneable) and ", " or "") .. (cloneable and L.Cloneable or ""), 1, 1, 1)
+    if type or (cloneable and showCloneable) then
+        tooltip:AddLine("|cff" .. ravMounts.color .. ravMounts.name .. ":|r " .. (type and type or "") .. ((type and cloneable and showCloneable) and ", " or "") .. ((cloneable and showCloneable) and L.Cloneable or ""), 1, 1, 1)
     end
     tooltip:Show()
 end
@@ -510,20 +511,22 @@ function ravMounts:TooltipLabels()
                     return
                 end
             end
-            addTooltipFromSpell(self, spellID)
+            addTooltipFromSpell(self, spellID, false)
         end
     end)
 
-    hooksecurefunc(GameTooltip, "SetUnitBuff", function(self,...)
+    hooksecurefunc(GameTooltip, "SetUnitBuff", function(self, ...)
+        local unit = select(1, ...)
         local spellID = select(10, UnitBuff(...))
-        if spellID then
+        if unit ~= "player" and spellID then
             addTooltipFromSpell(self, spellID)
         end
     end)
 
-    hooksecurefunc(GameTooltip, "SetUnitAura", function(self,...)
+    hooksecurefunc(GameTooltip, "SetUnitAura", function(self, ...)
+        local unit = select(1, ...)
         local spellID = select(10, UnitAura(...))
-        if spellID then
+        if unit ~= "player" and spellID then
             addTooltipFromSpell(self, spellID)
         end
     end)
