@@ -119,7 +119,7 @@ function ravMounts:EnsureMacro()
                 local mountName, _ = C_MountJournal.GetMountInfoByID(flying[random(#flying)])
                 if ground then
                     if RAV_data.options.normalMountModifier ~= "none" then
-                        body = "[flyable,nomod:" .. RAV_data.options.normalMountModifier .. "][noflyable,mod:" .. RAV_data.options.normalMountModifier .. "] " .. mountName .. "; " .. body
+                        body = "[swimming,flyable,mod:" .. RAV_data.options.normalMountModifier .. "][flyable,nomod:" .. RAV_data.options.normalMountModifier .. "][noflyable,mod:" .. RAV_data.options.normalMountModifier .. "] " .. mountName .. "; " .. body
                     else
                         body = "[flyable] " .. mountName .. "; " .. body
                     end
@@ -462,10 +462,7 @@ function ravMounts:MountUpHandler(specificType)
     elseif (specificType == "copy" or specificType == "clone" or RAV_data.options.clone) and cloneMountID then
         C_MountJournal.SummonByID(cloneMountID)
         return
-    --
-    -- TODO: Figure out how to manage Mount Special with custom modifiers
-    --
-    elseif ((vendorMountModifier and normalMountModifier) or (vendorMountModifier and passengerMountModifier)) and (IsMounted() or UnitInVehicle("player")) then
+    elseif vendorMountModifier and passengerMountModifier and (IsMounted() or UnitInVehicle("player")) then
         DoEmote(EMOTE171_TOKEN)
         return
     elseif IsMounted() or UnitInVehicle("player") then
@@ -480,12 +477,13 @@ function ravMounts:MountUpHandler(specificType)
         ravMounts:MountSummon(RAV_data.mounts.passengerFlying)
     elseif havePassengerGroundMounts and passengerMountModifier and (not flyable or (flyable and normalMountModifier)) then
         ravMounts:MountSummon(RAV_data.mounts.passengerGround)
-    elseif haveFlyingMounts and ((flyable and not normalMountModifier and not IsSwimming()) or (not flyable and normalMountModifier)) then
-        ravMounts:MountSummon(RAV_data.mounts.flying)
-    elseif inVashjir and IsSwimming() and haveVashjirMounts then
+    elseif haveVashjirMounts and IsSwimming() and not normalMountModifier and inVashjir then
         ravMounts:MountSummon(RAV_data.mounts.vashjir)
-    elseif IsSwimming() and haveSwimmingMounts then
+    elseif haveSwimmingMounts and IsSwimming() and not normalMountModifier then
         ravMounts:MountSummon(RAV_data.mounts.swimming)
+    -- elseif haveFlyingMounts and ((flyable and not normalMountModifier and not IsSwimming()) or (not flyable and normalMountModifier)) then
+    elseif haveFlyingMounts and ((IsSwimming() and flyable and normalMountModifier) or (flyable and not normalMountModifier) or (not flyable and normalMountModifier)) then
+        ravMounts:MountSummon(RAV_data.mounts.flying)
     elseif inAhnQiraj and haveAhnQirajMounts then
         ravMounts:MountSummon(RAV_data.mounts.ahnqiraj)
     elseif inMaw and haveMawMounts then
