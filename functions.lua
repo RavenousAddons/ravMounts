@@ -30,13 +30,13 @@ local function contains(table, input)
     return false
 end
 
-local function addTooltipFromSpell(tooltip, spellID, showCloneable)
+local function addLabelsFromSpell(target, spellID, showCloneable)
     if showCloneable == nil then showCloneable = true end
     local type, cloneable
     for mountType, label in pairs(tooltipLabels) do
         for _, mountID in ipairs(ravMounts.data.mountIDs[mountType]) do
             local _, lookup, _ = C_MountJournal.GetMountInfoByID(mountID)
-            if lookup == spellID then
+            if lookup .. "" == spellID then
                 type = label
                 break
             end
@@ -45,17 +45,19 @@ local function addTooltipFromSpell(tooltip, spellID, showCloneable)
             break
         end
     end
-    for _, mountID in ipairs(RAV_data.mounts.allByID) do
-        local _, lookup, _ = C_MountJournal.GetMountInfoByID(mountID)
-        if lookup == spellID then
-            cloneable = true
-            break
+    if showCloneable then
+        for _, mountID in ipairs(RAV_data.mounts.allByID) do
+            local _, lookup, _ = C_MountJournal.GetMountInfoByID(mountID)
+            if lookup == spellID then
+                cloneable = true
+                break
+            end
         end
     end
-    if type or (cloneable and showCloneable) then
-        tooltip:AddLine("|cff" .. ravMounts.color .. ravMounts.name .. ":|r " .. (type and type or "") .. ((type and cloneable and showCloneable) and ", " or "") .. ((cloneable and showCloneable) and L.Cloneable or ""), 1, 1, 1)
+    if type or (showCloneable and cloneable) then
+        target:AddLine("|cff" .. ravMounts.color .. ravMounts.name .. ":|r " .. (type and type or "") .. ((type and showCloneable and cloneable) and ", " or "") .. ((showCloneable and cloneable) and L.Cloneable or ""), 1, 1, 1)
     end
-    tooltip:Show()
+    target:Show()
 end
 
 function ravMounts:PrettyPrint(message)
@@ -501,6 +503,29 @@ function ravMounts:MountUpHandler(specificType)
 end
 
 function ravMounts:TooltipLabels()
+    hooksecurefunc(GameTooltip, "SetUnitAura", function(self, ...)
+        local unit = select(1, ...)
+        local spellID = select(10, UnitAura(...))
+        if unit ~= "player" and spellID then
+            addLabelsFromSpell(self, spellID)
+        end
+    end)
+
+    hooksecurefunc(GameTooltip, "SetUnitBuff", function(self, ...)
+        local unit = select(1, ...)
+        local spellID = select(10, UnitBuff(...))
+        if unit ~= "player" and spellID then
+            addLabelsFromSpell(self, spellID)
+        end
+    end)
+
+    hooksecurefunc("SetItemRef", function(link, text, button, chatFrame)
+        if string.find(link, "^spell:") then
+            local spellID, _ = strsplit(":", string.sub(link, 7))
+            addLabelsFromSpell(ItemRefTooltip, spellID, false)
+        end
+    end)
+
     GameTooltip:HookScript("OnTooltipSetSpell", function(self)
         local spellID = select(2, self:GetSpell())
         if spellID then
@@ -509,23 +534,7 @@ function ravMounts:TooltipLabels()
                     return
                 end
             end
-            addTooltipFromSpell(self, spellID, false)
-        end
-    end)
-
-    hooksecurefunc(GameTooltip, "SetUnitBuff", function(self, ...)
-        local unit = select(1, ...)
-        local spellID = select(10, UnitBuff(...))
-        if unit ~= "player" and spellID then
-            addTooltipFromSpell(self, spellID)
-        end
-    end)
-
-    hooksecurefunc(GameTooltip, "SetUnitAura", function(self, ...)
-        local unit = select(1, ...)
-        local spellID = select(10, UnitAura(...))
-        if unit ~= "player" and spellID then
-            addTooltipFromSpell(self, spellID)
+            addLabelsFromSpell(self, spellID, false)
         end
     end)
 end
