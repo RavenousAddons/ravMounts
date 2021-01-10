@@ -36,7 +36,7 @@ local function addLabelsFromSpell(target, spellID, showCloneable)
     for mountType, label in pairs(tooltipLabels) do
         for _, mountID in ipairs(ravMounts.data.mountIDs[mountType]) do
             local _, lookup, _ = C_MountJournal.GetMountInfoByID(mountID)
-            if lookup .. "" == spellID then
+            if tonumber(lookup) == tonumber(spellID) then
                 type = label
                 break
             end
