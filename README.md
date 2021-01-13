@@ -8,13 +8,16 @@
 
 ## How does Ravenous Mounts work?
 
-By default, the AddOn will create and maintain a macro for you under General Macros called Ravenous Mounts. The macro will pull icons from your available mounts and updates whenever you change zone (like going into Ahn'Qiraj), when you change Favorites in your Mount Journal, and even if you politely ask it to do so!
+1. The Addon creates a macro for you under General Macros called "Ravenous Mounts". Put the macro on your bars!
 
-This AddOn is meant as a replacement for the default in-game "Summon Random Favorite Mount" button by expanding what mounts can be summoned, and when used with a keybind can be combined with modifier keys to summon special mount types, like vendor or passenger mounts.
+2. Mark your favourite mounts in your Mount Journal as your normally would and use the macro. The Addon will act like the built-in "Summon Random Favorite Mount" button but will respond more intelligently:
+  - it can more accurately detect when a zone is flyable
+  - it can summon a swimming mount when you're underwater
+  - it can summon Maw-specific mounts you've learned when in The Maw (likewise for Ahn'Qiraj and Vashj'ir)
+  - using key-modifiers (alt, control, shift) with the macro can summon specific types of mounts (e.g. vendor mounts, passenger mounts)
+  - it can even clone your target/focus' active mount if you have learned it too (great for mount-off competitions!)
 
-`/ravm`
-
-When using that command, Ravenous Mounts will loop through your Mount Journal collecting and sorting your mounts into different lists, organised by type, then, depending on the situation your character is in, summon the optimal mount based on your Favorites in the Mount Journal.
+*If you'd rather manage your own macro, you can use the following slash-command: `/ravm`*
 
 ## Why?
 
@@ -46,13 +49,6 @@ Ravenous Mounts comes with a small handful of commands available for you to chec
 - vashjir
 - maw
 - chauffeur
-
-As mentioned above, Ravenous Mounts also checks for modifier keys being pressed when the command is run—these keys change what type of mount will be summoned:
-
-- SHIFT — *Vendor Mounts*
-- CONTROL - *Passenger Mounts*
-- ALT - *Opposite Mounts (if in flying zone, ground mounts, and vice versa)*
-- ALT + SHIFT — *Mount Special*
 
 ## Get in touch
 

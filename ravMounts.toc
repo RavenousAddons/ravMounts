@@ -4,7 +4,7 @@
 ## Name: Ravenous Mounts
 ## Title: Ravenous |cff9eb8c9Mounts|r
 ## Notes: "Chooses the best mount for the job with simple preferences based on your Favourites."
-## Author: waldenp0nd
+## Author: RavenousAddons
 
 ## SavedVariables: RAV_locale, RAV_version, RAV_seenUpdate
 ## SavedVariablesPerCharacter: RAV_data, RAV_macroBody
