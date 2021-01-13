@@ -52,7 +52,7 @@ Ravenous Mounts comes with a small handful of commands available for you to chec
 
 ## Get in touch
 
-If you wish to get in touch with me, hit me up in-game; my BattleTag is WaldenPond#11608.
+If you wish to get in touch with me, please get in touch through the [Ravenous Addons Discord](https://discord.gg/dNfqnRf2fq).
 
 ## Special thanks
 
