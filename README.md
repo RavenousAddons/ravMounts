@@ -11,11 +11,11 @@
 1. The Addon creates a macro for you under General Macros called "Ravenous Mounts". Put the macro on your bars!
 
 2. Mark your favourite mounts in your Mount Journal as your normally would and use the macro. The Addon will act like the built-in "Summon Random Favorite Mount" button but will respond more intelligently:
-  - it can more accurately detect when a zone is flyable
-  - it can summon a swimming mount when you're underwater
-  - it can summon Maw-specific mounts you've learned when in The Maw (likewise for Ahn'Qiraj and Vashj'ir)
-  - using key-modifiers (alt, control, shift) with the macro can summon specific types of mounts (e.g. vendor mounts, passenger mounts)
-  - it can even clone your target/focus' active mount if you have learned it too (great for mount-off competitions!)
+    - it can more accurately detect when a zone is flyable
+    - it can summon a swimming mount when you're underwater
+    - it can summon Maw-specific mounts you've learned when in The Maw (likewise for Ahn'Qiraj and Vashj'ir)
+    - using key-modifiers (alt, control, shift) with the macro can summon specific types of mounts (e.g. vendor mounts, passenger mounts)
+    - it can even clone your target/focus' active mount if you have learned it too (great for mount-off competitions!)
 
 *If you'd rather manage your own macro, you can use the following slash-command: `/ravm`*
 
