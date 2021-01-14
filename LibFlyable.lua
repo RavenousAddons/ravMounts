@@ -17,19 +17,6 @@ local spellsByContinent = {
     [1643] = 278833, -- Kul Tiras
     [1718] = 278833, -- Nazjatar
 
-    -- Flyable continents/instances where IsFlyableArea returns false:
-    [1220] = true, -- Broken Isles
-    [1116] = true, -- Draenor
-    [1464] = true, -- Tanaan Jungle
-    [1152] = true, -- FW Horde Garrison Level 1
-    [1330] = true, -- FW Horde Garrison Level 2
-    [1153] = true, -- FW Horde Garrison Level 3
-    [1154] = true, -- FW Horde Garrison Level 4
-    [1158] = true, -- SMV Alliance Garrison Level 1
-    [1331] = true, -- SMV Alliance Garrison Level 2
-    [1159] = true, -- SMV Alliance Garrison Level 3
-    [1160] = true, -- SMV Alliance Garrison Level 4
-
     -- Unflyable continents/instances where IsFlyableArea returns true:
     [1191] = -1, -- Ashran (PvP)
     [1265] = -1, -- Tanaan Jungle Intro
@@ -88,6 +75,21 @@ local noFlySubzones = {
     ["奈斯畢拉"] = true,
 }
 
+-- Flyable continents/instances where IsFlyableArea returns false:
+local flyableContinents = {
+    [1220] = 1, -- Broken Isles
+    [1116] = 1, -- Draenor
+    [1464] = 1, -- Tanaan Jungle
+    [1152] = 1, -- FW Horde Garrison Level 1
+    [1330] = 1, -- FW Horde Garrison Level 2
+    [1153] = 1, -- FW Horde Garrison Level 3
+    [1154] = 1, -- FW Horde Garrison Level 4
+    [1158] = 1, -- SMV Alliance Garrison Level 1
+    [1331] = 1, -- SMV Alliance Garrison Level 2
+    [1159] = 1, -- SMV Alliance Garrison Level 3
+    [1160] = 1, -- SMV Alliance Garrison Level 4
+}
+
 local GetInstanceInfo = GetInstanceInfo
 local GetSubZoneText = GetSubZoneText
 local IsFlyableArea = IsFlyableArea
@@ -97,15 +99,17 @@ function ravMounts:IsFlyableArea()
     if noFlySubzones[GetSubZoneText() or ""] then
         return false
     end
+
     local _, _, _, _, _, _, _, instanceMapID = GetInstanceInfo()
+
     local reqSpell = spellsByContinent[instanceMapID]
-    if reqSpell == true then
-        return true
-    elseif not IsFlyableArea() then
-        return false
-    end
     if reqSpell then
         return reqSpell > 0 and IsSpellKnown(reqSpell)
+    end
+
+    local forcedFlyable = flyableContinents[instanceMapID]
+    if not IsFlyableArea() and not forcedFlyable then
+        return false
     end
 
     return IsSpellKnown(34090) or IsSpellKnown(34091) or IsSpellKnown(90265)
