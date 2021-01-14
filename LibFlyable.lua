@@ -8,7 +8,7 @@
 
 local name, ravMounts = ...
 
-local spellForContinent = {
+local spellsByContinent = {
     -- Shadowlands
     [2363] = -1, -- Queen's Conservatory (Night Fae)
 
@@ -16,6 +16,19 @@ local spellForContinent = {
     [1642] = 278833, -- Zandalar
     [1643] = 278833, -- Kul Tiras
     [1718] = 278833, -- Nazjatar
+
+    -- Flyable continents/instances where IsFlyableArea returns false:
+    [1220] = true, -- Broken Isles
+    [1116] = true, -- Draenor
+    [1464] = true, -- Tanaan Jungle
+    [1152] = true, -- FW Horde Garrison Level 1
+    [1330] = true, -- FW Horde Garrison Level 2
+    [1153] = true, -- FW Horde Garrison Level 3
+    [1154] = true, -- FW Horde Garrison Level 4
+    [1158] = true, -- SMV Alliance Garrison Level 1
+    [1331] = true, -- SMV Alliance Garrison Level 2
+    [1159] = true, -- SMV Alliance Garrison Level 3
+    [1160] = true, -- SMV Alliance Garrison Level 4
 
     -- Unflyable continents/instances where IsFlyableArea returns true:
     [1191] = -1, -- Ashran (PvP)
@@ -75,20 +88,22 @@ local noFlySubzones = {
     ["奈斯畢拉"] = true,
 }
 
-
 local GetInstanceInfo = GetInstanceInfo
 local GetSubZoneText = GetSubZoneText
 local IsFlyableArea = IsFlyableArea
 local IsSpellKnown = IsSpellKnown
 
 function ravMounts:IsFlyableArea()
-    if not IsFlyableArea()
-    or noFlySubzones[GetSubZoneText() or ""] then
+    if noFlySubzones[GetSubZoneText() or ""] then
         return false
     end
-
     local _, _, _, _, _, _, _, instanceMapID = GetInstanceInfo()
-    local reqSpell = spellForContinent[instanceMapID]
+    local reqSpell = spellsByContinent[instanceMapID]
+    if reqSpell == true then
+        return true
+    elseif not IsFlyableArea() then
+        return false
+    end
     if reqSpell then
         return reqSpell > 0 and IsSpellKnown(reqSpell)
     end
