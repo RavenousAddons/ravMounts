@@ -37,6 +37,7 @@ ravMounts.data = {
             287, -- Grand Black War Mammoth (Horde)
             288, -- Grand Ice Mammoth (Horde)
             289, -- Grand Ice Mammoth (Alliance)
+            1288, -- Explorer's Dunetrekker
         },
         passengerFlying = {
             382, -- X-53 Touring Rocket
