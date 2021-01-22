@@ -483,13 +483,12 @@ function ravMounts:MountUpHandler(specificType)
         ravMounts:MountSummon(RAV_data.mounts.vashjir)
     elseif haveSwimmingMounts and IsSwimming() and not normalMountModifier then
         ravMounts:MountSummon(RAV_data.mounts.swimming)
-    -- elseif haveFlyingMounts and ((flyable and not normalMountModifier and not IsSwimming()) or (not flyable and normalMountModifier)) then
-    elseif haveFlyingMounts and ((IsSwimming() and flyable and normalMountModifier) or (flyable and not normalMountModifier) or (not flyable and normalMountModifier)) then
-        ravMounts:MountSummon(RAV_data.mounts.flying)
     elseif inAhnQiraj and haveAhnQirajMounts then
         ravMounts:MountSummon(RAV_data.mounts.ahnqiraj)
     elseif inMaw and haveMawMounts then
         ravMounts:MountSummon(RAV_data.mounts.maw)
+    elseif haveFlyingMounts and ((IsSwimming() and flyable and normalMountModifier) or (flyable and not normalMountModifier) or (not flyable and normalMountModifier)) then
+        ravMounts:MountSummon(RAV_data.mounts.flying)
     elseif haveGroundMounts then
         ravMounts:MountSummon(RAV_data.mounts.ground)
     elseif haveFlyingMounts then
