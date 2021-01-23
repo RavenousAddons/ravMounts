@@ -66,6 +66,12 @@ ravMounts.data = {
             547, -- Hearthsteed
             593, -- Warforged Nightmare
             764, -- Grove Warden
+            826, -- Prestigious Bronze Courser
+            831, -- Prestigious Royal Courser
+            832, -- Prestigious Forest Courser
+            833, -- Prestigious Ivory Courser
+            834, -- Prestigious Azure Courser
+            836, -- Prestigious Midnight Courser
             1222, -- Vulpine Familiar
             1404, -- Silverwind Larion
         },
