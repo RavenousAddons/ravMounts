@@ -10,8 +10,7 @@ local name, ravMounts = ...
 
 local spellsByContinent = {
     -- Shadowlands
-    [1543] = -1, -- The Maw
-    [1648] = -1, -- The Maw
+    [2364] = -1, -- The Maw
     [2363] = -1, -- Queen's Conservatory (Night Fae)
 
     -- Battle for Azeroth Pathfinder
