@@ -84,12 +84,19 @@ Options:SetScript("OnShow", function()
             offsetY = medium * -1,
         },
         {
-            type = "CheckBox",
+            type = "DropDown",
             name = "Clone",
             parent = Options,
-            label = L.Clone,
-            tooltip = L.CloneTooltip,
+            label = L.Cloneable .. " " .. L.Mounts,
             var = "clone",
+            options = {
+                "both",
+                "target",
+                "focus",
+                "none",
+            },
+            width = 180,
+            offsetX = large * -1,
         },
         {
             type = "DropDown",
@@ -103,7 +110,7 @@ Options:SetScript("OnShow", function()
                 "flying",
             },
             width = 180,
-            offsetX = large * -1,
+            offsetX = 0,
         },
         {
             type = "Label",

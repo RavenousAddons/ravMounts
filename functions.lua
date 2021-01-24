@@ -184,6 +184,9 @@ function ravMounts:SetDefaultOptions()
     if RAV_data.options.flexMounts == true or RAV_data.options.flexMounts == false then
         RAV_data.options.flexMounts = nil
     end
+    if RAV_data.options.clone == true or RAV_data.options.clone == false then
+        RAV_data.options.clone = nil
+    end
     for k, v in pairs(defaults) do
         ravMounts:RegisterDefaultOption(k, v)
     end
@@ -338,7 +341,14 @@ function ravMounts:MountSummon(list)
 end
 
 function ravMounts:GetCloneMount()
-    local clone = UnitIsPlayer("target") and "target" or UnitIsPlayer("focus") and "focus" or false
+    local clone = false
+    if RAV_data.options.clone == "both" then
+        clone = UnitIsPlayer("target") and "target" or UnitIsPlayer("focus") and "focus" or false
+    elseif RAV_data.options.clone == "target" then
+        clone = UnitIsPlayer("target") and "target" or false
+    elseif RAV_data.options.clone == "focus" then
+        clone = UnitIsPlayer("focus") and "focus" or false
+    end
     if clone then
         for buffIndex = 1, 40 do
             local mountIndex = contains(RAV_data.mounts.allByName, UnitBuff(clone, buffIndex))
@@ -461,7 +471,7 @@ function ravMounts:MountUpHandler(specificType)
         ravMounts:MountSummon(RAV_data.mounts.ground)
     elseif specificType == "chauffeur" and haveChauffeurMounts then
         ravMounts:MountSummon(RAV_data.mounts.chauffeur)
-    elseif (specificType == "copy" or specificType == "clone" or RAV_data.options.clone) and cloneMountID then
+    elseif (specificType == "copy" or specificType == "clone" or RAV_data.options.clone ~= "none") and cloneMountID then
         C_MountJournal.SummonByID(cloneMountID)
         return
     elseif vendorMountModifier and passengerMountModifier and (IsMounted() or UnitInVehicle("player")) then
