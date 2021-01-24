@@ -11,5 +11,7 @@
 
 ## X-License: Public Domain
 ## X-Website: https://github.com/RavenousAddons/ravMounts
+## X-Curse-Project-ID: 274452
+## X-WoWI-ID: 24005
 
 ravMounts.xml
