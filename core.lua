@@ -16,7 +16,7 @@ function ravMounts_OnEvent(self, event, arg, ...)
             ravMounts:SetDefaultOptions()
             InterfaceOptions_AddCategory(ravMounts.Options)
             if not RAV_version then
-                ravMounts:PrettyPrint(string.format(L.Install, ravMounts.color, ravMounts.name))
+                ravMounts:PrettyPrint(string.format(L.Install, ravMounts.color, ravMounts.version))
             elseif RAV_version ~= ravMounts.version then
                 ravMounts:PrettyPrint(string.format(L.Update, ravMounts.color, ravMounts.version))
             end
@@ -33,7 +33,7 @@ function ravMounts_OnEvent(self, event, arg, ...)
             local a, b, c = strsplit(".", ravMounts.version)
             local d, e, f = strsplit(".", message)
             if (d > a) or (d == a and e > b) or (d == a and e == b and f > c) then
-                ravMounts:PrettyPrint(string.format(L.OutOfDate, ravMounts.color, ravMounts.name))
+                ravMounts:PrettyPrint(L.OutOfDate)
                 RAV_seenUpdate = true
             end
         end

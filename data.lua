@@ -73,6 +73,7 @@ ravMounts.data = {
             834, -- Prestigious Azure Courser
             836, -- Prestigious Midnight Courser
             1222, -- Vulpine Familiar
+            1290, -- Squeakers, the Trickster
             1404, -- Silverwind Larion
         },
         maw = {
