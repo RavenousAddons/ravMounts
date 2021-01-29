@@ -64,22 +64,6 @@ function ravMounts:PrettyPrint(message)
     DEFAULT_CHAT_FRAME:AddMessage("|cff" .. ravMounts.color .. ravMounts.name .. ":|r " .. message)
 end
 
-function ravMounts:SendVersion()
-    local inInstance, _ = IsInInstance()
-    if inInstance then
-        C_ChatInfo.SendAddonMessage(name, RAV_version, "INSTANCE_CHAT")
-    elseif IsInGroup() then
-        if GetNumGroupMembers() > 5 then
-            C_ChatInfo.SendAddonMessage(name, RAV_version, "RAID")
-        end
-        C_ChatInfo.SendAddonMessage(name, RAV_version, "PARTY")
-    end
-    local guildName, _, _, _ = GetGuildInfo("player")
-    if guildName then
-        C_ChatInfo.SendAddonMessage(name, RAV_version, "GUILD")
-    end
-end
-
 function ravMounts:AssignVariables()
     flyable = ravMounts:IsFlyableArea()
     cloneMountID = ravMounts:GetCloneMount()
