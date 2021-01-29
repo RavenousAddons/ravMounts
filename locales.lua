@@ -20,7 +20,6 @@ L.Modifier = "Modifier"
 L.Mount = "mount"
 L.Mounts = "mounts"
 L.Version = "%s is the current version." -- ravMounts.version
-L.OutOfDate = "There is a new update available for download!"
 L.Install = "Thanks for installing |cff%1$sv%2$s|r!" -- ravMounts.color, ravMounts.version
 L.Update = "Thanks for updating to |cff%1$sv%2$s|r!" -- ravMounts.color, ravMounts.version
 L.Support1 = "This AddOn creates and maintains a macro called |r%s|cffffffff for you under |rGeneral Macros|cffffffff." -- ravMounts.name
