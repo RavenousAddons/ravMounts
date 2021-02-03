@@ -5,12 +5,6 @@ local mountTypes = ravMounts.data.mountTypes
 local mountIDs = ravMounts.data.mountIDs
 local mapIDs = ravMounts.data.mapIDs
 
-local GetBestMapForUnit = C_Map.GetBestMapForUnit
-local GetMountInfoByID = C_MountJournal.GetMountInfoByID
-local GetMountInfoExtraByID = C_MountJournal.GetMountInfoExtraByID
-local SummonByID = C_MountJournal.SummonByID
-local GetMountIDs = C_MountJournal.GetMountIDs()
-
 local faction, _ = UnitFactionGroup("player")
 local flyable, cloneMountID, mapID, inAhnQiraj, inVashjir, inMaw, haveGroundMounts, haveFlyingMounts, havePassengerGroundMounts, havePassengerFlyingMounts, haveVendorMounts, haveSwimmingMounts, haveAhnQirajMounts, haveVashjirMounts, haveMawMounts, haveChauffeurMounts, normalMountModifier, vendorMountModifier, passengerMountModifier
 local prevControl
@@ -41,7 +35,7 @@ local function addLabelsFromSpell(target, spellID, showCloneable)
     local type, cloneable
     for mountType, label in pairs(tooltipLabels) do
         for _, mountID in ipairs(ravMounts.data.mountIDs[mountType]) do
-            local _, lookup, _ = GetMountInfoByID(mountID)
+            local _, lookup, _ = C_MountJournal.GetMountInfoByID(mountID)
             if tonumber(lookup) == tonumber(spellID) then
                 type = label
                 break
@@ -53,7 +47,7 @@ local function addLabelsFromSpell(target, spellID, showCloneable)
     end
     if showCloneable then
         for _, mountID in ipairs(RAV_data.mounts.allByID) do
-            local _, lookup, _ = GetMountInfoByID(mountID)
+            local _, lookup, _ = C_MountJournal.GetMountInfoByID(mountID)
             if lookup == spellID then
                 cloneable = true
                 break
@@ -73,7 +67,7 @@ end
 function ravMounts:AssignVariables()
     flyable = ravMounts:IsFlyableArea()
     cloneMountID = ravMounts:GetCloneMount()
-    mapID = GetBestMapForUnit("player")
+    mapID = C_Map.GetBestMapForUnit("player")
     inAhnQiraj = contains(mapIDs.ahnqiraj, mapID)
     inVashjir = contains(mapIDs.vashjir, mapID)
     inMaw = contains(mapIDs.maw, mapID)
@@ -105,11 +99,11 @@ function ravMounts:EnsureMacro()
         if ground or flying or vendor or passenger or swimming then
             body = "\n" .. body
             if ground then
-                local mountName, _ = GetMountInfoByID(ground[random(#ground)])
+                local mountName, _ = C_MountJournal.GetMountInfoByID(ground[random(#ground)])
                 body = mountName .. body
             end
             if flying then
-                local mountName, _ = GetMountInfoByID(flying[random(#flying)])
+                local mountName, _ = C_MountJournal.GetMountInfoByID(flying[random(#flying)])
                 if flyable and ground then
                     if RAV_data.options.normalMountModifier ~= "none" then
                         body = "[swimming,mod:" .. RAV_data.options.normalMountModifier .. "][nomod:" .. RAV_data.options.normalMountModifier .. "] " .. mountName .. "; " .. body
@@ -123,7 +117,7 @@ function ravMounts:EnsureMacro()
                 end
             end
             if swimming then
-                local mountName, _ = GetMountInfoByID(swimming[random(#swimming)])
+                local mountName, _ = C_MountJournal.GetMountInfoByID(swimming[random(#swimming)])
                 if RAV_data.options.normalMountModifier ~= "none" then
                     body = "[swimming,nomod:" .. RAV_data.options.normalMountModifier .. "] " .. mountName .. ((ground or flying) and "; " or "") .. body
                 else
@@ -131,11 +125,11 @@ function ravMounts:EnsureMacro()
                 end
             end
             if vendor and RAV_data.options.vendorMountModifier ~= "none" then
-                local mountName, _ = GetMountInfoByID(vendor[random(#vendor)])
+                local mountName, _ = C_MountJournal.GetMountInfoByID(vendor[random(#vendor)])
                 body = "[mod:" .. RAV_data.options.vendorMountModifier .. "] " .. mountName .. ((ground or flying or swimming) and "; " or "") .. body
             end
             if passenger and RAV_data.options.passengerMountModifier ~= "none" then
-                local mountName, _ = GetMountInfoByID(passenger[random(#passenger)])
+                local mountName, _ = C_MountJournal.GetMountInfoByID(passenger[random(#passenger)])
                 body = "[mod:" .. RAV_data.options.passengerMountModifier .. "] " .. mountName .. ((ground or flying or swimming or vendor) and "; " or "") .. body
             end
             body = "#showtooltip " .. body
@@ -319,11 +313,11 @@ function ravMounts:MountSummon(list)
     if not UnitAffectingCombat("player") and #list > 0 then
         local iter = 10 -- "magic" number
         local n = random(#list)
-        while not select(5, GetMountInfoByID(list[n])) and iter > 0 do
+        while not select(5, C_MountJournal.GetMountInfoByID(list[n])) and iter > 0 do
             n = random(#list)
             iter = iter - 1
         end
-        SummonByID(list[n])
+        C_MountJournal.SummonByID(list[n])
     end
 end
 
@@ -361,9 +355,9 @@ function ravMounts:MountListHandler()
     RAV_data.mounts.vashjir = {}
     RAV_data.mounts.maw = {}
     RAV_data.mounts.chauffeur = {}
-    for _, mountID in pairs(GetMountIDs) do
-        local mountName, _, _, _, _, _, isFavorite, _, mountFaction, _, isCollected = GetMountInfoByID(mountID)
-        local _, _, _, _, mountType = GetMountInfoExtraByID(mountID)
+    for _, mountID in pairs(C_MountJournal.GetMountIDs()) do
+        local mountName, _, _, _, _, _, isFavorite, _, mountFaction, _, isCollected = C_MountJournal.GetMountInfoByID(mountID)
+        local _, _, _, _, mountType = C_MountJournal.GetMountInfoExtraByID(mountID)
         local isGroundMount = contains(mountTypes.ground, mountType)
         local isFlyingMount = contains(mountTypes.flying, mountType)
         local isVendorMount = contains(mountIDs.vendor, mountID)
@@ -450,7 +444,7 @@ function ravMounts:MountUpHandler(specificType)
     elseif specificType == "chauffeur" and haveChauffeurMounts then
         ravMounts:MountSummon(RAV_data.mounts.chauffeur)
     elseif (specificType == "copy" or specificType == "clone" or RAV_data.options.clone ~= "none") and cloneMountID then
-        SummonByID(cloneMountID)
+        C_MountJournal.SummonByID(cloneMountID)
         return
     elseif vendorMountModifier and passengerMountModifier and (IsMounted() or UnitInVehicle("player")) then
         DoEmote(EMOTE171_TOKEN)
