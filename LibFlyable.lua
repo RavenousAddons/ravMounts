@@ -1,12 +1,4 @@
--- LibFlyable.lua
--- Written by Phanx <addons@phanx.net>
--- This file provides a single function addons can call to determine
--- whether the player can actually use a flying mount at present, since
--- the game API function IsFlyableArea is unusable for this purpose.
--- This is free and unencumbered software released into the public domain.
--- Feel free to include this file or code from it in your own addons.
-
-local name, ravMounts = ...
+local _, ravMounts = ...
 
 local spellsByContinent = {
     -- Shadowlands

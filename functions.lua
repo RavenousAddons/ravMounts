@@ -1,12 +1,18 @@
-local name, ravMounts = ...
+local _, ravMounts = ...
 local L = ravMounts.L
 local defaults = ravMounts.data.defaults
 local mountTypes = ravMounts.data.mountTypes
 local mountIDs = ravMounts.data.mountIDs
 local mapIDs = ravMounts.data.mapIDs
 
+local GetBestMapForUnit = C_Map.GetBestMapForUnit
+local GetMountInfoByID = C_MountJournal.GetMountInfoByID
+local GetMountInfoExtraByID = C_MountJournal.GetMountInfoExtraByID
+local SummonByID = C_MountJournal.SummonByID
+local GetMountIDs = C_MountJournal.GetMountIDs()
+
 local faction, _ = UnitFactionGroup("player")
-local flyable, cloneMountID, mapID, inAhnQiraj, inVashjir, inMaw, haveGroundMounts, haveFlyingMounts, havePassengerGroundMounts, havePassengerFlyingMounts, haveVendorMounts, haveSwimmingMounts, haveAhnQirajMounts, haveVashjirMounts, haveMawMounts, haveChauffeurMounts, normalMountModifier, vendorMountModifier, passengerMountModifier, normalMountModifier, vendorMountModifier, passengerMountModifier
+local flyable, cloneMountID, mapID, inAhnQiraj, inVashjir, inMaw, haveGroundMounts, haveFlyingMounts, havePassengerGroundMounts, havePassengerFlyingMounts, haveVendorMounts, haveSwimmingMounts, haveAhnQirajMounts, haveVashjirMounts, haveMawMounts, haveChauffeurMounts, normalMountModifier, vendorMountModifier, passengerMountModifier
 local prevControl
 local dropdowns = {}
 local mountModifiers = {
@@ -35,7 +41,7 @@ local function addLabelsFromSpell(target, spellID, showCloneable)
     local type, cloneable
     for mountType, label in pairs(tooltipLabels) do
         for _, mountID in ipairs(ravMounts.data.mountIDs[mountType]) do
-            local _, lookup, _ = C_MountJournal.GetMountInfoByID(mountID)
+            local _, lookup, _ = GetMountInfoByID(mountID)
             if tonumber(lookup) == tonumber(spellID) then
                 type = label
                 break
@@ -47,7 +53,7 @@ local function addLabelsFromSpell(target, spellID, showCloneable)
     end
     if showCloneable then
         for _, mountID in ipairs(RAV_data.mounts.allByID) do
-            local _, lookup, _ = C_MountJournal.GetMountInfoByID(mountID)
+            local _, lookup, _ = GetMountInfoByID(mountID)
             if lookup == spellID then
                 cloneable = true
                 break
@@ -67,7 +73,7 @@ end
 function ravMounts:AssignVariables()
     flyable = ravMounts:IsFlyableArea()
     cloneMountID = ravMounts:GetCloneMount()
-    mapID = C_Map.GetBestMapForUnit("player")
+    mapID = GetBestMapForUnit("player")
     inAhnQiraj = contains(mapIDs.ahnqiraj, mapID)
     inVashjir = contains(mapIDs.vashjir, mapID)
     inMaw = contains(mapIDs.maw, mapID)
@@ -86,6 +92,7 @@ function ravMounts:AssignVariables()
     passengerMountModifier = RAV_data.options.passengerMountModifier == "alt" and IsAltKeyDown() or RAV_data.options.passengerMountModifier == "ctrl" and IsControlKeyDown() or RAV_data.options.passengerMountModifier == "shift" and IsShiftKeyDown() or false
 end
 
+local hasSeenNoSpaceMessage = false
 function ravMounts:EnsureMacro()
     if not UnitAffectingCombat("player") and RAV_data.options.macro then
         ravMounts:AssignVariables()
@@ -94,15 +101,15 @@ function ravMounts:EnsureMacro()
         local vendor = haveVendorMounts and RAV_data.mounts.vendor or nil
         local passenger = (flyable and havePassengerFlyingMounts) and RAV_data.mounts.passengerFlying or havePassengerGroundMounts and RAV_data.mounts.passengerGround or nil
         local swimming = (inVashjir and haveVashjirMounts) and RAV_data.mounts.vashjir or haveSwimmingMounts and RAV_data.mounts.swimming or nil
-        local body = "/" .. ravMounts.command
+        local body = "/ravm"
         if ground or flying or vendor or passenger or swimming then
             body = "\n" .. body
             if ground then
-                local mountName, _ = C_MountJournal.GetMountInfoByID(ground[random(#ground)])
+                local mountName, _ = GetMountInfoByID(ground[random(#ground)])
                 body = mountName .. body
             end
             if flying then
-                local mountName, _ = C_MountJournal.GetMountInfoByID(flying[random(#flying)])
+                local mountName, _ = GetMountInfoByID(flying[random(#flying)])
                 if flyable and ground then
                     if RAV_data.options.normalMountModifier ~= "none" then
                         body = "[swimming,mod:" .. RAV_data.options.normalMountModifier .. "][nomod:" .. RAV_data.options.normalMountModifier .. "] " .. mountName .. "; " .. body
@@ -116,7 +123,7 @@ function ravMounts:EnsureMacro()
                 end
             end
             if swimming then
-                local mountName, _ = C_MountJournal.GetMountInfoByID(swimming[random(#swimming)])
+                local mountName, _ = GetMountInfoByID(swimming[random(#swimming)])
                 if RAV_data.options.normalMountModifier ~= "none" then
                     body = "[swimming,nomod:" .. RAV_data.options.normalMountModifier .. "] " .. mountName .. ((ground or flying) and "; " or "") .. body
                 else
@@ -124,20 +131,17 @@ function ravMounts:EnsureMacro()
                 end
             end
             if vendor and RAV_data.options.vendorMountModifier ~= "none" then
-                local mountName, _ = C_MountJournal.GetMountInfoByID(vendor[random(#vendor)])
+                local mountName, _ = GetMountInfoByID(vendor[random(#vendor)])
                 body = "[mod:" .. RAV_data.options.vendorMountModifier .. "] " .. mountName .. ((ground or flying or swimming) and "; " or "") .. body
             end
             if passenger and RAV_data.options.passengerMountModifier ~= "none" then
-                local mountName, _ = C_MountJournal.GetMountInfoByID(passenger[random(#passenger)])
+                local mountName, _ = GetMountInfoByID(passenger[random(#passenger)])
                 body = "[mod:" .. RAV_data.options.passengerMountModifier .. "] " .. mountName .. ((ground or flying or swimming or vendor) and "; " or "") .. body
             end
             body = "#showtooltip " .. body
         end
-        -- Max: 120 Global, 18 Character (so we'll make ours global)
         local numberOfMacros, _ = GetNumMacros()
-        -- Edit if it exists, create if not
         if body == RAV_macroBody then
-            -- Do nothing
         elseif GetMacroIndexByName(ravMounts.name) > 0 then
             EditMacro(GetMacroIndexByName(ravMounts.name), ravMounts.name, "INV_Misc_QuestionMark", body)
             RAV_macroBody = body
@@ -145,7 +149,6 @@ function ravMounts:EnsureMacro()
             CreateMacro(ravMounts.name, "INV_Misc_QuestionMark", body)
             RAV_macroBody = body
         elseif not hasSeenNoSpaceMessage then
-            -- This isn't saved to remind the player on each load
             hasSeenNoSpaceMessage = true
             ravMounts:PrettyPrint(L.NoMacroSpace)
         end
@@ -230,10 +233,10 @@ function ravMounts:CreateCheckBox(cfg)
         checkBox.tooltipText = cfg.tooltip
     end
 
-    checkBox.GetValue = function(self)
+    checkBox.GetValue = function()
         return checkBox:GetChecked()
     end
-    checkBox.SetValue = function(self)
+    checkBox.SetValue = function()
         checkBox:SetChecked(RAV_data.options[cfg.var])
     end
 
@@ -267,7 +270,7 @@ function ravMounts:CreateDropDown(cfg)
     dropdowns[cfg.var]:SetPoint(cfg.initialPoint, cfg.relativeTo, cfg.relativePoint, cfg.offsetX, cfg.offsetY)
     UIDropDownMenu_SetWidth(dropdowns[cfg.var], cfg.width)
     UIDropDownMenu_SetText(dropdowns[cfg.var], cfg.label)
-    UIDropDownMenu_Initialize(dropdowns[cfg.var], function(self)
+    UIDropDownMenu_Initialize(dropdowns[cfg.var], function()
         for _, value in ipairs(cfg.options) do
             local info = UIDropDownMenu_CreateInfo()
             info.text = value:gsub("^%l", string.upper)
@@ -279,7 +282,7 @@ function ravMounts:CreateDropDown(cfg)
                     end
                 end
             end
-            info.func = function(option, arg1, arg2, checked)
+            info.func = function(option)
                 RAV_data.options[cfg.var] = option.value:lower()
                 info.checked = true
                 ravMounts:RefreshControls(ravMounts.Options.controls)
@@ -298,7 +301,7 @@ end
 function ravMounts:RefreshControls(controls)
     ravMounts:MountListHandler()
     ravMounts:EnsureMacro()
-    for i, control in pairs(controls) do
+    for _, control in pairs(controls) do
         if control.type == "CheckBox" then
             control:SetValue(control)
             control.oldValue = control:GetValue()
@@ -314,13 +317,13 @@ end
 
 function ravMounts:MountSummon(list)
     if not UnitAffectingCombat("player") and #list > 0 then
-        local iter = 10 -- magic number (can random fail us so much?)
+        local iter = 10 -- "magic" number
         local n = random(#list)
-        while not select(5, C_MountJournal.GetMountInfoByID(list[n])) and iter > 0 do
+        while not select(5, GetMountInfoByID(list[n])) and iter > 0 do
             n = random(#list)
             iter = iter - 1
         end
-        C_MountJournal.SummonByID(list[n])
+        SummonByID(list[n])
     end
 end
 
@@ -344,9 +347,7 @@ function ravMounts:GetCloneMount()
     return false
 end
 
--- Collect Data and Sort it
 function ravMounts:MountListHandler()
-    -- Reset the mount data to be repopulated
     RAV_data.mounts = {}
     RAV_data.mounts.allByName = {}
     RAV_data.mounts.allByID = {}
@@ -360,9 +361,9 @@ function ravMounts:MountListHandler()
     RAV_data.mounts.vashjir = {}
     RAV_data.mounts.maw = {}
     RAV_data.mounts.chauffeur = {}
-    for _, mountID in pairs(C_MountJournal.GetMountIDs()) do
-        local mountName, spellID, _, _, isUsable, _, isFavorite, _, mountFaction, hiddenOnCharacter, isCollected = C_MountJournal.GetMountInfoByID(mountID)
-        local _, _, _, _, mountType = C_MountJournal.GetMountInfoExtraByID(mountID)
+    for _, mountID in pairs(GetMountIDs) do
+        local mountName, _, _, _, _, _, isFavorite, _, mountFaction, _, isCollected = GetMountInfoByID(mountID)
+        local _, _, _, _, mountType = GetMountInfoExtraByID(mountID)
         local isGroundMount = contains(mountTypes.ground, mountType)
         local isFlyingMount = contains(mountTypes.flying, mountType)
         local isVendorMount = contains(mountIDs.vendor, mountID)
@@ -376,12 +377,7 @@ function ravMounts:MountListHandler()
         local isFlexMount = contains(mountIDs.flex, mountID)
         if isCollected then
             -- 0 = Horde, 1 = Alliance
-            -- Check for mismatch, means not available
-            if mountFaction == 0 and faction ~= "Horde" then
-                -- skip
-            elseif mountFaction == 1 and faction ~= "Alliance" then
-                -- skip
-            else
+            if not (mountFaction == 0 and faction ~= "Horde") and not (mountFaction == 1 and faction ~= "Alliance") then
                 table.insert(RAV_data.mounts.allByName, mountName)
                 table.insert(RAV_data.mounts.allByID, mountID)
                 if isFlyingMount and (not RAV_data.options.normalMounts or isFavorite) and not isVendorMount and not isPassengerFlyingMount and not isPassengerGroundMount then
@@ -428,8 +424,6 @@ function ravMounts:MountListHandler()
     end
 end
 
--- Check a plethora of conditions and choose the appropriate Mount from the
--- Mount Journal, and do nothing if conditions are not met
 function ravMounts:MountUpHandler(specificType)
     if IsFlying() then
         return
@@ -456,7 +450,7 @@ function ravMounts:MountUpHandler(specificType)
     elseif specificType == "chauffeur" and haveChauffeurMounts then
         ravMounts:MountSummon(RAV_data.mounts.chauffeur)
     elseif (specificType == "copy" or specificType == "clone" or RAV_data.options.clone ~= "none") and cloneMountID then
-        C_MountJournal.SummonByID(cloneMountID)
+        SummonByID(cloneMountID)
         return
     elseif vendorMountModifier and passengerMountModifier and (IsMounted() or UnitInVehicle("player")) then
         DoEmote(EMOTE171_TOKEN)
@@ -512,7 +506,7 @@ function ravMounts:TooltipLabels()
         end
     end)
 
-    hooksecurefunc("SetItemRef", function(link, text, button, chatFrame)
+    hooksecurefunc("SetItemRef", function(link)
         if string.find(link, "^spell:") then
             local spellID, _ = strsplit(":", string.sub(link, 7))
             addLabelsFromSpell(ItemRefTooltip, spellID, false)

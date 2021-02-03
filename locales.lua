@@ -1,7 +1,8 @@
-local name, ravMounts = ...
-
+local _, ravMounts = ...
 local L = {}
 ravMounts.L = L
+
+local GetMapInfo = C_Map.GetMapInfo
 
 setmetatable(L, { __index = function(t, k)
     local v = tostring(k)
@@ -11,9 +12,9 @@ end })
 
 -- Automatic
 local mapIDs = ravMounts.data.mapIDs
-L.AhnQiraj = C_Map.GetMapInfo(mapIDs.ahnqiraj[#mapIDs.ahnqiraj]).name
-L.Vashjir = C_Map.GetMapInfo(mapIDs.vashjir[#mapIDs.vashjir]).name
-L.Maw = C_Map.GetMapInfo(mapIDs.maw[#mapIDs.maw]).name
+L.AhnQiraj = GetMapInfo(mapIDs.ahnqiraj[#mapIDs.ahnqiraj]).name
+L.Vashjir = GetMapInfo(mapIDs.vashjir[#mapIDs.vashjir]).name
+L.Maw = GetMapInfo(mapIDs.maw[#mapIDs.maw]).name
 
 -- Default (English)
 L.Modifier = "Modifier"

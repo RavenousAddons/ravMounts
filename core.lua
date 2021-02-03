@@ -9,7 +9,7 @@ function ravMounts_OnLoad(self)
     self:RegisterEvent("ZONE_CHANGED_NEW_AREA")
 end
 
-function ravMounts_OnEvent(self, event, arg, ...)
+function ravMounts_OnEvent(_, event, arg)
     if arg == name then
         if event == "ADDON_LOADED" then
             ravMounts:SetDefaultOptions()
@@ -32,14 +32,13 @@ function ravMounts_OnEvent(self, event, arg, ...)
     end
 end
 
-SlashCmdList["RAVMOUNTS"] = function(message, editbox)
-    local command, argument = strsplit(" ", message)
-    if command == "version" or command == "v" then
+SlashCmdList["RAVMOUNTS"] = function(message)
+    if message == "version" or message == "v" then
         ravMounts:PrettyPrint(string.format(L.Version, ravMounts.version))
-    elseif command == "c" or string.match(command, "con") or command == "h" or string.match(command, "help") or command == "o" or string.match(command, "opt") or command == "s" or string.match(command, "sett") or string.match(command, "togg") then
+    elseif message == "c" or string.match(message, "con") or message == "h" or string.match(message, "help") or message == "o" or string.match(message, "opt") or message == "s" or string.match(message, "sett") or string.match(message, "togg") then
         InterfaceOptionsFrame_OpenToCategory(ravMounts.Options)
         InterfaceOptionsFrame_OpenToCategory(ravMounts.Options)
-    elseif command == "f" or string.match(command, "force") then
+    elseif message == "f" or string.match(message, "force") then
         ravMounts:PrettyPrint(L.Force)
         ravMounts:MountListHandler()
         ravMounts:EnsureMacro()
@@ -47,9 +46,9 @@ SlashCmdList["RAVMOUNTS"] = function(message, editbox)
             ravMounts:RefreshControls(ravMounts.Options.controls)
         end
     else
-        ravMounts:MountUpHandler(command)
+        ravMounts:MountUpHandler(message)
     end
 end
-SLASH_RAVMOUNTS1 = "/" .. ravMounts.command
+SLASH_RAVMOUNTS1 = "/ravm"
 SLASH_RAVMOUNTS2 = "/ravmounts"
 SLASH_RAVMOUNTS3 = "/ravenousmounts"
