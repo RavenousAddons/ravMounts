@@ -1,12 +1,12 @@
 ## Interface: 90002
-## Version: 2.5.2
+## Version: 2.5.3
 
 ## Name: Ravenous Mounts
 ## Title: Ravenous |cff9eb8c9Mounts|r
 ## Notes: "Chooses the best mount for the job with simple preferences based on your Favourites."
 ## Author: RavenousAddons
 
-## SavedVariables: RAV_locale, RAV_version
+## SavedVariables: RAV_version
 ## SavedVariablesPerCharacter: RAV_data, RAV_macroBody
 
 ## X-License: Public Domain

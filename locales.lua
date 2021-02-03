@@ -2,8 +2,6 @@ local _, ravMounts = ...
 local L = {}
 ravMounts.L = L
 
-local GetMapInfo = C_Map.GetMapInfo
-
 setmetatable(L, { __index = function(t, k)
     local v = tostring(k)
     t[k] = v
@@ -12,9 +10,9 @@ end })
 
 -- Automatic
 local mapIDs = ravMounts.data.mapIDs
-L.AhnQiraj = GetMapInfo(mapIDs.ahnqiraj[#mapIDs.ahnqiraj]).name
-L.Vashjir = GetMapInfo(mapIDs.vashjir[#mapIDs.vashjir]).name
-L.Maw = GetMapInfo(mapIDs.maw[#mapIDs.maw]).name
+L.AhnQiraj = C_Map.GetMapInfo(mapIDs.ahnqiraj[#mapIDs.ahnqiraj]).name
+L.Vashjir = C_Map.GetMapInfo(mapIDs.vashjir[#mapIDs.vashjir]).name
+L.Maw = C_Map.GetMapInfo(mapIDs.maw[#mapIDs.maw]).name
 
 -- Default (English)
 L.Modifier = "Modifier"
@@ -53,9 +51,6 @@ L.DataHeading = "Collected Data:"
 
 -- Check locale and assign appropriate
 local CURRENT_LOCALE = GetLocale()
-
--- English
-if CURRENT_LOCALE == "enUS" then return end
 
 -- German
 if CURRENT_LOCALE == "deDE" then return end
