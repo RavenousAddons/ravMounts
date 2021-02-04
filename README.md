@@ -58,7 +58,7 @@ If you wish to get in touch with me, please get in touch through the [Ravenous A
 
 [Phanx](https://www.wowinterface.com/forums/member.php?userid=28751) for their immensely useful API_CanFly from [AnyFavoriteMount](https://www.wowinterface.com/downloads/info23261-AnyFavoriteMount.html).
 
-[yj368413](https://www.wowinterface.com/forums/member.php?u=319392%22) for helping me realise that the AddOn should be language-agnostic.
+[yj368413](https://www.wowinterface.com/forums/member.php?u=319392%22) for helping me realise that the Addon should be language-agnostic.
 
 [DJharris71](https://www.curseforge.com/members/djharris71) for loads of bugfixes, mount cloning functionality, and helping greatly in preparing for 9.0.0.
 
