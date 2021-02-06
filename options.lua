@@ -34,17 +34,17 @@ Options:SetScript("OnShow", function()
     local fullWidth = Options:GetWidth() - (large * 2)
 
     local HeaderPanel = CreateFrame("Frame", "HeaderPanel", Options)
-    HeaderPanel:SetPoint("TOPLEFT", Options, "TOPLEFT", large, large * -1)
+    HeaderPanel:SetPoint("TOPLEFT", Options, "TOPLEFT", large, -large)
     HeaderPanel:SetWidth(fullWidth)
     HeaderPanel:SetHeight(large * 3)
 
     local LeftPanel = CreateFrame("Frame", "LeftPanel", Options)
-    LeftPanel:SetPoint("TOPLEFT", HeaderPanel, "BOTTOMLEFT", 0, large * -1)
+    LeftPanel:SetPoint("TOPLEFT", HeaderPanel, "BOTTOMLEFT", 0, -large)
     LeftPanel:SetWidth(fullWidth / 5 * 3 - large)
     LeftPanel:SetHeight(Options:GetHeight() - HeaderPanel:GetHeight() - (large * 2))
 
     local RightPanel = CreateFrame("Frame", "RightPanel", Options)
-    RightPanel:SetPoint("TOPRIGHT", HeaderPanel, "BOTTOMRIGHT", 0, large * -1)
+    RightPanel:SetPoint("TOPRIGHT", HeaderPanel, "BOTTOMRIGHT", 0, -large)
     RightPanel:SetWidth(fullWidth / 5 * 2 - large)
     RightPanel:SetHeight(Options:GetHeight() - HeaderPanel:GetHeight() - (large * 2))
 
@@ -81,7 +81,7 @@ Options:SetScript("OnShow", function()
             label = L.Macro,
             tooltip = string.format(L.MacroTooltip, ravMounts.name),
             var = "macro",
-            offsetY = medium * -1,
+            offsetY = -medium,
         },
         {
             type = "DropDown",
@@ -96,7 +96,7 @@ Options:SetScript("OnShow", function()
                 L.None:lower(),
             },
             width = 180,
-            offsetX = large * -1,
+            offsetX = -large,
         },
         {
             type = "DropDown",
@@ -126,7 +126,7 @@ Options:SetScript("OnShow", function()
             label = L.Ground .. "/" .. L.Flying .. " " .. L.Mounts,
             tooltip = string.format(L.MountsTooltip, L.Ground .. "/" .. L.Flying .. " " .. L.Mounts),
             var = "normalMounts",
-            offsetY = medium * -1,
+            offsetY = -medium,
         },
         {
             type = "DropDown",
@@ -260,7 +260,7 @@ Options:SetScript("OnShow", function()
             label = L.Ground .. ": |cffffffff%s|r",
             countMounts = "ground",
             fontObject = "GameFontNormal",
-            offsetY = small * -1,
+            offsetY = -small,
         },
         {
             type = "Label",
@@ -269,7 +269,7 @@ Options:SetScript("OnShow", function()
             label = L.Flying .. ": |cffffffff%s|r",
             countMounts = "flying",
             fontObject = "GameFontNormal",
-            offsetY = small * -1,
+            offsetY = -small,
         },
         {
             type = "Label",
@@ -278,7 +278,7 @@ Options:SetScript("OnShow", function()
             label = L.Swimming .. ": |cffffffff%s|r",
             countMounts = "swimming",
             fontObject = "GameFontNormal",
-            offsetY = small * -1,
+            offsetY = -small,
         },
         {
             type = "Label",
@@ -287,7 +287,7 @@ Options:SetScript("OnShow", function()
             label = L.Vendor .. ": |cffffffff%s|r",
             countMounts = "vendor",
             fontObject = "GameFontNormal",
-            offsetY = small * -1,
+            offsetY = -small,
         },
         {
             type = "Label",
@@ -296,7 +296,7 @@ Options:SetScript("OnShow", function()
             label = L.PassengerGround .. ": |cffffffff%s|r",
             countMounts = "passengerGround",
             fontObject = "GameFontNormal",
-            offsetY = small * -1,
+            offsetY = -small,
         },
         {
             type = "Label",
@@ -305,7 +305,7 @@ Options:SetScript("OnShow", function()
             label = L.PassengerFlying .. ": |cffffffff%s|r",
             countMounts = "passengerFlying",
             fontObject = "GameFontNormal",
-            offsetY = small * -1,
+            offsetY = -small,
         },
         {
             type = "Label",
@@ -314,7 +314,7 @@ Options:SetScript("OnShow", function()
             label = L.AhnQiraj .. ": |cffffffff%s|r",
             countMounts = "ahnqiraj",
             fontObject = "GameFontNormal",
-            offsetY = small * -1,
+            offsetY = -small,
         },
         {
             type = "Label",
@@ -323,7 +323,7 @@ Options:SetScript("OnShow", function()
             label = L.Vashjir .. ": |cffffffff%s|r",
             countMounts = "vashjir",
             fontObject = "GameFontNormal",
-            offsetY = small * -1,
+            offsetY = -small,
         },
         {
             type = "Label",
@@ -333,7 +333,7 @@ Options:SetScript("OnShow", function()
             countMounts = "maw",
             maps = {1543, 1648},
             fontObject = "GameFontNormal",
-            offsetY = small * -1,
+            offsetY = -small,
         },
     }
 
