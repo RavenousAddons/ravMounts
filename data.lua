@@ -1,6 +1,6 @@
-local _, ravMounts = ...
+local _, ns = ...
 
-ravMounts.data = {
+ns.data = {
     defaults = {
         macro = true,
         clone = "none",

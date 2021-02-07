@@ -1,6 +1,6 @@
-local _, ravMounts = ...
+local _, ns = ...
 local L = {}
-ravMounts.L = L
+ns.L = L
 
 setmetatable(L, { __index = function(t, k)
     local v = tostring(k)
@@ -9,7 +9,7 @@ setmetatable(L, { __index = function(t, k)
 end })
 
 -- Automatic
-local mapIDs = ravMounts.data.mapIDs
+local mapIDs = ns.data.mapIDs
 L.AhnQiraj = C_Map.GetMapInfo(mapIDs.ahnqiraj[#mapIDs.ahnqiraj]).name
 L.Vashjir = C_Map.GetMapInfo(mapIDs.vashjir[#mapIDs.vashjir]).name
 L.Maw = C_Map.GetMapInfo(mapIDs.maw[#mapIDs.maw]).name
@@ -18,12 +18,12 @@ L.Maw = C_Map.GetMapInfo(mapIDs.maw[#mapIDs.maw]).name
 L.Modifier = "Modifier"
 L.Mount = "mount"
 L.Mounts = "mounts"
-L.Version = "%s is the current version." -- ravMounts.version
-L.Install = "Thanks for installing |cff%1$sv%2$s|r!" -- ravMounts.color, ravMounts.version
-L.Update = "Thanks for updating to |cff%1$sv%2$s|r!" -- ravMounts.color, ravMounts.version
-L.Support1 = "This Addon creates and maintains a macro called |r%s|cffffffff for you under |rGeneral Macros|cffffffff." -- ravMounts.name
+L.Version = "%s is the current version." -- ns.version
+L.Install = "Thanks for installing |cff%1$sv%2$s|r!" -- ns.color, ns.version
+L.Update = "Thanks for updating to |cff%1$sv%2$s|r!" -- ns.color, ns.version
+L.Support1 = "This Addon creates and maintains a macro called |r%s|cffffffff for you under |rGeneral Macros|cffffffff." -- ns.name
 L.Support2 = "Check out the Addon on |rGitHub|cffffffff, |rWoWInterface|cffffffff, or |rCurse|cffffffff for more info and support!"
-L.Support3 = "You can also get help directly from the author on Discord: |r%s|cffffffff" -- ravMounts.discord
+L.Support3 = "You can also get help directly from the author on Discord: |r%s|cffffffff" -- ns.discord
 L.NoMounts = "Unfortunately, you don't have any mounts that can be called at this time!"
 L.NoMacroSpace = "Unfortunately, you don't have enough global macro space for the macro to be created!"
 L.Force = "Mount Journal data collected, sorted, and ready to go!"
@@ -43,7 +43,7 @@ L.Flex = "Flexible"
 L.Cloneable = "Cloneable"
 L.OptionsHeading = "Configuration:"
 L.Macro = "Automatically create/maintain macro"
-L.MacroTooltip = "When enabled, a macro called |cffffffff%s|r will be automatically created and managed for you under |cffffffffGeneral Macros|r." -- ravMounts.name
+L.MacroTooltip = "When enabled, a macro called |cffffffff%s|r will be automatically created and managed for you under |cffffffffGeneral Macros|r." -- ns.name
 L.FavoritesHeading = "Types which use Favorites:"
 L.MountsTooltip = "When enabled, only %s marked as favorites will be summoned." -- type
 L.SupportHeading = "Help and Support:"

@@ -1,4 +1,4 @@
-local _, ravMounts = ...
+local _, ns = ...
 
 local spellsByContinent = {
     -- Shadowlands
@@ -88,7 +88,7 @@ local GetSubZoneText = GetSubZoneText
 local IsFlyableArea = IsFlyableArea
 local IsSpellKnown = IsSpellKnown
 
-function ravMounts:IsFlyableArea()
+function ns:IsFlyableArea()
     if noFlySubzones[GetSubZoneText() or ""] then
         return false
     end

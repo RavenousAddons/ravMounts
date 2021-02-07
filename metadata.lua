@@ -1,8 +1,8 @@
-local name, ravMounts = ...
+local name, ns = ...
 
-ravMounts.name = "Ravenous Mounts"
-ravMounts.title = GetAddOnMetadata(name, "Title")
-ravMounts.notes = GetAddOnMetadata(name, "Notes")
-ravMounts.version = GetAddOnMetadata(name, "Version")
-ravMounts.color = "9eb8c9"
-ravMounts.discord = "https://discord.gg/dNfqnRf2fq"
+ns.name = "Ravenous Mounts"
+ns.title = GetAddOnMetadata(name, "Title")
+ns.notes = GetAddOnMetadata(name, "Notes")
+ns.version = GetAddOnMetadata(name, "Version")
+ns.color = "9eb8c9"
+ns.discord = "https://discord.gg/dNfqnRf2fq"

@@ -1,12 +1,12 @@
-local name, ravMounts = ...
-local L = ravMounts.L
+local name, ns = ...
+local L = ns.L
 
 local small = 6
 local medium = 12
 local large = 16
 
 local Options = CreateFrame("Frame", name .. "Options", InterfaceOptionsFramePanelContainer)
-Options.name = ravMounts.name
+Options.name = ns.name
 Options.controlTable = {}
 Options.okay = function(self)
     for _, control in pairs(self.controls) do
@@ -26,7 +26,7 @@ Options.cancel = function(self)
     end
 end
 Options.refresh = function(self)
-    ravMounts:RefreshControls(self.controls)
+    ns:RefreshControls(self.controls)
 end
 
 Options:Hide()
@@ -53,7 +53,7 @@ Options:SetScript("OnShow", function()
             type = "Label",
             name = "Heading",
             parent = Options,
-            label = ravMounts.name .. " v" .. ravMounts.version,
+            label = ns.name .. " v" .. ns.version,
             relativeTo = HeaderPanel,
             relativePoint = "TOPLEFT",
             offsetY = 0,
@@ -62,7 +62,7 @@ Options:SetScript("OnShow", function()
             type = "Label",
             name = "SubHeading",
             parent = Options,
-            label = "|cffffffff" .. ravMounts.notes .. "|r",
+            label = "|cffffffff" .. ns.notes .. "|r",
             fontObject = "GameFontNormal"
         },
         {
@@ -79,7 +79,7 @@ Options:SetScript("OnShow", function()
             name = "Macro",
             parent = Options,
             label = L.Macro,
-            tooltip = string.format(L.MacroTooltip, ravMounts.name),
+            tooltip = string.format(L.MacroTooltip, ns.name),
             var = "macro",
             offsetY = -medium,
         },
@@ -219,7 +219,7 @@ Options:SetScript("OnShow", function()
             type = "Label",
             name = "SubHeadingSupport1",
             parent = Options,
-            label = "|cffffffff" .. string.format(L.Support1, ravMounts.name) .. "|r",
+            label = "|cffffffff" .. string.format(L.Support1, ns.name) .. "|r",
             fontObject = "GameFontNormal",
         },
         {
@@ -233,7 +233,7 @@ Options:SetScript("OnShow", function()
             type = "Label",
             name = "SubHeadingSupport3",
             parent = Options,
-            label = "|cffffffff" .. string.format(L.Support3, ravMounts.discord) .. "|r",
+            label = "|cffffffff" .. string.format(L.Support3, ns.discord) .. "|r",
             fontObject = "GameFontNormal",
         },
         {
@@ -339,15 +339,15 @@ Options:SetScript("OnShow", function()
 
     for _, control in pairs(UIControls) do
         if control.type == "Label" then
-            ravMounts:CreateLabel(control)
+            ns:CreateLabel(control)
         elseif control.type == "CheckBox" then
-            ravMounts:CreateCheckBox(control)
+            ns:CreateCheckBox(control)
         elseif control.type == "DropDown" then
-            ravMounts:CreateDropDown(control)
+            ns:CreateDropDown(control)
         end
     end
 
-    ravMounts:RefreshControls(Options.controls)
+    ns:RefreshControls(Options.controls)
     Options:SetScript("OnShow", nil)
 end)
-ravMounts.Options = Options
+ns.Options = Options

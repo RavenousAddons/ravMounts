@@ -1,9 +1,9 @@
-local _, ravMounts = ...
-local L = ravMounts.L
-local defaults = ravMounts.data.defaults
-local mountTypes = ravMounts.data.mountTypes
-local mountIDs = ravMounts.data.mountIDs
-local mapIDs = ravMounts.data.mapIDs
+local _, ns = ...
+local L = ns.L
+local defaults = ns.data.defaults
+local mountTypes = ns.data.mountTypes
+local mountIDs = ns.data.mountIDs
+local mapIDs = ns.data.mapIDs
 
 local faction, _ = UnitFactionGroup("player")
 local flyable, cloneMountID, mapID, inAhnQiraj, inVashjir, inMaw, haveGroundMounts, haveFlyingMounts, havePassengerGroundMounts, havePassengerFlyingMounts, haveVendorMounts, haveSwimmingMounts, haveAhnQirajMounts, haveVashjirMounts, haveMawMounts, haveChauffeurMounts, normalMountModifier, vendorMountModifier, passengerMountModifier
@@ -34,7 +34,7 @@ local function addLabelsFromSpell(target, spellID, showCloneable)
     if showCloneable == nil then showCloneable = true end
     local type, cloneable
     for mountType, label in pairs(tooltipLabels) do
-        for _, mountID in ipairs(ravMounts.data.mountIDs[mountType]) do
+        for _, mountID in ipairs(ns.data.mountIDs[mountType]) do
             local _, lookup, _ = C_MountJournal.GetMountInfoByID(mountID)
             if tonumber(lookup) == tonumber(spellID) then
                 type = label
@@ -55,18 +55,18 @@ local function addLabelsFromSpell(target, spellID, showCloneable)
         end
     end
     if type or (showCloneable and cloneable) then
-        target:AddLine("|cff" .. ravMounts.color .. ravMounts.name .. ":|r " .. (type and type or "") .. ((type and showCloneable and cloneable) and ", " or "") .. ((showCloneable and cloneable) and L.Cloneable or ""), 1, 1, 1)
+        target:AddLine("|cff" .. ns.color .. ns.name .. ":|r " .. (type and type or "") .. ((type and showCloneable and cloneable) and ", " or "") .. ((showCloneable and cloneable) and L.Cloneable or ""), 1, 1, 1)
     end
     target:Show()
 end
 
-function ravMounts:PrettyPrint(message)
-    DEFAULT_CHAT_FRAME:AddMessage("|cff" .. ravMounts.color .. ravMounts.name .. ":|r " .. message)
+function ns:PrettyPrint(message)
+    DEFAULT_CHAT_FRAME:AddMessage("|cff" .. ns.color .. ns.name .. ":|r " .. message)
 end
 
-function ravMounts:AssignVariables()
-    flyable = ravMounts:IsFlyableArea()
-    cloneMountID = ravMounts:GetCloneMount()
+function ns:AssignVariables()
+    flyable = ns:IsFlyableArea()
+    cloneMountID = ns:GetCloneMount()
     mapID = C_Map.GetBestMapForUnit("player")
     inAhnQiraj = contains(mapIDs.ahnqiraj, mapID)
     inVashjir = contains(mapIDs.vashjir, mapID)
@@ -87,9 +87,9 @@ function ravMounts:AssignVariables()
 end
 
 local hasSeenNoSpaceMessage = false
-function ravMounts:EnsureMacro()
+function ns:EnsureMacro()
     if not UnitAffectingCombat("player") and RAV_data.options.macro then
-        ravMounts:AssignVariables()
+        ns:AssignVariables()
         local flying = haveFlyingMounts and RAV_data.mounts.flying or nil
         local ground = (inAhnQiraj and haveAhnQirajMounts) and RAV_data.mounts.ahnqiraj or (inMaw and haveMawMounts) and RAV_data.mounts.maw or haveGroundMounts and RAV_data.mounts.ground or nil
         local vendor = haveVendorMounts and RAV_data.mounts.vendor or nil
@@ -136,26 +136,26 @@ function ravMounts:EnsureMacro()
         end
         local numberOfMacros, _ = GetNumMacros()
         if body == RAV_macroBody then
-        elseif GetMacroIndexByName(ravMounts.name) > 0 then
-            EditMacro(GetMacroIndexByName(ravMounts.name), ravMounts.name, "INV_Misc_QuestionMark", body)
+        elseif GetMacroIndexByName(ns.name) > 0 then
+            EditMacro(GetMacroIndexByName(ns.name), ns.name, "INV_Misc_QuestionMark", body)
             RAV_macroBody = body
         elseif numberOfMacros < 120 then
-            CreateMacro(ravMounts.name, "INV_Misc_QuestionMark", body)
+            CreateMacro(ns.name, "INV_Misc_QuestionMark", body)
             RAV_macroBody = body
         elseif not hasSeenNoSpaceMessage then
             hasSeenNoSpaceMessage = true
-            ravMounts:PrettyPrint(L.NoMacroSpace)
+            ns:PrettyPrint(L.NoMacroSpace)
         end
     end
 end
 
-function ravMounts:RegisterDefaultOption(key, value)
+function ns:RegisterDefaultOption(key, value)
     if RAV_data.options[key] == nil then
         RAV_data.options[key] = value
     end
 end
 
-function ravMounts:SetDefaultOptions()
+function ns:SetDefaultOptions()
     if RAV_data == nil then
         RAV_data = {}
     end
@@ -169,11 +169,11 @@ function ravMounts:SetDefaultOptions()
         RAV_data.options.clone = nil
     end
     for k, v in pairs(defaults) do
-        ravMounts:RegisterDefaultOption(k, v)
+        ns:RegisterDefaultOption(k, v)
     end
 end
 
-function ravMounts:RegisterControl(control, parentFrame)
+function ns:RegisterControl(control, parentFrame)
     if (not parentFrame) or (not control) then
         return
     end
@@ -181,7 +181,7 @@ function ravMounts:RegisterControl(control, parentFrame)
     table.insert(parentFrame.controls, control)
 end
 
-function ravMounts:CreateLabel(cfg)
+function ns:CreateLabel(cfg)
     cfg.initialPoint = cfg.initialPoint or "TOPLEFT"
     cfg.relativePoint = cfg.relativePoint or "BOTTOMLEFT"
     cfg.offsetX = cfg.offsetX or 0
@@ -203,14 +203,14 @@ function ravMounts:CreateLabel(cfg)
         label:SetText(cfg.label)
     end
 
-    ravMounts:RegisterControl(label, cfg.parent)
+    ns:RegisterControl(label, cfg.parent)
     if not cfg.ignorePlacement then
         prevControl = label
     end
     return label
 end
 
-function ravMounts:CreateCheckBox(cfg)
+function ns:CreateCheckBox(cfg)
     cfg.initialPoint = cfg.initialPoint or "TOPLEFT"
     cfg.relativePoint = cfg.relativePoint or "BOTTOMLEFT"
     cfg.offsetX = cfg.offsetX or 0
@@ -237,19 +237,19 @@ function ravMounts:CreateCheckBox(cfg)
     checkBox:SetScript("OnClick", function(self)
         checkBox.value = self:GetChecked()
         RAV_data.options[checkBox.var] = checkBox:GetChecked()
-        ravMounts:MountListHandler()
-        ravMounts:EnsureMacro()
-        ravMounts:RefreshControls(ravMounts.Options.controls)
+        ns:MountListHandler()
+        ns:EnsureMacro()
+        ns:RefreshControls(ns.Options.controls)
     end)
 
-    ravMounts:RegisterControl(checkBox, cfg.parent)
+    ns:RegisterControl(checkBox, cfg.parent)
     if not cfg.ignorePlacement then
         prevControl = checkBox
     end
     return checkBox
 end
 
-function ravMounts:CreateDropDown(cfg)
+function ns:CreateDropDown(cfg)
     cfg.initialPoint = cfg.initialPoint or "TOPLEFT"
     cfg.relativePoint = cfg.relativePoint or "BOTTOMLEFT"
     cfg.offsetX = cfg.offsetX or 0
@@ -279,22 +279,22 @@ function ravMounts:CreateDropDown(cfg)
             info.func = function(option)
                 RAV_data.options[cfg.var] = option.value:lower()
                 info.checked = true
-                ravMounts:RefreshControls(ravMounts.Options.controls)
+                ns:RefreshControls(ns.Options.controls)
             end
             UIDropDownMenu_AddButton(info)
         end
     end)
 
-    ravMounts:RegisterControl(dropdowns[cfg.var], cfg.parent)
+    ns:RegisterControl(dropdowns[cfg.var], cfg.parent)
     if not cfg.ignorePlacement then
         prevControl = dropdowns[cfg.var]
     end
     return dropdowns[cfg.var]
 end
 
-function ravMounts:RefreshControls(controls)
-    ravMounts:MountListHandler()
-    ravMounts:EnsureMacro()
+function ns:RefreshControls(controls)
+    ns:MountListHandler()
+    ns:EnsureMacro()
     for _, control in pairs(controls) do
         if control.type == "CheckBox" then
             control:SetValue(control)
@@ -309,7 +309,7 @@ function ravMounts:RefreshControls(controls)
     CloseDropDownMenus()
 end
 
-function ravMounts:MountSummon(list)
+function ns:MountSummon(list)
     if not UnitAffectingCombat("player") and #list > 0 then
         local iter = 10 -- "magic" number
         local n = random(#list)
@@ -321,7 +321,7 @@ function ravMounts:MountSummon(list)
     end
 end
 
-function ravMounts:GetCloneMount()
+function ns:GetCloneMount()
     local clone = false
     if RAV_data.options.clone == "both" then
         clone = UnitIsPlayer("target") and "target" or UnitIsPlayer("focus") and "focus" or false
@@ -341,7 +341,7 @@ function ravMounts:GetCloneMount()
     return false
 end
 
-function ravMounts:MountListHandler()
+function ns:MountListHandler()
     RAV_data.mounts = {}
     RAV_data.mounts.allByName = {}
     RAV_data.mounts.allByID = {}
@@ -418,31 +418,31 @@ function ravMounts:MountListHandler()
     end
 end
 
-function ravMounts:MountUpHandler(specificType)
+function ns:MountUpHandler(specificType)
     if IsFlying() then
         return
     end
-    ravMounts:AssignVariables()
+    ns:AssignVariables()
     if (string.match(specificType, "vend") or string.match(specificType, "repair") or string.match(specificType, "trans") or string.match(specificType, "mog")) and haveVendorMounts then
-        ravMounts:MountSummon(RAV_data.mounts.vendor)
+        ns:MountSummon(RAV_data.mounts.vendor)
     elseif (string.match(specificType, "2") or string.match(specificType, "two") or string.match(specificType, "multi") or string.match(specificType, "passenger")) and havePassengerFlyingMounts and flyable then
-        ravMounts:MountSummon(RAV_data.mounts.passengerFlying)
+        ns:MountSummon(RAV_data.mounts.passengerFlying)
     elseif string.match(specificType, "fly") and (string.match(specificType, "2") or string.match(specificType, "two") or string.match(specificType, "multi") or string.match(specificType, "passenger")) and havePassengerFlyingMounts then
-        ravMounts:MountSummon(RAV_data.mounts.passengerFlying)
+        ns:MountSummon(RAV_data.mounts.passengerFlying)
     elseif (string.match(specificType, "2") or string.match(specificType, "two") or string.match(specificType, "multi") or string.match(specificType, "passenger")) and havePassengerGroundMounts then
-        ravMounts:MountSummon(RAV_data.mounts.passengerGround)
+        ns:MountSummon(RAV_data.mounts.passengerGround)
     elseif string.match(specificType, "swim") and haveSwimmingMounts then
-        ravMounts:MountSummon(RAV_data.mounts.swimming)
+        ns:MountSummon(RAV_data.mounts.swimming)
     elseif (specificType == "vj" or string.match(specificType, "vash") or string.match(specificType, "jir")) and haveVashjirMounts then
-        ravMounts:MountSummon(RAV_data.mounts.vashjir)
+        ns:MountSummon(RAV_data.mounts.vashjir)
     elseif string.match(specificType, "fly") and haveFlyingMounts then
-        ravMounts:MountSummon(RAV_data.mounts.flying)
+        ns:MountSummon(RAV_data.mounts.flying)
     elseif (specificType == "aq" or string.match(specificType, "ahn") or string.match(specificType, "qiraj")) and haveAhnQirajMounts then
-        ravMounts:MountSummon(RAV_data.mounts.ahnqiraj)
+        ns:MountSummon(RAV_data.mounts.ahnqiraj)
     elseif specificType == "ground" and haveGroundMounts then
-        ravMounts:MountSummon(RAV_data.mounts.ground)
+        ns:MountSummon(RAV_data.mounts.ground)
     elseif specificType == "chauffeur" and haveChauffeurMounts then
-        ravMounts:MountSummon(RAV_data.mounts.chauffeur)
+        ns:MountSummon(RAV_data.mounts.chauffeur)
     elseif (specificType == "copy" or specificType == "clone" or RAV_data.options.clone ~= "none") and cloneMountID then
         C_MountJournal.SummonByID(cloneMountID)
         return
@@ -456,34 +456,34 @@ function ravMounts:MountUpHandler(specificType)
         UIErrorsFrame:Clear()
         return
     elseif haveVendorMounts and vendorMountModifier then
-        ravMounts:MountSummon(RAV_data.mounts.vendor)
+        ns:MountSummon(RAV_data.mounts.vendor)
     elseif havePassengerFlyingMounts and flyable and passengerMountModifier and not normalMountModifier then
-        ravMounts:MountSummon(RAV_data.mounts.passengerFlying)
+        ns:MountSummon(RAV_data.mounts.passengerFlying)
     elseif havePassengerGroundMounts and passengerMountModifier and (not flyable or (flyable and normalMountModifier)) then
-        ravMounts:MountSummon(RAV_data.mounts.passengerGround)
+        ns:MountSummon(RAV_data.mounts.passengerGround)
     elseif haveVashjirMounts and IsSwimming() and not normalMountModifier and inVashjir then
-        ravMounts:MountSummon(RAV_data.mounts.vashjir)
+        ns:MountSummon(RAV_data.mounts.vashjir)
     elseif haveSwimmingMounts and IsSwimming() and not normalMountModifier then
-        ravMounts:MountSummon(RAV_data.mounts.swimming)
+        ns:MountSummon(RAV_data.mounts.swimming)
     elseif haveFlyingMounts and ((IsSwimming() and flyable and normalMountModifier) or (flyable and not normalMountModifier) or (not IsSwimming() and not flyable and normalMountModifier)) then
-        ravMounts:MountSummon(RAV_data.mounts.flying)
+        ns:MountSummon(RAV_data.mounts.flying)
     elseif inAhnQiraj and haveAhnQirajMounts then
-        ravMounts:MountSummon(RAV_data.mounts.ahnqiraj)
+        ns:MountSummon(RAV_data.mounts.ahnqiraj)
     elseif inMaw and haveMawMounts then
-        ravMounts:MountSummon(RAV_data.mounts.maw)
+        ns:MountSummon(RAV_data.mounts.maw)
     elseif haveGroundMounts then
-        ravMounts:MountSummon(RAV_data.mounts.ground)
+        ns:MountSummon(RAV_data.mounts.ground)
     elseif haveFlyingMounts then
-        ravMounts:MountSummon(RAV_data.mounts.flying)
+        ns:MountSummon(RAV_data.mounts.flying)
     elseif haveChauffeurMounts then
-        ravMounts:MountSummon(RAV_data.mounts.chauffeur)
+        ns:MountSummon(RAV_data.mounts.chauffeur)
     else
-        ravMounts:PrettyPrint(L.NoMounts)
+        ns:PrettyPrint(L.NoMounts)
         return
     end
 end
 
-function ravMounts:TooltipLabels()
+function ns:TooltipLabels()
     hooksecurefunc(GameTooltip, "SetUnitAura", function(self, ...)
         local unit = select(1, ...)
         local spellID = select(10, UnitAura(...))
@@ -511,7 +511,7 @@ function ravMounts:TooltipLabels()
         local spellID = select(2, self:GetSpell())
         if spellID then
             for i = 1, self:NumLines() do
-                if string.match(_G["GameTooltipTextLeft"..i]:GetText(), ravMounts.name) then
+                if string.match(_G["GameTooltipTextLeft"..i]:GetText(), ns.name) then
                     return
                 end
             end
