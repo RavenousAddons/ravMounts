@@ -10,7 +10,7 @@
 ## SavedVariablesPerCharacter: RAV_data, RAV_macroBody
 
 ## X-License: Public Domain
-## X-Website: https://github.com/RavenousAddons/ns
+## X-Website: https://github.com/RavenousAddons/ravMounts
 ## X-Curse-Project-ID: 274452
 ## X-WoWI-ID: 24005
 
