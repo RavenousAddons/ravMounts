@@ -196,6 +196,7 @@ function ns:CreateLabel(cfg)
     if cfg.width then
         label:SetWidth(cfg.width)
     end
+    label:SetJustifyH("LEFT")
     if cfg.countMounts then
         label.countMounts = cfg.countMounts
         label:SetText(string.format(cfg.label, table.maxn(RAV_data.mounts[cfg.countMounts])))
@@ -222,6 +223,7 @@ function ns:CreateCheckBox(cfg)
     checkBox.label = cfg.label
     checkBox.type = cfg.type
     checkBox:SetPoint(cfg.initialPoint, cfg.relativeTo, cfg.relativePoint, cfg.offsetX, cfg.offsetY)
+    checkBox.Text:SetJustifyH("LEFT")
     checkBox.Text:SetText(cfg.label)
     if cfg.tooltip then
         checkBox.tooltipText = cfg.tooltip
