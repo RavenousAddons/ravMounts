@@ -66,6 +66,7 @@ ns.data = {
             547, -- Hearthsteed
             593, -- Warforged Nightmare
             764, -- Grove Warden
+            779, -- Spirit of Eche'ro
             826, -- Prestigious Bronze Courser
             831, -- Prestigious Royal Courser
             832, -- Prestigious Forest Courser
