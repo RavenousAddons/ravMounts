@@ -2,6 +2,7 @@ local name, ns = ...
 local L = ns.L
 
 function ravMounts_OnLoad(self)
+    self:RegisterEvent("PLAYER_LOGIN")
     self:RegisterEvent("ADDON_LOADED")
     self:RegisterEvent("MOUNT_JOURNAL_SEARCH_UPDATED")
     self:RegisterEvent("ZONE_CHANGED")
@@ -9,20 +10,22 @@ function ravMounts_OnLoad(self)
     self:RegisterEvent("ZONE_CHANGED_NEW_AREA")
 end
 
-function ravMounts_OnEvent(_, event, arg)
-    if arg == name then
-        if event == "ADDON_LOADED" then
-            ns:SetDefaultOptions()
-            InterfaceOptions_AddCategory(ns.Options)
-            if not RAV_version then
-                ns:PrettyPrint(string.format(L.Install, ns.color, ns.version))
-            elseif RAV_version ~= ns.version then
-                ns:PrettyPrint(string.format(L.Update, ns.color, ns.version))
-            end
-            RAV_version = ns.version
-            ns:MountListHandler()
-            ns:TooltipLabels()
+function ravMounts_OnEvent(self, event, arg)
+    if event == "PLAYER_LOGIN" then
+        ns:SetDefaultOptions()
+        InterfaceOptions_AddCategory(ns.Options)
+        if not RAV_version then
+            ns:PrettyPrint(string.format(L.Install, ns.color, ns.version))
+        elseif RAV_version ~= ns.version then
+            ns:PrettyPrint(string.format(L.Update, ns.color, ns.version))
         end
+        RAV_version = ns.version
+        ns:MountListHandler()
+        ns:TooltipLabels()
+        self:UnregisterEvent("PLAYER_LOGIN")
+    elseif event == "ADDON_LOADED" and arg == "Blizzard_Collections" then
+        ns:CreateOpenOptionsButton(MountJournal)
+        self:UnregisterEvent("ADDON_LOADED")
     elseif event == "MOUNT_JOURNAL_SEARCH_UPDATED" or event == "ZONE_CHANGED" or event == "ZONE_CHANGED_INDOORS" or event == "ZONE_CHANGED_NEW_AREA" then
         ns:MountListHandler()
         ns:EnsureMacro()

@@ -1,4 +1,4 @@
-local _, ns = ...
+local name, ns = ...
 local L = ns.L
 local defaults = ns.data.defaults
 local mountTypes = ns.data.mountTypes
@@ -238,6 +238,7 @@ function ns:CreateCheckBox(cfg)
 
     checkBox:SetScript("OnClick", function(self)
         checkBox.value = self:GetChecked()
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
         RAV_data.options[checkBox.var] = checkBox:GetChecked()
         ns:MountListHandler()
         ns:EnsureMacro()
@@ -519,5 +520,18 @@ function ns:TooltipLabels()
             end
             addLabelsFromSpell(self, spellID, false)
         end
+    end)
+end
+
+function ns:CreateOpenOptionsButton(parent)
+    local OpenOptions = CreateFrame("Button", name .. "OpenOptionsButton", MountJournal, "UIPanelButtonTemplate")
+    OpenOptions:SetText(ns.name)
+    OpenOptions:SetWidth(128)
+    OpenOptions:SetPoint("BOTTOMRIGHT", MountJournal, "BOTTOMRIGHT", -4, 4)
+    OpenOptions:RegisterForClicks("AnyUp")
+    OpenOptions:SetScript("OnMouseUp", function(self)
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)
+        InterfaceOptionsFrame_OpenToCategory(ns.Options)
+        InterfaceOptionsFrame_OpenToCategory(ns.Options)
     end)
 end
