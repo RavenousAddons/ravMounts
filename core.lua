@@ -27,6 +27,7 @@ function ravMounts_OnEvent(self, event, arg)
         ns:CreateOpenOptionsButton(MountJournal)
         self:UnregisterEvent("ADDON_LOADED")
     elseif event == "MOUNT_JOURNAL_SEARCH_UPDATED" or event == "ZONE_CHANGED" or event == "ZONE_CHANGED_INDOORS" or event == "ZONE_CHANGED_NEW_AREA" then
+        ns:SetDefaultOptions()
         ns:MountListHandler()
         ns:EnsureMacro()
         if ns.Options and ns.Options.controls then
