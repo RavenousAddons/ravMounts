@@ -1,4 +1,4 @@
-local name, ns = ...
+local ADDON_NAME, ns = ...
 local L = ns.L
 local defaults = ns.data.defaults
 local mountTypes = ns.data.mountTypes
@@ -524,10 +524,12 @@ function ns:TooltipLabels()
 end
 
 function ns:CreateOpenOptionsButton(parent)
-    local OpenOptions = CreateFrame("Button", name .. "OpenOptionsButton", MountJournal, "UIPanelButtonTemplate")
-    OpenOptions:SetText(ns.name)
-    OpenOptions:SetWidth(128)
+    local OpenOptions = CreateFrame("Button", ADDON_NAME .. "OpenOptionsButton", MountJournal, "UIPanelButtonTemplate")
     OpenOptions:SetPoint("BOTTOMRIGHT", MountJournal, "BOTTOMRIGHT", -4, 4)
+    local OpenOptionsLabel = OpenOptions:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+    OpenOptionsLabel:SetPoint("CENTER", OpenOptions, "CENTER")
+    OpenOptionsLabel:SetText(ns.name)
+    OpenOptions:SetWidth(OpenOptionsLabel:GetWidth() + 16)
     OpenOptions:RegisterForClicks("AnyUp")
     OpenOptions:SetScript("OnMouseUp", function(self)
         PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)

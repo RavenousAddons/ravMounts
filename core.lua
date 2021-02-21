@@ -1,4 +1,4 @@
-local name, ns = ...
+local ADDON_NAME, ns = ...
 local L = ns.L
 
 function ravMounts_OnLoad(self)
@@ -10,7 +10,7 @@ function ravMounts_OnLoad(self)
     self:RegisterEvent("ZONE_CHANGED_NEW_AREA")
 end
 
-function ravMounts_OnEvent(self, event, arg)
+function ravMounts_OnEvent(self, event, arg, ...)
     if event == "PLAYER_LOGIN" then
         ns:SetDefaultOptions()
         InterfaceOptions_AddCategory(ns.Options)

@@ -1,11 +1,11 @@
-local name, ns = ...
+local ADDON_NAME, ns = ...
 local L = ns.L
 
 local small = 6
 local medium = 12
 local large = 16
 
-local Options = CreateFrame("Frame", name .. "Options", InterfaceOptionsFramePanelContainer)
+local Options = CreateFrame("Frame", ADDON_NAME .. "Options", InterfaceOptionsFramePanelContainer)
 Options.name = ns.name
 Options.controlTable = {}
 Options.okay = function(self)
