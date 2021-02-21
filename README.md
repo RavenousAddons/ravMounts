@@ -1,3 +1,5 @@
+[![](https://img.shields.io/badge/discord-Walden%20Pond-7289da)](https://discord.gg/9XeTpbcjzu)
+
 > Now looking for translators! If you speak a language other than English and would like to help, I'd be honoured if you got in touch!
 
 # Ravenous Mounts
