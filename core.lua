@@ -40,6 +40,7 @@ SlashCmdList["RAVMOUNTS"] = function(message)
     if message == "version" or message == "v" then
         ns:PrettyPrint(string.format(L.Version, ns.version))
     elseif message == "c" or string.match(message, "con") or message == "h" or string.match(message, "help") or message == "o" or string.match(message, "opt") or message == "s" or string.match(message, "sett") or string.match(message, "togg") then
+        PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)
         InterfaceOptionsFrame_OpenToCategory(ns.Options)
         InterfaceOptionsFrame_OpenToCategory(ns.Options)
     elseif message == "f" or string.match(message, "force") then

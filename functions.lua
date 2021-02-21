@@ -15,10 +15,10 @@ local mountModifiers = {
     "passengerMountModifier",
 }
 local tooltipLabels = {
-    ["vendor"] = L.Vendor,
+    ["vendor"] = _G.BATTLE_PET_SOURCE_3,
     ["passengerGround"] = L.PassengerGround,
     ["passengerFlying"] = L.PassengerFlying,
-    ["flex"] = L.Flex,
+    ["flex"] = _G.PLAYER_DIFFICULTY4,
 }
 
 local function contains(table, input)

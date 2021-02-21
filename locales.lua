@@ -16,8 +16,6 @@ L.Maw = C_Map.GetMapInfo(mapIDs.maw[#mapIDs.maw]).name
 
 -- Default (English)
 L.Modifier = "Modifier"
-L.Mount = "mount"
-L.Mounts = "mounts"
 L.Version = "%s is the current version." -- ns.version
 L.Install = "Thanks for installing |cff%1$sv%2$s|r!" -- ns.color, ns.version
 L.Update = "Thanks for updating to |cff%1$sv%2$s|r!" -- ns.color, ns.version
@@ -27,26 +25,15 @@ L.Support3 = "You can also get help directly from the author on Discord: |r%s|cf
 L.NoMounts = "Unfortunately, you don't have any mounts that can be called at this time!"
 L.NoMacroSpace = "Unfortunately, you don't have enough global macro space for the macro to be created!"
 L.Force = "Mount Journal data collected, sorted, and ready to go!"
-L.Total = "Total"
-L.Both = "Both"
-L.Target = "Target"
-L.Focus = "Focus"
-L.None = "None"
 L.Ground = "Ground"
-L.Flying = "Flying"
-L.Swimming = "Swimming"
-L.Vendor = "Vendor"
 L.Passenger = "Passenger"
 L.PassengerGround = L.Passenger .. " (" .. L.Ground .. ")"
-L.PassengerFlying = L.Passenger .. " (" .. L.Flying .. ")"
-L.Flex = "Flexible"
+L.PassengerFlying = L.Passenger .. " (" .. _G.BATTLE_PET_NAME_3 .. ")"
 L.Cloneable = "Cloneable"
-L.OptionsHeading = "Configuration:"
 L.Macro = "Automatically create/maintain macro"
 L.MacroTooltip = "When enabled, a macro called |cffffffff%s|r will be automatically created and managed for you under |cffffffffGeneral Macros|r." -- ns.name
 L.FavoritesHeading = "Types which use Favorites:"
 L.MountsTooltip = "When enabled, only %s marked as favorites will be summoned." -- type
-L.SupportHeading = "Help and Support:"
 L.DataHeading = "Collected Data:"
 
 -- Check locale and assign appropriate
