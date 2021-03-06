@@ -1,5 +1,6 @@
 local ADDON_NAME, ns = ...
 local L = ns.L
+
 local defaults = ns.data.defaults
 local mountTypes = ns.data.mountTypes
 local mountIDs = ns.data.mountIDs
@@ -21,6 +22,9 @@ local tooltipLabels = {
     ["flex"] = _G.PLAYER_DIFFICULTY4,
 }
 
+local CM = C_Map
+local CMJ = C_MountJournal
+
 local function contains(table, input)
     for index, value in ipairs(table) do
         if value == input then
@@ -35,7 +39,7 @@ local function addLabelsFromSpell(target, spellID, showCloneable)
     local type, cloneable
     for mountType, label in pairs(tooltipLabels) do
         for _, mountID in ipairs(ns.data.mountIDs[mountType]) do
-            local _, lookup, _ = C_MountJournal.GetMountInfoByID(mountID)
+            local _, lookup, _ = CMJ.GetMountInfoByID(mountID)
             if tonumber(lookup) == tonumber(spellID) then
                 type = label
                 break
@@ -47,7 +51,7 @@ local function addLabelsFromSpell(target, spellID, showCloneable)
     end
     if showCloneable then
         for _, mountID in ipairs(RAV_data.mounts.allByID) do
-            local _, lookup, _ = C_MountJournal.GetMountInfoByID(mountID)
+            local _, lookup, _ = CMJ.GetMountInfoByID(mountID)
             if lookup == spellID then
                 cloneable = true
                 break
@@ -67,7 +71,7 @@ end
 function ns:AssignVariables()
     flyable = ns:IsFlyableArea()
     cloneMountID = ns:GetCloneMount()
-    mapID = C_Map.GetBestMapForUnit("player")
+    mapID = CM.GetBestMapForUnit("player")
     inAhnQiraj = contains(mapIDs.ahnqiraj, mapID)
     inVashjir = contains(mapIDs.vashjir, mapID)
     inMaw = contains(mapIDs.maw, mapID)
@@ -99,11 +103,11 @@ function ns:EnsureMacro()
         if ground or flying or vendor or passenger or swimming then
             body = "\n" .. body
             if ground then
-                local mountName, _ = C_MountJournal.GetMountInfoByID(ground[random(#ground)])
+                local mountName, _ = CMJ.GetMountInfoByID(ground[random(#ground)])
                 body = mountName .. body
             end
             if flying then
-                local mountName, _ = C_MountJournal.GetMountInfoByID(flying[random(#flying)])
+                local mountName, _ = CMJ.GetMountInfoByID(flying[random(#flying)])
                 if flyable and ground then
                     if RAV_data.options.normalMountModifier ~= "none" then
                         body = "[swimming,mod:" .. RAV_data.options.normalMountModifier .. "][nomod:" .. RAV_data.options.normalMountModifier .. "] " .. mountName .. "; " .. body
@@ -117,7 +121,7 @@ function ns:EnsureMacro()
                 end
             end
             if swimming then
-                local mountName, _ = C_MountJournal.GetMountInfoByID(swimming[random(#swimming)])
+                local mountName, _ = CMJ.GetMountInfoByID(swimming[random(#swimming)])
                 if RAV_data.options.normalMountModifier ~= "none" then
                     body = "[swimming,nomod:" .. RAV_data.options.normalMountModifier .. "] " .. mountName .. ((ground or flying) and "; " or "") .. body
                 else
@@ -125,11 +129,11 @@ function ns:EnsureMacro()
                 end
             end
             if vendor and RAV_data.options.vendorMountModifier ~= "none" then
-                local mountName, _ = C_MountJournal.GetMountInfoByID(vendor[random(#vendor)])
+                local mountName, _ = CMJ.GetMountInfoByID(vendor[random(#vendor)])
                 body = "[mod:" .. RAV_data.options.vendorMountModifier .. "] " .. mountName .. ((ground or flying or swimming) and "; " or "") .. body
             end
             if passenger and RAV_data.options.passengerMountModifier ~= "none" then
-                local mountName, _ = C_MountJournal.GetMountInfoByID(passenger[random(#passenger)])
+                local mountName, _ = CMJ.GetMountInfoByID(passenger[random(#passenger)])
                 body = "[mod:" .. RAV_data.options.passengerMountModifier .. "] " .. mountName .. ((ground or flying or swimming or vendor) and "; " or "") .. body
             end
             body = "#showtooltip " .. body
@@ -316,11 +320,11 @@ function ns:MountSummon(list)
     if not UnitAffectingCombat("player") and #list > 0 then
         local iter = 10 -- "magic" number
         local n = random(#list)
-        while not select(5, C_MountJournal.GetMountInfoByID(list[n])) and iter > 0 do
+        while not select(5, CMJ.GetMountInfoByID(list[n])) and iter > 0 do
             n = random(#list)
             iter = iter - 1
         end
-        C_MountJournal.SummonByID(list[n])
+        CMJ.SummonByID(list[n])
     end
 end
 
@@ -358,9 +362,9 @@ function ns:MountListHandler()
     RAV_data.mounts.vashjir = {}
     RAV_data.mounts.maw = {}
     RAV_data.mounts.chauffeur = {}
-    for _, mountID in pairs(C_MountJournal.GetMountIDs()) do
-        local mountName, _, _, _, _, _, isFavorite, _, mountFaction, _, isCollected = C_MountJournal.GetMountInfoByID(mountID)
-        local _, _, _, _, mountType = C_MountJournal.GetMountInfoExtraByID(mountID)
+    for _, mountID in pairs(CMJ.GetMountIDs()) do
+        local mountName, _, _, _, _, _, isFavorite, _, mountFaction, _, isCollected = CMJ.GetMountInfoByID(mountID)
+        local _, _, _, _, mountType = CMJ.GetMountInfoExtraByID(mountID)
         local isGroundMount = contains(mountTypes.ground, mountType)
         local isFlyingMount = contains(mountTypes.flying, mountType)
         local isVendorMount = contains(mountIDs.vendor, mountID)
@@ -447,7 +451,7 @@ function ns:MountUpHandler(specificType)
     elseif specificType == "chauffeur" and haveChauffeurMounts then
         ns:MountSummon(RAV_data.mounts.chauffeur)
     elseif (specificType == "copy" or specificType == "clone" or RAV_data.options.clone ~= "none") and cloneMountID then
-        C_MountJournal.SummonByID(cloneMountID)
+        CMJ.SummonByID(cloneMountID)
         return
     elseif vendorMountModifier and passengerMountModifier and (IsMounted() or UnitInVehicle("player")) then
         DoEmote(EMOTE171_TOKEN)

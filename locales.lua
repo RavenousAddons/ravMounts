@@ -8,11 +8,13 @@ setmetatable(L, { __index = function(t, k)
     return v
 end })
 
+local CM = C_Map
+
 -- Automatic
 local mapIDs = ns.data.mapIDs
-L.AhnQiraj = C_Map.GetMapInfo(mapIDs.ahnqiraj[#mapIDs.ahnqiraj]).name
-L.Vashjir = C_Map.GetMapInfo(mapIDs.vashjir[#mapIDs.vashjir]).name
-L.Maw = C_Map.GetMapInfo(mapIDs.maw[#mapIDs.maw]).name
+L.AhnQiraj = CM.GetMapInfo(mapIDs.ahnqiraj[#mapIDs.ahnqiraj]).name
+L.Vashjir = CM.GetMapInfo(mapIDs.vashjir[#mapIDs.vashjir]).name
+L.Maw = CM.GetMapInfo(mapIDs.maw[#mapIDs.maw]).name
 
 -- Default (English)
 L.Modifier = "Modifier"
