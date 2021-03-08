@@ -1,8 +1,8 @@
-[![](https://img.shields.io/badge/discord-Walden%20Pond-7289da)](https://discord.gg/9XeTpbcjzu)
+# Ravenous Mounts
+
+[![Ravenous Addons Discord](https://img.shields.io/badge/discord-Ravenous%20Addons-7289da)](https://discord.gg/9XeTpbcjzu) [![Buy me a coffee](https://img.shields.io/badge/help%20out-Buy%20me%20a%20coffee-81b3a0)](https://www.buymeacoffee.com/waldenpond)
 
 > Now looking for translators! If you speak a language other than English and would like to help, I'd be honoured if you got in touch!
-
-# Ravenous Mounts
 
 *Chooses the best Mount for the job without any set-up; it’s all based on your Mount Journal Favorites. Minimal in-game configuration to customise your summoning experience. Can even clone your target's mount (if you have the mount too)!*
 
