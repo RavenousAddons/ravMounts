@@ -80,6 +80,7 @@ ns.data = {
         maw = {
             1304, -- Mawsworn Soulhunter
             1442, -- Corridor Creeper
+            1441, -- Bound Shadehound
         },
     },
     mapIDs = {
