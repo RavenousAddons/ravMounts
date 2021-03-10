@@ -96,11 +96,12 @@ function ns:EnsureMacro()
         ns:AssignVariables()
         local flying = haveFlyingMounts and RAV_data.mounts.flying or nil
         local ground = (inAhnQiraj and haveAhnQirajMounts) and RAV_data.mounts.ahnqiraj or (inMaw and haveMawMounts) and RAV_data.mounts.maw or haveGroundMounts and RAV_data.mounts.ground or nil
+        local chauffeur = haveChauffeurMounts and RAV_data.mounts.chauffeur or nil
         local vendor = haveVendorMounts and RAV_data.mounts.vendor or nil
         local passenger = (flyable and havePassengerFlyingMounts) and RAV_data.mounts.passengerFlying or havePassengerGroundMounts and RAV_data.mounts.passengerGround or nil
         local swimming = (inVashjir and haveVashjirMounts) and RAV_data.mounts.vashjir or haveSwimmingMounts and RAV_data.mounts.swimming or nil
         local body = "/ravm"
-        if ground or flying or vendor or passenger or swimming then
+        if flying or ground or chauffeur or vendor or passenger or swimming then
             body = "\n" .. body
             if ground then
                 local mountName, _ = CMJ.GetMountInfoByID(ground[random(#ground)])
@@ -120,21 +121,25 @@ function ns:EnsureMacro()
                     body = mountName .. body
                 end
             end
+            if chauffeur and ground == nil and flying == nil then
+                local mountName, _ = CMJ.GetMountInfoByID(chauffeur[random(#chauffeur)])
+                body = mountName .. body
+            end
             if swimming then
                 local mountName, _ = CMJ.GetMountInfoByID(swimming[random(#swimming)])
                 if RAV_data.options.normalMountModifier ~= "none" then
-                    body = "[swimming,nomod:" .. RAV_data.options.normalMountModifier .. "] " .. mountName .. ((ground or flying) and "; " or "") .. body
+                    body = "[swimming,nomod:" .. RAV_data.options.normalMountModifier .. "] " .. mountName .. ((flying or ground or chauffeur) and "; " or "") .. body
                 else
-                    body = "[swimming] " .. mountName .. ((ground or flying) and "; " or "") .. body
+                    body = "[swimming] " .. mountName .. ((flying or ground or chauffeur) and "; " or "") .. body
                 end
             end
             if vendor and RAV_data.options.vendorMountModifier ~= "none" then
                 local mountName, _ = CMJ.GetMountInfoByID(vendor[random(#vendor)])
-                body = "[mod:" .. RAV_data.options.vendorMountModifier .. "] " .. mountName .. ((ground or flying or swimming) and "; " or "") .. body
+                body = "[mod:" .. RAV_data.options.vendorMountModifier .. "] " .. mountName .. ((flying or ground or chauffeur or swimming) and "; " or "") .. body
             end
             if passenger and RAV_data.options.passengerMountModifier ~= "none" then
                 local mountName, _ = CMJ.GetMountInfoByID(passenger[random(#passenger)])
-                body = "[mod:" .. RAV_data.options.passengerMountModifier .. "] " .. mountName .. ((ground or flying or swimming or vendor) and "; " or "") .. body
+                body = "[mod:" .. RAV_data.options.passengerMountModifier .. "] " .. mountName .. ((flying or ground or chauffeur or swimming or vendor) and "; " or "") .. body
             end
             body = "#showtooltip " .. body
         end
@@ -363,7 +368,7 @@ function ns:MountListHandler()
     RAV_data.mounts.maw = {}
     RAV_data.mounts.chauffeur = {}
     for _, mountID in pairs(CMJ.GetMountIDs()) do
-        local mountName, _, _, _, _, _, isFavorite, _, mountFaction, _, isCollected = CMJ.GetMountInfoByID(mountID)
+        local mountName, _, _, _, isUsable, _, isFavorite, _, mountFaction, _, isCollected = CMJ.GetMountInfoByID(mountID)
         local _, _, _, _, mountType = CMJ.GetMountInfoExtraByID(mountID)
         local isGroundMount = contains(mountTypes.ground, mountType)
         local isFlyingMount = contains(mountTypes.flying, mountType)
@@ -376,7 +381,7 @@ function ns:MountListHandler()
         local isMawMount = contains(mountIDs.maw, mountID)
         local isChauffeurMount = contains(mountTypes.chauffeur, mountType)
         local isFlexMount = contains(mountIDs.flex, mountID)
-        if isCollected then
+        if isCollected and isUsable then
             -- 0 = Horde, 1 = Alliance
             if not (mountFaction == 0 and faction ~= "Horde") and not (mountFaction == 1 and faction ~= "Alliance") then
                 table.insert(RAV_data.mounts.allByName, mountName)
