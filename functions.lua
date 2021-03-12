@@ -34,6 +34,21 @@ local function contains(table, input)
     return false
 end
 
+local function hasFlyingRiding()
+    for _, spell in ipairs({34090, 34091}) do
+        if IsSpellKnown(spell) then return true end
+    end
+    return false
+end
+
+local function hasGroundRiding()
+    if hasFlyingRiding() then return true end
+    for _, spell in ipairs({33388, 33391}) do
+        if IsSpellKnown(spell) then return true end
+    end
+    return false
+end
+
 local function addLabelsFromSpell(target, spellID, showCloneable)
     if showCloneable == nil then showCloneable = true end
     local type, cloneable
@@ -381,9 +396,11 @@ function ns:MountListHandler()
         local isMawMount = contains(mountIDs.maw, mountID)
         local isChauffeurMount = contains(mountTypes.chauffeur, mountType)
         local isFlexMount = contains(mountIDs.flex, mountID)
-        if isCollected and isUsable then
+        local hasGroundRiding = hasGroundRiding()
+        local hasFlyingRiding = hasFlyingRiding()
+        if isCollected then
             -- 0 = Horde, 1 = Alliance
-            if not (mountFaction == 0 and faction ~= "Horde") and not (mountFaction == 1 and faction ~= "Alliance") then
+            if hasGroundRiding and not (mountFaction == 0 and faction ~= "Horde") and not (mountFaction == 1 and faction ~= "Alliance") then
                 table.insert(RAV_data.mounts.allByName, mountName)
                 table.insert(RAV_data.mounts.allByID, mountID)
                 if isFlyingMount and (not RAV_data.options.normalMounts or isFavorite) and not isVendorMount and not isPassengerFlyingMount and not isPassengerGroundMount then
@@ -391,10 +408,10 @@ function ns:MountListHandler()
                         if RAV_data.options.flexMounts == "both" or RAV_data.options.flexMounts == "ground" then
                             table.insert(RAV_data.mounts.ground, mountID)
                         end
-                        if RAV_data.options.flexMounts == "both" or RAV_data.options.flexMounts == "flying" then
+                        if hasFlyingRiding and RAV_data.options.flexMounts == "both" or RAV_data.options.flexMounts == "flying" then
                             table.insert(RAV_data.mounts.flying, mountID)
                         end
-                    else
+                    elseif hasFlyingRiding then
                         table.insert(RAV_data.mounts.flying, mountID)
                     end
                 end
@@ -404,7 +421,7 @@ function ns:MountListHandler()
                 if isVendorMount and (isFavorite or not RAV_data.options.vendorMounts) then
                     table.insert(RAV_data.mounts.vendor, mountID)
                 end
-                if isPassengerFlyingMount and (isFavorite or not RAV_data.options.passengerMounts) then
+                if hasFlyingRiding and isPassengerFlyingMount and (isFavorite or not RAV_data.options.passengerMounts) then
                     table.insert(RAV_data.mounts.passengerFlying, mountID)
                 end
                 if isPassengerGroundMount and (isFavorite or not RAV_data.options.passengerMounts) then
@@ -412,9 +429,6 @@ function ns:MountListHandler()
                 end
                 if isSwimmingMount and (isFavorite or not RAV_data.options.swimmingMounts) then
                     table.insert(RAV_data.mounts.swimming, mountID)
-                end
-                if isChauffeurMount then
-                    table.insert(RAV_data.mounts.chauffeur, mountID)
                 end
                 if isAhnQirajMount then
                     table.insert(RAV_data.mounts.ahnqiraj, mountID)
@@ -425,6 +439,9 @@ function ns:MountListHandler()
                 if isMawMount then
                     table.insert(RAV_data.mounts.maw, mountID)
                 end
+            end
+            if isChauffeurMount then
+                table.insert(RAV_data.mounts.chauffeur, mountID)
             end
         end
     end
