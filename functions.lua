@@ -42,11 +42,7 @@ local function hasFlyingRiding()
 end
 
 local function hasGroundRiding()
-    local hasFlyingRiding = hasFlyingRiding()
-    if hasFlyingRiding then
-        print("ayo")
-        return true
-    end
+    if hasFlyingRiding() then return true end
     for _, spell in ipairs({33388, 33391}) do
         if IsSpellKnown(spell) then return true end
     end
@@ -402,8 +398,6 @@ function ns:MountListHandler()
         local isFlexMount = contains(mountIDs.flex, mountID)
         local hasGroundRiding = hasGroundRiding()
         local hasFlyingRiding = hasFlyingRiding()
-        print(hasGroundRiding and "ground" or "no ground")
-        print(hasFlyingRiding and "flying" or "no flying")
         if isCollected then
             -- 0 = Horde, 1 = Alliance
             if hasGroundRiding and not (mountFaction == 0 and faction ~= "Horde") and not (mountFaction == 1 and faction ~= "Alliance") then
