@@ -35,14 +35,18 @@ local function contains(table, input)
 end
 
 local function hasFlyingRiding()
-    for _, spell in ipairs({34090, 34091}) do
+    for _, spell in ipairs({34090, 34091, 90265}) do
         if IsSpellKnown(spell) then return true end
     end
     return false
 end
 
 local function hasGroundRiding()
-    if hasFlyingRiding() then return true end
+    local hasFlyingRiding = hasFlyingRiding()
+    if hasFlyingRiding then
+        print("ayo")
+        return true
+    end
     for _, spell in ipairs({33388, 33391}) do
         if IsSpellKnown(spell) then return true end
     end
@@ -398,6 +402,8 @@ function ns:MountListHandler()
         local isFlexMount = contains(mountIDs.flex, mountID)
         local hasGroundRiding = hasGroundRiding()
         local hasFlyingRiding = hasFlyingRiding()
+        print(hasGroundRiding and "ground" or "no ground")
+        print(hasFlyingRiding and "flying" or "no flying")
         if isCollected then
             -- 0 = Horde, 1 = Alliance
             if hasGroundRiding and not (mountFaction == 0 and faction ~= "Horde") and not (mountFaction == 1 and faction ~= "Alliance") then
