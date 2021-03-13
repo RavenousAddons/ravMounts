@@ -72,7 +72,6 @@ Options:SetScript("OnShow", function()
             label = _G.GAMEOPTIONS_MENU .. ":",
             relativeTo = LeftPanel,
             relativePoint = "TOPLEFT",
-            offsetY = 0,
         },
         {
             type = "CheckBox",
@@ -219,7 +218,7 @@ Options:SetScript("OnShow", function()
             type = "Label",
             name = "SubHeadingSupport1",
             parent = Options,
-            label = "|cffffffff" .. string.format(L.Support1, ns.name) .. "|r",
+            label = "|cffffffff" .. string.format(L.Support1, ns.name, _G.GENERAL_MACROS) .. "|r",
             fontObject = "GameFontNormal",
         },
         {
@@ -243,7 +242,6 @@ Options:SetScript("OnShow", function()
             label = L.DataHeading,
             relativeTo = RightPanel,
             relativePoint = "TOPLEFT",
-            offsetY = 0,
         },
         {
             type = "Label",

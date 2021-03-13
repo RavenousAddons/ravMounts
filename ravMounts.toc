@@ -3,7 +3,7 @@
 
 ## Name: Ravenous Mounts
 ## Title: Ravenous |cff9eb8c9Mounts|r
-## Notes: Chooses the best mount for the job with simple preferences based on your Favourites.
+## Notes: Summons optimal mounts based on your Mount Journal Favorites.|n|cffbbbbbbSlash command: /ravm|r
 ## Author: RavenousAddons
 
 ## SavedVariables: RAV_version

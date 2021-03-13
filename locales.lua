@@ -11,14 +11,12 @@ end })
 local CM = C_Map
 
 -- Default (English)
-L.Modifier = "Modifier"
 L.Version = "%s is the current version." -- ns.version
 L.Install = "Thanks for installing |cff%1$sv%2$s|r!" -- ns.color, ns.version
 L.Update = "Thanks for updating to |cff%1$sv%2$s|r!" -- ns.color, ns.version
-L.Support1 = "This Addon creates and maintains a macro called |r%s|cffffffff for you under |rGeneral Macros|cffffffff." -- ns.name
+L.Support1 = "This Addon creates and maintains a macro called |r%s|cffffffff for you under |r%s|cffffffff." -- ns.name, _G.GENERAL_MACROS
 L.Support2 = "Check out the Addon on |rGitHub|cffffffff, |rWoWInterface|cffffffff, or |rCurse|cffffffff for more info and support!"
 L.Support3 = "You can also get help directly from the author on Discord: |r%s|cffffffff" -- ns.discord
-L.NoMounts = "Unfortunately, you don't have any mounts that can be called at this time!"
 L.NoMacroSpace = "Unfortunately, you don't have enough global macro space for the macro to be created!"
 L.Macro = "Automatically create/maintain macro"
 L.MacroTooltip = "When enabled, a macro called |cffffffff%s|r will be automatically created and managed for you under |cffffffffGeneral Macros|r." -- ns.name
@@ -29,6 +27,7 @@ L.Force = "Mount Journal data collected, sorted, and ready to go!"
 L.Cloneable = "Cloneable"
 L.Ground = "Ground"
 L.Passenger = "Passenger"
+L.Modifier = "Modifier"
 
 -- Check locale and assign appropriate
 local CURRENT_LOCALE = GetLocale()

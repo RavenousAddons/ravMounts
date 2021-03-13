@@ -507,7 +507,7 @@ function ns:MountUpHandler(specificType)
     elseif haveChauffeurMounts then
         ns:MountSummon(RAV_data.mounts.chauffeur)
     else
-        ns:PrettyPrint(L.NoMounts)
+        ns:PrettyPrint(_G.MOUNT_JOURNAL_NO_VALID_FAVORITES)
         return
     end
 end
