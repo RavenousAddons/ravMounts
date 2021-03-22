@@ -398,9 +398,9 @@ function ns:MountListHandler()
         local isFlexMount = contains(mountIDs.flex, mountID)
         local hasGroundRiding = hasGroundRiding()
         local hasFlyingRiding = hasFlyingRiding()
-        if isCollected then
-            -- 0 = Horde, 1 = Alliance
-            if hasGroundRiding and not (mountFaction == 0 and faction ~= "Horde") and not (mountFaction == 1 and faction ~= "Alliance") then
+        -- 0 = Horde, 1 = Alliance
+        if isCollected and not (mountFaction == 0 and faction ~= "Horde") and not (mountFaction == 1 and faction ~= "Alliance") then
+            if hasGroundRiding then
                 table.insert(RAV_data.mounts.allByName, mountName)
                 table.insert(RAV_data.mounts.allByID, mountID)
                 if isFlyingMount and (not RAV_data.options.normalMounts or isFavorite) and not isVendorMount and not isPassengerFlyingMount and not isPassengerGroundMount then

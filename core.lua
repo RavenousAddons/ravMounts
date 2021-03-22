@@ -5,9 +5,6 @@ function ravMounts_OnLoad(self)
     self:RegisterEvent("PLAYER_LOGIN")
     self:RegisterEvent("ADDON_LOADED")
     self:RegisterEvent("MOUNT_JOURNAL_SEARCH_UPDATED")
-    self:RegisterEvent("ZONE_CHANGED")
-    self:RegisterEvent("ZONE_CHANGED_INDOORS")
-    self:RegisterEvent("ZONE_CHANGED_NEW_AREA")
 end
 
 function ravMounts_OnEvent(self, event, arg, ...)
@@ -26,8 +23,7 @@ function ravMounts_OnEvent(self, event, arg, ...)
     elseif event == "ADDON_LOADED" and arg == "Blizzard_Collections" then
         ns:CreateOpenOptionsButton(MountJournal)
         self:UnregisterEvent("ADDON_LOADED")
-    elseif event == "MOUNT_JOURNAL_SEARCH_UPDATED" or event == "ZONE_CHANGED" or event == "ZONE_CHANGED_INDOORS" or event == "ZONE_CHANGED_NEW_AREA" then
-        ns:SetDefaultOptions()
+    elseif event == "MOUNT_JOURNAL_SEARCH_UPDATED" then
         ns:MountListHandler()
         ns:EnsureMacro()
         if ns.Options and ns.Options.controls then
