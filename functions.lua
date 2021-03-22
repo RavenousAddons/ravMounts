@@ -109,6 +109,7 @@ local hasSeenNoSpaceMessage = false
 function ns:EnsureMacro()
     if not UnitAffectingCombat("player") and RAV_data.options.macro then
         ns:AssignVariables()
+        local icon = "INV_Misc_QuestionMark"
         local flying = haveFlyingMounts and RAV_data.mounts.flying or nil
         local ground = (inAhnQiraj and haveAhnQirajMounts) and RAV_data.mounts.ahnqiraj or (inMaw and haveMawMounts) and RAV_data.mounts.maw or haveGroundMounts and RAV_data.mounts.ground or nil
         local chauffeur = haveChauffeurMounts and RAV_data.mounts.chauffeur or nil
@@ -137,6 +138,7 @@ function ns:EnsureMacro()
                 end
             end
             if chauffeur and ground == nil and flying == nil then
+                icon = "inv_misc_key_06"
                 local mountName, _ = CMJ.GetMountInfoByID(chauffeur[random(#chauffeur)])
                 body = mountName .. body
             end
@@ -159,12 +161,13 @@ function ns:EnsureMacro()
             body = "#showtooltip " .. body
         end
         local numberOfMacros, _ = GetNumMacros()
-        if body == RAV_macroBody then
-        elseif GetMacroIndexByName(ns.name) > 0 then
-            EditMacro(GetMacroIndexByName(ns.name), ns.name, "INV_Misc_QuestionMark", body)
-            RAV_macroBody = body
+        if GetMacroIndexByName(ns.name) > 0 then
+            if body ~= RAV_macroBody then
+                EditMacro(GetMacroIndexByName(ns.name), ns.name, icon, body)
+                RAV_macroBody = body
+            end
         elseif numberOfMacros < 120 then
-            CreateMacro(ns.name, "INV_Misc_QuestionMark", body)
+            CreateMacro(ns.name, icon, body)
             RAV_macroBody = body
         elseif not hasSeenNoSpaceMessage then
             hasSeenNoSpaceMessage = true
