@@ -12,6 +12,7 @@ ns.data = {
         passengerMounts = true,
         passengerMountModifier = "ctrl",
         swimmingMounts = true,
+        travelForm = true,
     },
     mountTypes = {
         ground = {230},
@@ -20,6 +21,9 @@ ns.data = {
         ahnqiraj = {241},
         vashjir = {232},
         chauffeur = {284},
+    },
+    travelForms = {
+        ["DRUID"] = 783,
     },
     mountIDs = {
         vendor = {
@@ -45,6 +49,10 @@ ns.data = {
             455, -- Obsidian Nightwing
             959, -- Stormwind Skychaser (Alliance)
             960, -- Orgrimmar Interceptor (Horde)
+        },
+        noFlyingSwimming = {
+            125, -- Riding Turtle
+            312, -- Sea Turtle
         },
         flex = {
             219, -- Headless Horseman's Mount
@@ -96,6 +104,9 @@ ns.data = {
             204, -- Abyssal Depths
             205, -- Shimmering Expanse
             1272, -- Vashj'ir
+        },
+        nazjatar = {
+            1355, -- Nazjatar
         },
         maw = {
             1543, -- The Maw

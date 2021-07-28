@@ -20,13 +20,16 @@ L.Support3 = "You can also get help directly from the author on Discord: |r%s|cf
 L.NoMacroSpace = "Unfortunately, you don't have enough global macro space for the macro to be created!"
 L.Macro = "Automatically create/maintain macro"
 L.MacroTooltip = "When enabled, a macro called |cffffffff%s|r will be automatically created and managed for you under |cffffffffGeneral Macros|r." -- ns.name
+L.TravelForm = "Use Travel Form"
+L.TravelFormTooltip = "When enabled, Travel Form, if available, will be utilised as a priority over Ground/Flying mounts."
 L.FavoritesHeading = "Types which use Favorites:"
 L.MountsTooltip = "When enabled, only %s marked as favorites will be summoned." -- type
-L.DataHeading = "Collected Data:"
+L.CountHeading = "Collected Data:"
 L.Force = "Mount Journal data collected, sorted, and ready to go!"
 L.Cloneable = "Cloneable"
 L.Ground = "Ground"
 L.Passenger = "Passenger"
+L.Chauffeur = "Chauffeur"
 L.Modifier = "Modifier"
 
 -- Check locale and assign appropriate

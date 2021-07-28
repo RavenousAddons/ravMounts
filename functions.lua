@@ -6,6 +6,7 @@ local mountTypes = ns.data.mountTypes
 local mountIDs = ns.data.mountIDs
 local mapIDs = ns.data.mapIDs
 
+local _, className = UnitClass("player")
 local faction, _ = UnitFactionGroup("player")
 local flyable, cloneMountID, mapID, inAhnQiraj, inVashjir, inMaw, haveGroundMounts, haveFlyingMounts, havePassengerGroundMounts, havePassengerFlyingMounts, haveVendorMounts, haveSwimmingMounts, haveAhnQirajMounts, haveVashjirMounts, haveMawMounts, haveChauffeurMounts, normalMountModifier, vendorMountModifier, passengerMountModifier
 local prevControl
@@ -99,6 +100,7 @@ function ns:AssignVariables()
     haveAhnQirajMounts = next(RAV_data.mounts.ahnqiraj) ~= nil and true or false
     haveVashjirMounts = next(RAV_data.mounts.vashjir) ~= nil and true or false
     haveMawMounts = next(RAV_data.mounts.maw) ~= nil and true or false
+    haveTravelForm = next(RAV_data.mounts.travelForm) ~= nil and true or false
     haveChauffeurMounts = next(RAV_data.mounts.chauffeur) ~= nil and true or false
     normalMountModifier = RAV_data.options.normalMountModifier == "alt" and IsAltKeyDown() or RAV_data.options.normalMountModifier == "ctrl" and IsControlKeyDown() or RAV_data.options.normalMountModifier == "shift" and IsShiftKeyDown() or false
     vendorMountModifier = RAV_data.options.vendorMountModifier == "alt" and IsAltKeyDown() or RAV_data.options.vendorMountModifier == "ctrl" and IsControlKeyDown() or RAV_data.options.vendorMountModifier == "shift" and IsShiftKeyDown() or false
@@ -110,39 +112,60 @@ function ns:EnsureMacro()
     if not UnitAffectingCombat("player") and RAV_data.options.macro then
         ns:AssignVariables()
         local icon = "INV_Misc_QuestionMark"
+        local travelForm = haveTravelForm and RAV_data.mounts.travelForm or nil
         local flying = haveFlyingMounts and RAV_data.mounts.flying or nil
-        local ground = (inAhnQiraj and haveAhnQirajMounts) and RAV_data.mounts.ahnqiraj or (inMaw and haveMawMounts) and RAV_data.mounts.maw or haveGroundMounts and RAV_data.mounts.ground or nil
+        local ground = (inAhnQiraj and haveAhnQirajMounts) and RAV_data.mounts.ahnqiraj or haveGroundMounts and RAV_data.mounts.ground or nil
         local chauffeur = haveChauffeurMounts and RAV_data.mounts.chauffeur or nil
         local vendor = haveVendorMounts and RAV_data.mounts.vendor or nil
         local passenger = (flyable and havePassengerFlyingMounts) and RAV_data.mounts.passengerFlying or havePassengerGroundMounts and RAV_data.mounts.passengerGround or nil
         local swimming = (inVashjir and haveVashjirMounts) and RAV_data.mounts.vashjir or haveSwimmingMounts and RAV_data.mounts.swimming or nil
         local body = "/ravm"
-        if flying or ground or chauffeur or vendor or passenger or swimming then
+        if (RAV_data.options.travelForm and travelForm) or flying or ground or chauffeur or vendor or passenger or swimming then
             body = "\n" .. body
-            if ground then
-                local mountName, _ = CMJ.GetMountInfoByID(ground[random(#ground)])
-                body = mountName .. body
-            end
-            if flying then
-                local mountName, _ = CMJ.GetMountInfoByID(flying[random(#flying)])
-                if flyable and ground then
-                    if RAV_data.options.normalMountModifier ~= "none" then
-                        body = "[swimming,mod:" .. RAV_data.options.normalMountModifier .. "][nomod:" .. RAV_data.options.normalMountModifier .. "] " .. mountName .. "; " .. body
-                    else
-                        body = "[] " .. mountName .. "; " .. body
+            if (RAV_data.options.travelForm and travelForm) then
+                local travelFormName, _ = GetSpellInfo(travelForm[random(#travelForm)])
+                if RAV_data.options.normalMountModifier ~= "none" then
+                    body = "[nomod:" .. RAV_data.options.normalMountModifier .. "] " .. travelFormName .. "\n" .. "/use [nomod:" .. RAV_data.options.normalMountModifier .. "] " .. travelFormName .. "\n" .. "/stopmacro [nomod]" .. body
+                    local mountName
+                    if flying then
+                        mountName, _ = CMJ.GetMountInfoByID(flying[random(#flying)])
+                    elseif ground then
+                        mountName, _ = CMJ.GetMountInfoByID(ground[random(#ground)])
+                    elseif chauffeur then
+                        mountName, _ = CMJ.GetMountInfoByID(chauffeur[random(#chauffeur)])
                     end
-                elseif ground and RAV_data.options.normalMountModifier ~= "none" then
-                    body = "[noswimming,mod:" .. RAV_data.options.normalMountModifier .. "] " .. mountName .. "; " .. body
+                    if mountName then
+                        body = "[mod:" .. RAV_data.options.normalMountModifier .. "] " .. mountName .. "; " .. body
+                    end
                 else
+                    body = travelFormName .. "\n" .. "/use " .. travelFormName
+                end
+            else
+                if ground then
+                    local mountName, _ = CMJ.GetMountInfoByID(ground[random(#ground)])
+                    body = mountName .. body
+                end
+                if flying then
+                    local mountName, _ = CMJ.GetMountInfoByID(flying[random(#flying)])
+                    if flyable and ground then
+                        if RAV_data.options.normalMountModifier ~= "none" then
+                            body = "[swimming,mod:" .. RAV_data.options.normalMountModifier .. "][nomod:" .. RAV_data.options.normalMountModifier .. "] " .. mountName .. "; " .. body
+                        else
+                            body = "[] " .. mountName .. "; " .. body
+                        end
+                    elseif ground and RAV_data.options.normalMountModifier ~= "none" then
+                        body = "[noswimming,mod:" .. RAV_data.options.normalMountModifier .. "] " .. mountName .. "; " .. body
+                    else
+                        body = mountName .. body
+                    end
+                end
+                if chauffeur and ground == nil and flying == nil then
+                    icon = "inv_misc_key_06"
+                    local mountName, _ = CMJ.GetMountInfoByID(chauffeur[random(#chauffeur)])
                     body = mountName .. body
                 end
             end
-            if chauffeur and ground == nil and flying == nil then
-                icon = "inv_misc_key_06"
-                local mountName, _ = CMJ.GetMountInfoByID(chauffeur[random(#chauffeur)])
-                body = mountName .. body
-            end
-            if swimming then
+            if swimming and travelForm == nil then
                 local mountName, _ = CMJ.GetMountInfoByID(swimming[random(#swimming)])
                 if RAV_data.options.normalMountModifier ~= "none" then
                     body = "[swimming,nomod:" .. RAV_data.options.normalMountModifier .. "] " .. mountName .. ((flying or ground or chauffeur) and "; " or "") .. body
@@ -224,7 +247,14 @@ function ns:CreateLabel(cfg)
         label:SetWidth(cfg.width)
     end
     label:SetJustifyH("LEFT")
-    if cfg.countMounts then
+    if cfg.haveMounts then
+        label.haveMounts = cfg.haveMounts
+        if table.maxn(RAV_data.mounts[cfg.haveMounts]) > 0 then
+            label:SetText(string.format(cfg.label, _G.AVAILABLE))
+        else
+            label:SetText(string.format(cfg.label, _G.UNAVAILABLE))
+        end
+    elseif cfg.countMounts then
         label.countMounts = cfg.countMounts
         label:SetText(string.format(cfg.label, table.maxn(RAV_data.mounts[cfg.countMounts])))
     else
@@ -235,6 +265,7 @@ function ns:CreateLabel(cfg)
     if not cfg.ignorePlacement then
         prevControl = label
     end
+
     return label
 end
 
@@ -331,6 +362,13 @@ function ns:RefreshControls(controls)
             control.oldValue = control:GetValue()
         elseif control.type == "DropDown" then
             UIDropDownMenu_SetText(dropdowns[control.var], control.label .. ": " .. RAV_data.options[control.var]:gsub("^%l", string.upper))
+        elseif control.haveMounts then
+            if table.maxn(RAV_data.mounts[control.haveMounts]) > 0 then
+                control:SetText(string.format(control.label, _G.AVAILABLE))
+            else
+                control:SetText(string.format(control.label, _G.UNAVAILABLE))
+            end
+            control.oldValue = control:GetText()
         elseif control.countMounts then
             control:SetText(string.format(control.label, table.maxn(RAV_data.mounts[control.countMounts])))
             control.oldValue = control:GetText()
@@ -385,6 +423,8 @@ function ns:MountListHandler()
     RAV_data.mounts.vashjir = {}
     RAV_data.mounts.maw = {}
     RAV_data.mounts.chauffeur = {}
+    mapID = CM.GetBestMapForUnit("player")
+    inNazjatar = contains(mapIDs.nazjatar, mapID)
     for _, mountID in pairs(CMJ.GetMountIDs()) do
         local mountName, _, _, _, isUsable, _, isFavorite, _, mountFaction, _, isCollected = CMJ.GetMountInfoByID(mountID)
         local _, _, _, _, mountType = CMJ.GetMountInfoExtraByID(mountID)
@@ -432,6 +472,9 @@ function ns:MountListHandler()
                 end
                 if isSwimmingMount and (isFavorite or not RAV_data.options.swimmingMounts) then
                     table.insert(RAV_data.mounts.swimming, mountID)
+                    if inNazjatar and not contains(mountIDs.noFlyingSwimming, mountID) then
+                        table.insert(RAV_data.mounts.flying, mountID)
+                    end
                 end
                 if isAhnQirajMount then
                     table.insert(RAV_data.mounts.ahnqiraj, mountID)
@@ -446,6 +489,12 @@ function ns:MountListHandler()
             if isChauffeurMount then
                 table.insert(RAV_data.mounts.chauffeur, mountID)
             end
+        end
+    end
+    RAV_data.mounts.travelForm = {}
+    if ns.data.travelForms[className] ~= nil then
+        if IsSpellKnown(ns.data.travelForms[className]) then
+            table.insert(RAV_data.mounts.travelForm, ns.data.travelForms[className])
         end
     end
 end
@@ -501,8 +550,6 @@ function ns:MountUpHandler(specificType)
         ns:MountSummon(RAV_data.mounts.flying)
     elseif inAhnQiraj and haveAhnQirajMounts then
         ns:MountSummon(RAV_data.mounts.ahnqiraj)
-    elseif inMaw and haveMawMounts then
-        ns:MountSummon(RAV_data.mounts.maw)
     elseif haveGroundMounts then
         ns:MountSummon(RAV_data.mounts.ground)
     elseif haveFlyingMounts then
