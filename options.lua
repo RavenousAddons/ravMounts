@@ -238,13 +238,6 @@ Options:SetScript("OnShow", function()
         },
         {
             type = "Label",
-            name = "SubHeadingSupport3",
-            parent = Options,
-            label = "|cffffffff" .. string.format(L.Support3, ns.discord) .. "|r",
-            fontObject = "GameFontNormal",
-        },
-        {
-            type = "Label",
             name = "CountHeading",
             parent = Options,
             label = L.CountHeading,
