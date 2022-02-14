@@ -6,7 +6,7 @@
 
 *Chooses the best Mount for the job without any set-up; it’s all based on your Mount Journal Favorites. Minimal in-game configuration to customise your summoning experience. Can even clone your target's mount (if you have the mount too)!*
 
-![Interface Options Window](https://cdn-wow.mmoui.com/preview/pvw73744.png)
+![Interface Options Window](https://cdn-wow.mmoui.com/preview/pvw74778.png)
 
 ## How does Ravenous Mounts work?
 
