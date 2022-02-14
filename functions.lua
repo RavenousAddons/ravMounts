@@ -123,7 +123,7 @@ function ns:EnsureMacro()
         if (RAV_data.options.travelForm and travelForm) or flying or ground or chauffeur or vendor or passenger or swimming then
             body = "\n" .. body
             if (RAV_data.options.travelForm and travelForm) then
-                local travelFormName, _ = GetSpellInfo(travelForm[random(#travelForm)])
+                local travelFormName, _ = GetSpellInfo(travelForm)
                 if RAV_data.options.normalMountModifier ~= "none" then
                     body = "[nomod:" .. RAV_data.options.normalMountModifier .. "] " .. travelFormName .. "\n" .. "/use [nomod:" .. RAV_data.options.normalMountModifier .. "] " .. travelFormName .. "\n" .. "/stopmacro [nomod]" .. body
                     local mountName
@@ -492,10 +492,14 @@ function ns:MountListHandler()
         end
     end
     RAV_data.mounts.travelForm = {}
-    if ns.data.travelForms[className] ~= nil then
-        if IsSpellKnown(ns.data.travelForms[className]) then
-            table.insert(RAV_data.mounts.travelForm, ns.data.travelForms[className])
+    if className == "DRUID" then
+        if IsPlayerSpell(ns.data.travelForms["Cat Form"]) and (IsOutdoors() or IsSubmerged()) then
+            table.insert(RAV_data.mounts.travelForm, ns.data.travelForms["Cat Form"])
+        elseif IsPlayerSpell(ns.data.travelForms["Travel Form"]) then
+            table.insert(RAV_data.mounts.travelForm, ns.data.travelForms["Travel Form"])
         end
+    elseif className == "SHAMAN" and IsPlayerSpell(ns.data.travelForms["Ghost Wolf"]) then
+        table.insert(RAV_data.mounts.travelForm, ns.data.travelForms["Ghost Wolf"])
     end
 end
 
@@ -612,4 +616,15 @@ function ns:CreateOpenOptionsButton(parent)
         InterfaceOptionsFrame_OpenToCategory(ns.Options)
         InterfaceOptionsFrame_OpenToCategory(ns.Options)
     end)
+end
+
+function ns:SendUpdate(type)
+    local currentTime = GetTime()
+    if (RAV_data.updateTimeoutTime) then
+        if (currentTime < RAV_data.updateTimeoutTime) then
+            return
+        end
+    end
+    RAV_data.updateTimeoutTime = currentTime + ns.data.updateTimeout
+    C_ChatInfo.SendAddonMessage(ADDON_NAME, "V:" .. ns.version, type)
 end

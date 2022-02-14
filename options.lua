@@ -41,12 +41,12 @@ Options:SetScript("OnShow", function()
     local LeftPanel = CreateFrame("Frame", "LeftPanel", Options)
     LeftPanel:SetPoint("TOPLEFT", HeaderPanel, "BOTTOMLEFT", 0, -large)
     LeftPanel:SetWidth(fullWidth / 5 * 3 - large)
-    LeftPanel:SetHeight(Options:GetHeight() - HeaderPanel:GetHeight() - (large * 2))
+    LeftPanel:SetHeight(Options:GetHeight() - HeaderPanel:GetHeight() - (large * 3))
 
     local RightPanel = CreateFrame("Frame", "RightPanel", Options)
     RightPanel:SetPoint("TOPRIGHT", HeaderPanel, "BOTTOMRIGHT", 0, -large)
     RightPanel:SetWidth(fullWidth / 5 * 2 - large)
-    RightPanel:SetHeight(Options:GetHeight() - HeaderPanel:GetHeight() - (large * 2))
+    RightPanel:SetHeight(Options:GetHeight() - HeaderPanel:GetHeight() - (large * 3))
 
     local UIControls = {
         {

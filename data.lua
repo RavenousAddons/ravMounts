@@ -23,7 +23,10 @@ ns.data = {
         chauffeur = {284},
     },
     travelForms = {
-        ["DRUID"] = 783,
+        ["Cat Form"] = 768,
+        ["Flight Form"] = 165962,
+        ["Travel Form"] = 783,
+        ["Ghost Wolf"] = 2645,
     },
     mountIDs = {
         vendor = {
@@ -113,4 +116,8 @@ ns.data = {
             1648, -- The Maw
         },
     },
+    partyMembers = 0,
+    raidMembers = 0,
+    updateFound = false,
+    updateTimeout = 5,
 }

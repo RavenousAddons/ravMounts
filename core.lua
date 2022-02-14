@@ -5,6 +5,10 @@ function ravMounts_OnLoad(self)
     self:RegisterEvent("PLAYER_LOGIN")
     self:RegisterEvent("ADDON_LOADED")
     self:RegisterEvent("MOUNT_JOURNAL_SEARCH_UPDATED")
+    self:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+    self:RegisterEvent("UPDATE_SHAPESHIFT_FORMS")
+    self:RegisterEvent("GROUP_ROSTER_UPDATE")
+    self:RegisterEvent("CHAT_MSG_ADDON")
 end
 
 function ravMounts_OnEvent(self, event, arg, ...)
@@ -23,11 +27,34 @@ function ravMounts_OnEvent(self, event, arg, ...)
     elseif event == "ADDON_LOADED" and arg == "Blizzard_Collections" then
         ns:CreateOpenOptionsButton(MountJournal)
         self:UnregisterEvent("ADDON_LOADED")
-    elseif event == "MOUNT_JOURNAL_SEARCH_UPDATED" then
+    elseif event == "MOUNT_JOURNAL_SEARCH_UPDATED" or event =="PLAYER_SPECIALIZATION_CHANGED" or event == "UPDATE_SHAPESHIFT_FORMS" then
         ns:MountListHandler()
         ns:EnsureMacro()
         if ns.Options and ns.Options.controls then
             ns:RefreshControls(ns.Options.controls)
+        end
+    elseif event == "GROUP_ROSTER_UPDATE" then
+        local partyMembers = GetNumSubgroupMembers()
+        local raidMembers = IsInRaid() and GetNumGroupMembers() or 0
+        if IsInGroup(LE_PARTY_CATEGORY_INSTANCE) and (partyMembers > ns.data.partyMembers or raidMembers > ns.data.raidMembers) then
+            ns:SendUpdate("INSTANCE_CHAT");
+        elseif raidMembers == 0 and partyMembers > ns.data.partyMembers then
+            ns:SendUpdate("PARTY");
+        elseif raidMembers > ns.data.raidMembers then
+            ns:SendUpdate("RAID")
+        end
+        ns.data.partyMembers = partyMembers
+        ns.data.raidMembers = raidMembers
+    elseif event == "CHAT_MSG_ADDON" and arg == ADDON_NAME then
+        local message, channel, sender, _ = ...
+        if string.match(message, "V:") and not ns.updateFound then
+            local version = string.gsub(message, "V:", "")
+            local v1, v2, v3 = strsplit(".", version)
+            local c1, c2, c3 = strsplit(".", ns.version)
+            if v1 > c1 or (v1 == c1 and v2 > c2) or (v1 == c1 and v2 == c2 and v3 > c3) then
+                ns:PrettyPrint(string.format(L.UpdateFound, version))
+                ns.updateFound = true
+            end
         end
     end
 end
