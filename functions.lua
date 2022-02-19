@@ -504,7 +504,7 @@ function ns:MountListHandler()
 end
 
 function ns:MountUpHandler(specificType)
-    if IsFlying() then
+    if IsFlying() and GetCVar("autoDismountFlying") == "0" then
         return
     end
     ns:AssignVariables()
