@@ -7,13 +7,14 @@ local travelFormCondition = (IsOutdoors() or IsSubmerged())
 function ravMounts_OnLoad(self)
     self:RegisterEvent("PLAYER_LOGIN")
     self:RegisterEvent("ADDON_LOADED")
+    self:RegisterEvent("ZONE_CHANGED_NEW_AREA")
     self:RegisterEvent("MOUNT_JOURNAL_SEARCH_UPDATED")
     self:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
     self:RegisterEvent("UPDATE_SHAPESHIFT_FORMS")
     self:RegisterEvent("GROUP_ROSTER_UPDATE")
     self:RegisterEvent("CHAT_MSG_ADDON")
     if className == "DRUID" then
-        self:RegisterEvent("AREA_POIS_UPDATED")
+        self:RegisterEvent("ZONE_CHANGED")
     end
 end
 
@@ -33,13 +34,13 @@ function ravMounts_OnEvent(self, event, arg, ...)
     elseif event == "ADDON_LOADED" and arg == "Blizzard_Collections" then
         ns:CreateOpenOptionsButton(MountJournal)
         self:UnregisterEvent("ADDON_LOADED")
-    elseif event == "MOUNT_JOURNAL_SEARCH_UPDATED" or event =="PLAYER_SPECIALIZATION_CHANGED" or event == "UPDATE_SHAPESHIFT_FORMS" then
+    elseif event == "ZONE_CHANGED_NEW_AREA" or event == "MOUNT_JOURNAL_SEARCH_UPDATED" or event =="PLAYER_SPECIALIZATION_CHANGED" or event == "UPDATE_SHAPESHIFT_FORMS" then
         ns:MountListHandler()
         ns:EnsureMacro()
         if ns.Options and ns.Options.controls then
             ns:RefreshControls(ns.Options.controls)
         end
-    elseif event == "AREA_POIS_UPDATED" and travelFormCondition ~= (IsOutdoors() or IsSubmerged()) then
+    elseif event == "ZONE_CHANGED" and travelFormCondition ~= (IsOutdoors() or IsSubmerged()) then
         travelFormCondition = (IsOutdoors() or IsSubmerged())
         ns:MountListHandler()
         ns:EnsureMacro()
