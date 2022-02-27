@@ -84,9 +84,19 @@ ns.data = {
             833, -- Prestigious Ivory Courser
             834, -- Prestigious Azure Courser
             836, -- Prestigious Midnight Courser
+            961, -- Lucid Nightmare
             1222, -- Vulpine Familiar
             1290, -- Squeakers, the Trickster
+            1291, -- Lucky Yun
+            1306, -- Swift Gloomhoof
+            1307, -- Sundancer
+            1330, -- Sunwarmed Furline
+            1360, -- Shimmermist Runner
             1404, -- Silverwind Larion
+            1413, -- Dauntless Duskrunner
+            1414, -- Sinrunner Blanchy
+            1426, -- Ascended Skymane
+            1511, -- Wandering Arden Doe
         },
         maw = {
             1304, -- Mawsworn Soulhunter

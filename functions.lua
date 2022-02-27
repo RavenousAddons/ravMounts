@@ -123,18 +123,19 @@ function ns:EnsureMacro()
         if (RAV_data.options.travelForm and travelForm) or flying or ground or chauffeur or vendor or passenger or swimming then
             body = "\n" .. body
             if (RAV_data.options.travelForm and travelForm) then
+                local spellID, mountName
                 local travelFormName, _ = GetSpellInfo(travelForm[1])
                 if RAV_data.options.normalMountModifier ~= "none" then
                     body = "[nomod:" .. RAV_data.options.normalMountModifier .. "] " .. travelFormName .. "\n" .. "/use [nomod:" .. RAV_data.options.normalMountModifier .. "] " .. travelFormName .. "\n" .. "/stopmacro [nomod]" .. body
-                    local mountName
                     if flying then
-                        mountName, _ = CMJ.GetMountInfoByID(flying[random(#flying)])
+                        _, spellID = CMJ.GetMountInfoByID(flying[random(#flying)])
                     elseif ground then
-                        mountName, _ = CMJ.GetMountInfoByID(ground[random(#ground)])
+                        _, spellID = CMJ.GetMountInfoByID(ground[random(#ground)])
                     elseif chauffeur then
-                        mountName, _ = CMJ.GetMountInfoByID(chauffeur[random(#chauffeur)])
+                        _, spellID = CMJ.GetMountInfoByID(chauffeur[random(#chauffeur)])
                     end
-                    if mountName then
+                    if spellID then
+                        mountName, _ = GetSpellInfo(spellID)
                         body = "[mod:" .. RAV_data.options.normalMountModifier .. "] " .. mountName .. "; " .. body
                     end
                 else
@@ -142,11 +143,13 @@ function ns:EnsureMacro()
                 end
             else
                 if ground then
-                    local mountName, _ = CMJ.GetMountInfoByID(ground[random(#ground)])
+                    _, spellID = CMJ.GetMountInfoByID(ground[random(#ground)])
+                    mountName, _ = GetSpellInfo(spellID)
                     body = mountName .. body
                 end
                 if flying then
-                    local mountName, _ = CMJ.GetMountInfoByID(flying[random(#flying)])
+                    _, spellID = CMJ.GetMountInfoByID(flying[random(#flying)])
+                    mountName, _ = GetSpellInfo(spellID)
                     if flyable and ground then
                         if RAV_data.options.normalMountModifier ~= "none" then
                             body = "[swimming,mod:" .. RAV_data.options.normalMountModifier .. "][nomod:" .. RAV_data.options.normalMountModifier .. "] " .. mountName .. "; " .. body
@@ -161,12 +164,14 @@ function ns:EnsureMacro()
                 end
                 if chauffeur and ground == nil and flying == nil then
                     icon = "inv_misc_key_06"
-                    local mountName, _ = CMJ.GetMountInfoByID(chauffeur[random(#chauffeur)])
+                    _, spellID = CMJ.GetMountInfoByID(chauffeur[random(#chauffeur)])
+                    mountName, _ = GetSpellInfo(spellID)
                     body = mountName .. body
                 end
             end
             if swimming and travelForm == nil then
-                local mountName, _ = CMJ.GetMountInfoByID(swimming[random(#swimming)])
+                _, spellID = CMJ.GetMountInfoByID(swimming[random(#swimming)])
+                mountName, _ = GetSpellInfo(spellID)
                 if RAV_data.options.normalMountModifier ~= "none" then
                     body = "[swimming,nomod:" .. RAV_data.options.normalMountModifier .. "] " .. mountName .. ((flying or ground or chauffeur) and "; " or "") .. body
                 else
@@ -174,11 +179,13 @@ function ns:EnsureMacro()
                 end
             end
             if vendor and RAV_data.options.vendorMountModifier ~= "none" then
-                local mountName, _ = CMJ.GetMountInfoByID(vendor[random(#vendor)])
+                _, spellID = CMJ.GetMountInfoByID(vendor[random(#vendor)])
+                mountName, _ = GetSpellInfo(spellID)
                 body = "[mod:" .. RAV_data.options.vendorMountModifier .. "] " .. mountName .. ((flying or ground or chauffeur or swimming) and "; " or "") .. body
             end
             if passenger and RAV_data.options.passengerMountModifier ~= "none" then
-                local mountName, _ = CMJ.GetMountInfoByID(passenger[random(#passenger)])
+                _, spellID = CMJ.GetMountInfoByID(passenger[random(#passenger)])
+                mountName, _ = GetSpellInfo(spellID)
                 body = "[mod:" .. RAV_data.options.passengerMountModifier .. "] " .. mountName .. ((flying or ground or chauffeur or swimming or vendor) and "; " or "") .. body
             end
             body = "#showtooltip " .. body
