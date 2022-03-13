@@ -80,6 +80,15 @@ local function addLabelsFromSpell(target, spellID, showCloneable)
     target:Show()
 end
 
+local function GetMountName(mountID)
+    if not mountID then return nil end
+
+    local _, spellID = CMJ.GetMountInfoByID(mountID)
+    local mountName, _ = GetSpellInfo(spellID)
+
+    return mountName
+end
+
 function ns:PrettyPrint(message)
     DEFAULT_CHAT_FRAME:AddMessage("|cff" .. ns.color .. ns.name .. ":|r " .. message)
 end
@@ -107,9 +116,35 @@ function ns:AssignVariables()
     passengerMountModifier = RAV_data.options.passengerMountModifier == "alt" and IsAltKeyDown() or RAV_data.options.passengerMountModifier == "ctrl" and IsControlKeyDown() or RAV_data.options.passengerMountModifier == "shift" and IsShiftKeyDown() or false
 end
 
+local hasBeenCached = false
+local function CacheMount(i, mountIDs)
+    local _, spellID = CMJ.GetMountInfoByID(mountIDs[i])
+    local spell = Spell:CreateFromSpellID(spellID)
+    if i < #mountIDs then
+        spell:ContinueOnSpellLoad(function()
+            CacheMount(i + 1, mountIDs)
+        end)
+    else
+        hasBeenCached = true
+        ns:EnsureMacro()
+    end
+end
+
+function ns:CacheMounts()
+    local mountIDs = {}
+    for type, mounts in pairs(RAV_data.mounts) do
+        if type ~= "allByName" and type ~= "allByID" then
+            for _, mountID in ipairs(mounts) do
+                table.insert(mountIDs, mountID)
+            end
+        end
+    end
+    CacheMount(1, mountIDs)
+end
+
 local hasSeenNoSpaceMessage = false
 function ns:EnsureMacro()
-    if not UnitAffectingCombat("player") and RAV_data.options.macro then
+    if hasBeenCached and not UnitAffectingCombat("player") and RAV_data.options.macro then
         ns:AssignVariables()
         local icon = "INV_Misc_QuestionMark"
         local travelForm = haveTravelForm and RAV_data.mounts.travelForm or nil
@@ -120,22 +155,24 @@ function ns:EnsureMacro()
         local passenger = (flyable and havePassengerFlyingMounts) and RAV_data.mounts.passengerFlying or havePassengerGroundMounts and RAV_data.mounts.passengerGround or nil
         local swimming = (inVashjir and haveVashjirMounts) and RAV_data.mounts.vashjir or haveSwimmingMounts and RAV_data.mounts.swimming or nil
         local body = "/ravm"
+        if className == "DRUID" or className == "SHAMAN" then
+            body = "/cancelform\n" .. body
+        end
+        local mountName
         if (RAV_data.options.travelForm and travelForm) or flying or ground or chauffeur or vendor or passenger or swimming then
             body = "\n" .. body
             if (RAV_data.options.travelForm and travelForm) then
-                local spellID, mountName
                 local travelFormName, _ = GetSpellInfo(travelForm[1])
                 if RAV_data.options.normalMountModifier ~= "none" then
                     body = "[nomod:" .. RAV_data.options.normalMountModifier .. "] " .. travelFormName .. "\n" .. "/use [nomod:" .. RAV_data.options.normalMountModifier .. "] " .. travelFormName .. "\n" .. "/stopmacro [nomod]" .. body
-                    if flying then
-                        _, spellID = CMJ.GetMountInfoByID(flying[random(#flying)])
-                    elseif ground then
-                        _, spellID = CMJ.GetMountInfoByID(ground[random(#ground)])
-                    elseif chauffeur then
-                        _, spellID = CMJ.GetMountInfoByID(chauffeur[random(#chauffeur)])
+                    if flying or ground or chauffeur then
+                        mountName = GetMountName(flying and flying[random(#flying)] or ground and ground[random(#ground)] or chauffeur and chauffeur[random(#chauffeur)] or nil)
+                        if not mountName then
+                            ns:EnsureMacro()
+                            return
+                        end
                     end
-                    if spellID then
-                        mountName, _ = GetSpellInfo(spellID)
+                    if mountName then
                         body = "[mod:" .. RAV_data.options.normalMountModifier .. "] " .. mountName .. "; " .. body
                     end
                 else
@@ -143,13 +180,19 @@ function ns:EnsureMacro()
                 end
             else
                 if ground then
-                    _, spellID = CMJ.GetMountInfoByID(ground[random(#ground)])
-                    mountName, _ = GetSpellInfo(spellID)
+                    mountName = GetMountName(ground[random(#ground)])
+                    if not mountName then
+                        ns:EnsureMacro()
+                        return
+                    end
                     body = mountName .. body
                 end
                 if flying then
-                    _, spellID = CMJ.GetMountInfoByID(flying[random(#flying)])
-                    mountName, _ = GetSpellInfo(spellID)
+                    mountName = GetMountName(flying[random(#flying)])
+                    if not mountName then
+                        ns:EnsureMacro()
+                        return
+                    end
                     if flyable and ground then
                         if RAV_data.options.normalMountModifier ~= "none" then
                             body = "[swimming,mod:" .. RAV_data.options.normalMountModifier .. "][nomod:" .. RAV_data.options.normalMountModifier .. "] " .. mountName .. "; " .. body
@@ -257,13 +300,13 @@ function ns:CreateLabel(cfg)
     if cfg.haveMounts then
         label.haveMounts = cfg.haveMounts
         if table.maxn(RAV_data.mounts[cfg.haveMounts]) > 0 then
-            label:SetText(string.format(cfg.label, _G.AVAILABLE))
+            label:SetText(cfg.label:format(_G.AVAILABLE))
         else
-            label:SetText(string.format(cfg.label, _G.UNAVAILABLE))
+            label:SetText(cfg.label:format(_G.UNAVAILABLE))
         end
     elseif cfg.countMounts then
         label.countMounts = cfg.countMounts
-        label:SetText(string.format(cfg.label, table.maxn(RAV_data.mounts[cfg.countMounts])))
+        label:SetText(cfg.label:format(table.maxn(RAV_data.mounts[cfg.countMounts])))
     else
         label:SetText(cfg.label)
     end
@@ -371,13 +414,13 @@ function ns:RefreshControls(controls)
             UIDropDownMenu_SetText(dropdowns[control.var], control.label .. ": " .. RAV_data.options[control.var]:gsub("^%l", string.upper))
         elseif control.haveMounts then
             if table.maxn(RAV_data.mounts[control.haveMounts]) > 0 then
-                control:SetText(string.format(control.label, _G.AVAILABLE))
+                control:SetText(control.label:format(_G.AVAILABLE))
             else
-                control:SetText(string.format(control.label, _G.UNAVAILABLE))
+                control:SetText(control.label:format(_G.UNAVAILABLE))
             end
             control.oldValue = control:GetText()
         elseif control.countMounts then
-            control:SetText(string.format(control.label, table.maxn(RAV_data.mounts[control.countMounts])))
+            control:SetText(control.label:format(table.maxn(RAV_data.mounts[control.countMounts])))
             control.oldValue = control:GetText()
         end
     end
@@ -511,42 +554,47 @@ function ns:MountListHandler()
 end
 
 function ns:MountUpHandler(specificType)
+    -- Uses the in-game Interface Setting "Controls" → "Auto Dismount in Flight"
     if IsFlying() and GetCVar("autoDismountFlying") == "0" then
         return
     end
     ns:AssignVariables()
-    if (string.match(specificType, "vend") or string.match(specificType, "repair") or string.match(specificType, "trans") or string.match(specificType, "mog")) and haveVendorMounts then
+    -- Check for specific types
+    if (specificType:match("vend") or specificType:match("repair") or specificType:match("trans") or specificType:match("mog")) and haveVendorMounts then
         ns:MountSummon(RAV_data.mounts.vendor)
-    elseif (string.match(specificType, "2") or string.match(specificType, "two") or string.match(specificType, "multi") or string.match(specificType, "passenger")) and havePassengerFlyingMounts and flyable then
+    elseif (specificType:match("2") or specificType:match("two") or specificType:match("multi") or specificType:match("passenger")) and havePassengerFlyingMounts and flyable then
         ns:MountSummon(RAV_data.mounts.passengerFlying)
-    elseif string.match(specificType, "fly") and (string.match(specificType, "2") or string.match(specificType, "two") or string.match(specificType, "multi") or string.match(specificType, "passenger")) and havePassengerFlyingMounts then
+    elseif specificType:match("fly") and (specificType:match("2") or specificType:match("two") or specificType:match("multi") or specificType:match("passenger")) and havePassengerFlyingMounts then
         ns:MountSummon(RAV_data.mounts.passengerFlying)
-    elseif (string.match(specificType, "2") or string.match(specificType, "two") or string.match(specificType, "multi") or string.match(specificType, "passenger")) and havePassengerGroundMounts then
+    elseif (specificType:match("2") or specificType:match("two") or specificType:match("multi") or specificType:match("passenger")) and havePassengerGroundMounts then
         ns:MountSummon(RAV_data.mounts.passengerGround)
-    elseif string.match(specificType, "swim") and haveSwimmingMounts then
+    elseif specificType:match("swim") and haveSwimmingMounts then
         ns:MountSummon(RAV_data.mounts.swimming)
-    elseif (specificType == "vj" or string.match(specificType, "vash") or string.match(specificType, "jir")) and haveVashjirMounts then
+    elseif (specificType == "vj" or specificType:match("vash") or specificType:match("jir")) and haveVashjirMounts then
         ns:MountSummon(RAV_data.mounts.vashjir)
-    elseif string.match(specificType, "fly") and haveFlyingMounts then
+    elseif specificType:match("fly") and haveFlyingMounts then
         ns:MountSummon(RAV_data.mounts.flying)
-    elseif (specificType == "aq" or string.match(specificType, "ahn") or string.match(specificType, "qiraj")) and haveAhnQirajMounts then
+    elseif (specificType == "aq" or specificType:match("ahn") or specificType:match("qiraj")) and haveAhnQirajMounts then
         ns:MountSummon(RAV_data.mounts.ahnqiraj)
     elseif specificType == "ground" and haveGroundMounts then
         ns:MountSummon(RAV_data.mounts.ground)
     elseif specificType == "chauffeur" and haveChauffeurMounts then
         ns:MountSummon(RAV_data.mounts.chauffeur)
-    elseif (specificType == "copy" or specificType == "clone" or RAV_data.options.clone ~= "none") and cloneMountID then
+    elseif (specificType == "copy" or specificType == "clone") and cloneMountID then
         CMJ.SummonByID(cloneMountID)
-        return
+    -- Check for /mountspecial modifiers
     elseif vendorMountModifier and passengerMountModifier and (IsMounted() or UnitInVehicle("player")) then
         DoEmote(EMOTE171_TOKEN)
-        return
-    elseif IsMounted() or UnitInVehicle("player") then
-        Dismount()
-        VehicleExit()
+    -- If mounted, in a vehicle, or shapeshifted, then dismount
+    elseif IsMounted() or UnitInVehicle("player") or ((className == "DRUID" or className == "SHAMAN") and GetShapeshiftForm() > 0) then
         CancelShapeshiftForm()
+        VehicleExit()
+        Dismount()
         UIErrorsFrame:Clear()
-        return
+    -- Clone
+    elseif RAV_data.options.clone ~= "none" and cloneMountID and not normalMountModifier and not vendorMountModifier and not passengerMountModifier then
+        CMJ.SummonByID(cloneMountID)
+    -- Modifier keys & Standard summons
     elseif haveVendorMounts and vendorMountModifier then
         ns:MountSummon(RAV_data.mounts.vendor)
     elseif havePassengerFlyingMounts and flyable and passengerMountModifier and not normalMountModifier then
@@ -569,7 +617,6 @@ function ns:MountUpHandler(specificType)
         ns:MountSummon(RAV_data.mounts.chauffeur)
     else
         ns:PrettyPrint(_G.MOUNT_JOURNAL_NO_VALID_FAVORITES)
-        return
     end
 end
 
@@ -591,8 +638,8 @@ function ns:TooltipLabels()
     end)
 
     hooksecurefunc("SetItemRef", function(link)
-        if string.find(link, "^spell:") then
-            local spellID, _ = strsplit(":", string.sub(link, 7))
+        if link:find("^spell:") then
+            local spellID, _ = strsplit(":", link:sub(7))
             addLabelsFromSpell(ItemRefTooltip, spellID, false)
         end
     end)
@@ -601,7 +648,7 @@ function ns:TooltipLabels()
         local spellID = select(2, self:GetSpell())
         if spellID then
             for i = 1, self:NumLines() do
-                if string.match(_G["GameTooltipTextLeft"..i]:GetText(), ns.name) then
+                if _G["GameTooltipTextLeft"..i]:GetText():match(ns.name) then
                     return
                 end
             end

@@ -23,13 +23,14 @@ function ravMounts_OnEvent(self, event, arg, ...)
         ns:SetDefaultOptions()
         InterfaceOptions_AddCategory(ns.Options)
         if not RAV_version then
-            ns:PrettyPrint(string.format(L.Install, ns.color, ns.version))
+            ns:PrettyPrint(L.Install:format(ns.color, ns.version))
         elseif RAV_version ~= ns.version then
-            ns:PrettyPrint(string.format(L.Update, ns.color, ns.version))
+            ns:PrettyPrint(L.Update:format(ns.color, ns.version))
         end
         RAV_version = ns.version
         ns:MountListHandler()
         ns:TooltipLabels()
+        ns:CacheMounts()
         self:UnregisterEvent("PLAYER_LOGIN")
     elseif event == "ADDON_LOADED" and arg == "Blizzard_Collections" then
         ns:CreateOpenOptionsButton(MountJournal)
@@ -61,12 +62,12 @@ function ravMounts_OnEvent(self, event, arg, ...)
         ns.data.raidMembers = raidMembers
     elseif event == "CHAT_MSG_ADDON" and arg == ADDON_NAME then
         local message, channel, sender, _ = ...
-        if string.match(message, "V:") and not ns.updateFound then
-            local version = string.gsub(message, "V:", "")
+        if message:match("V:") and not ns.updateFound then
+            local version = message:gsub("V:", "")
             local v1, v2, v3 = strsplit(".", version)
             local c1, c2, c3 = strsplit(".", ns.version)
             if v1 > c1 or (v1 == c1 and v2 > c2) or (v1 == c1 and v2 == c2 and v3 > c3) then
-                ns:PrettyPrint(string.format(L.UpdateFound, version))
+                ns:PrettyPrint(L.UpdateFound:format(version))
                 ns.updateFound = true
             end
         end
@@ -75,12 +76,12 @@ end
 
 SlashCmdList["RAVMOUNTS"] = function(message)
     if message == "version" or message == "v" then
-        ns:PrettyPrint(string.format(L.Version, ns.version))
-    elseif message == "c" or string.match(message, "con") or message == "h" or string.match(message, "help") or message == "o" or string.match(message, "opt") or message == "s" or string.match(message, "sett") or string.match(message, "togg") then
+        ns:PrettyPrint(L.Version:format(ns.version))
+    elseif message == "c" or message:match("con") or message == "h" or message:match("help") or message == "o" or message:match("opt") or message == "s" or message:match("sett") or message:match("togg") then
         PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)
         InterfaceOptionsFrame_OpenToCategory(ns.Options)
         InterfaceOptionsFrame_OpenToCategory(ns.Options)
-    elseif message == "f" or string.match(message, "force") then
+    elseif message == "f" or message:match("force") then
         ns:PrettyPrint(L.Force)
         ns:MountListHandler()
         ns:EnsureMacro()

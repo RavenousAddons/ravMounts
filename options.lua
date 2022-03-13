@@ -78,7 +78,7 @@ Options:SetScript("OnShow", function()
             name = "Macro",
             parent = Options,
             label = L.Macro,
-            tooltip = string.format(L.MacroTooltip, ns.name),
+            tooltip = L.MacroTooltip:format(ns.name),
             var = "macro",
             offsetY = -medium,
         },
@@ -131,7 +131,7 @@ Options:SetScript("OnShow", function()
             name = "NormalMounts",
             parent = Options,
             label = L.Ground .. "/" .. _G.BATTLE_PET_NAME_3 .. " " .. _G.MOUNTS,
-            tooltip = string.format(L.MountsTooltip, L.Ground .. "/" .. _G.BATTLE_PET_NAME_3 .. " " .. _G.MOUNTS),
+            tooltip = L.MountsTooltip:format(L.Ground .. "/" .. _G.BATTLE_PET_NAME_3 .. " " .. _G.MOUNTS),
             var = "normalMounts",
             offsetY = -medium,
         },
@@ -159,7 +159,7 @@ Options:SetScript("OnShow", function()
             name = "VendorMounts",
             parent = Options,
             label = _G.BATTLE_PET_SOURCE_3 .. " " .. _G.MOUNTS,
-            tooltip = string.format(L.MountsTooltip, _G.BATTLE_PET_SOURCE_3 .. " " .. _G.MOUNTS),
+            tooltip = L.MountsTooltip:format(_G.BATTLE_PET_SOURCE_3 .. " " .. _G.MOUNTS),
             var = "vendorMounts",
         },
         {
@@ -186,7 +186,7 @@ Options:SetScript("OnShow", function()
             name = "PassengerMounts",
             parent = Options,
             label = L.Passenger .. " " .. _G.MOUNTS,
-            tooltip = string.format(L.MountsTooltip, L.Passenger .. " " .. _G.MOUNTS),
+            tooltip = L.MountsTooltip:format(L.Passenger .. " " .. _G.MOUNTS),
             var = "passengerMounts",
         },
         {
@@ -213,7 +213,7 @@ Options:SetScript("OnShow", function()
             name = "SwimmingMounts",
             parent = Options,
             label = _G.TUTORIAL_TITLE28 .. " " .. _G.MOUNTS,
-            tooltip = string.format(L.MountsTooltip, _G.TUTORIAL_TITLE28 .. " " .. _G.MOUNTS),
+            tooltip = L.MountsTooltip:format(_G.TUTORIAL_TITLE28 .. " " .. _G.MOUNTS),
             var = "swimmingMounts",
         },
         {
@@ -226,7 +226,7 @@ Options:SetScript("OnShow", function()
             type = "Label",
             name = "SubHeadingSupport1",
             parent = Options,
-            label = "|cffffffff" .. string.format(L.Support1, ns.name, _G.GENERAL_MACROS) .. "|r",
+            label = "|cffffffff" .. L.Support1:format(ns.name, _G.GENERAL_MACROS) .. "|r",
             fontObject = "GameFontNormal",
         },
         {
