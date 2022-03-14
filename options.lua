@@ -77,7 +77,7 @@ Options:SetScript("OnShow", function()
             type = "CheckBox",
             name = "Macro",
             parent = Options,
-            label = L.Macro,
+            label = L.Macro:format(ns.name, _G.GENERAL_MACROS),
             tooltip = L.MacroTooltip:format(ns.name),
             var = "macro",
             offsetY = -medium,
@@ -119,6 +119,14 @@ Options:SetScript("OnShow", function()
             tooltip = L.TravelFormTooltip,
             var = "travelForm",
             offsetX = large,
+        },
+        {
+            type = "CheckBox",
+            name = "NormalSwimming",
+            parent = Options,
+            label = L.NormalSwimming,
+            tooltip = L.NormalSwimmingTooltip,
+            var = "normalSwimmingMounts",
         },
         {
             type = "Label",
@@ -224,16 +232,9 @@ Options:SetScript("OnShow", function()
         },
         {
             type = "Label",
-            name = "SubHeadingSupport1",
-            parent = Options,
-            label = "|cffffffff" .. L.Support1:format(ns.name, _G.GENERAL_MACROS) .. "|r",
-            fontObject = "GameFontNormal",
-        },
-        {
-            type = "Label",
             name = "SubHeadingSupport2",
             parent = Options,
-            label = "|cffffffff" .. L.Support2 .. "|r",
+            label = "|cffffffff" .. L.Support .. "|r",
             fontObject = "GameFontNormal",
         },
         {
