@@ -8,7 +8,7 @@ local mapIDs = ns.data.mapIDs
 
 local _, className = UnitClass("player")
 local faction, _ = UnitFactionGroup("player")
-local flyable, cloneMountID, mapID, inAhnQiraj, inVashjir, inMaw, haveGroundMounts, haveFlyingMounts, havePassengerGroundMounts, havePassengerFlyingMounts, haveVendorMounts, haveSwimmingMounts, haveAhnQirajMounts, haveVashjirMounts, haveMawMounts, haveChauffeurMounts, normalMountModifier, vendorMountModifier, passengerMountModifier
+local flyable, cloneMountID, mapID, inAhnQiraj, inVashjir, inMaw, haveGroundMounts, haveFlyingMounts, havePassengerGroundMounts, havePassengerFlyingMounts, haveVendorMounts, haveSwimmingMounts, haveAhnQirajMounts, haveVashjirMounts, haveMawMounts, haveChauffeurMounts, haveBroom, haveMoonfang, normalMountModifier, vendorMountModifier, passengerMountModifier
 local prevControl
 local dropdowns = {}
 local mountModifiers = {
@@ -46,6 +46,15 @@ local function hasGroundRiding()
     if hasFlyingRiding() then return true end
     for _, spell in ipairs({33388, 33391}) do
         if IsSpellKnown(spell) then return true end
+    end
+    return false
+end
+
+local function hasItemInBags()
+    for bag=0, NUM_BAG_SLOTS do
+        for slot=1, GetContainerNumSlots(bag) do
+            if 37011 == GetContainerItemID(bag, slot) then return true end
+        end
     end
     return false
 end
@@ -109,8 +118,10 @@ function ns:AssignVariables()
     haveAhnQirajMounts = next(RAV_data.mounts.ahnqiraj) ~= nil and true or false
     haveVashjirMounts = next(RAV_data.mounts.vashjir) ~= nil and true or false
     haveMawMounts = next(RAV_data.mounts.maw) ~= nil and true or false
-    haveTravelForm = next(RAV_data.mounts.travelForm) ~= nil and true or false
     haveChauffeurMounts = next(RAV_data.mounts.chauffeur) ~= nil and true or false
+    haveTravelForm = next(RAV_data.mounts.travelForm) ~= nil and true or false
+    haveBroom = RAV_data.mounts.broom.slot ~= nil and true or false
+    haveMoonfang = RAV_data.mounts.moonfang.slot ~= nil and true or false
     normalMountModifier = RAV_data.options.normalMountModifier == "alt" and IsAltKeyDown() or RAV_data.options.normalMountModifier == "ctrl" and IsControlKeyDown() or RAV_data.options.normalMountModifier == "shift" and IsShiftKeyDown() or false
     vendorMountModifier = RAV_data.options.vendorMountModifier == "alt" and IsAltKeyDown() or RAV_data.options.vendorMountModifier == "ctrl" and IsControlKeyDown() or RAV_data.options.vendorMountModifier == "shift" and IsShiftKeyDown() or false
     passengerMountModifier = RAV_data.options.passengerMountModifier == "alt" and IsAltKeyDown() or RAV_data.options.passengerMountModifier == "ctrl" and IsControlKeyDown() or RAV_data.options.passengerMountModifier == "shift" and IsShiftKeyDown() or false
@@ -147,26 +158,28 @@ function ns:EnsureMacro()
     if hasBeenCached and not UnitAffectingCombat("player") and RAV_data.options.macro then
         ns:AssignVariables()
         local icon = "INV_Misc_QuestionMark"
-        local travelForm = haveTravelForm and RAV_data.mounts.travelForm or nil
         local flying = haveFlyingMounts and RAV_data.mounts.flying or nil
         local ground = (inAhnQiraj and haveAhnQirajMounts) and RAV_data.mounts.ahnqiraj or haveGroundMounts and RAV_data.mounts.ground or nil
-        local chauffeur = haveChauffeurMounts and RAV_data.mounts.chauffeur or nil
         local vendor = haveVendorMounts and RAV_data.mounts.vendor or nil
         local passenger = (flyable and havePassengerFlyingMounts) and RAV_data.mounts.passengerFlying or havePassengerGroundMounts and RAV_data.mounts.passengerGround or nil
         local swimming = (inVashjir and haveVashjirMounts) and RAV_data.mounts.vashjir or haveSwimmingMounts and RAV_data.mounts.swimming or nil
+        local chauffeur = haveChauffeurMounts and RAV_data.mounts.chauffeur or nil
+        local travelForm = haveTravelForm and RAV_data.mounts.travelForm or nil
+        local broom = haveBroom and RAV_data.mounts.broom or nil
+        local moonfang = haveMoonfang and RAV_data.mounts.moonfang or nil
         local body = "/ravm"
         if className == "DRUID" or className == "SHAMAN" then
             body = "/cancelform\n" .. body
         end
         local mountName
-        if (RAV_data.options.travelForm and travelForm) or flying or ground or chauffeur or vendor or passenger or swimming then
+        if flying or broom or ground or moonfang or chauffeur or vendor or passenger or swimming or (RAV_data.options.travelForm and travelForm) then
             body = "\n" .. body
             if (RAV_data.options.travelForm and travelForm) then
                 local travelFormName, _ = GetSpellInfo(travelForm[1])
                 if RAV_data.options.normalMountModifier ~= "none" then
                     body = "[nomod:" .. RAV_data.options.normalMountModifier .. "] " .. travelFormName .. "\n" .. "/use [nomod:" .. RAV_data.options.normalMountModifier .. "] " .. travelFormName .. "\n" .. "/stopmacro [nomod]" .. body
-                    if flying or ground or chauffeur then
-                        mountName = GetMountName(flying and flying[random(#flying)] or ground and ground[random(#ground)] or chauffeur and chauffeur[random(#chauffeur)] or nil)
+                    if broom or flying or moonfang or ground or chauffeur then
+                        mountName = broom and broom.name or flying and GetMountName(flying[random(#flying)]) or moonfang and moonfang.name or ground and GetMountName(ground[random(#ground)]) or chauffeur and GetMountName(chauffeur[random(#chauffeur)]) or nil
                         if not mountName then
                             ns:EnsureMacro()
                             return
@@ -179,27 +192,27 @@ function ns:EnsureMacro()
                     body = travelFormName .. "\n" .. "/use " .. travelFormName
                 end
             else
-                if ground then
-                    mountName = GetMountName(ground[random(#ground)])
+                if moonfang or ground then
+                    mountName = moonfang and moonfang.name or GetMountName(ground[random(#ground)])
                     if not mountName then
                         ns:EnsureMacro()
                         return
                     end
                     body = mountName .. body
                 end
-                if flying then
-                    mountName = GetMountName(flying[random(#flying)])
+                if broom or flying then
+                    mountName = broom and broom.name or GetMountName(flying[random(#flying)])
                     if not mountName then
                         ns:EnsureMacro()
                         return
                     end
-                    if flyable and ground then
+                    if (broom or flyable) and (moonfang or ground) then
                         if RAV_data.options.normalMountModifier ~= "none" then
                             body = "[swimming,mod:" .. RAV_data.options.normalMountModifier .. "][nomod:" .. RAV_data.options.normalMountModifier .. "] " .. mountName .. "; " .. body
                         else
                             body = "[] " .. mountName .. "; " .. body
                         end
-                    elseif ground and RAV_data.options.normalMountModifier ~= "none" then
+                    elseif (moonfang or ground) and RAV_data.options.normalMountModifier ~= "none" then
                         body = "[noswimming,mod:" .. RAV_data.options.normalMountModifier .. "] " .. mountName .. "; " .. body
                     else
                         body = mountName .. body
@@ -548,9 +561,37 @@ function ns:MountListHandler()
         elseif IsPlayerSpell(ns.data.travelForms["Cat Form"]) then
             table.insert(RAV_data.mounts.travelForm, ns.data.travelForms["Cat Form"])
         end
-    elseif className == "SHAMAN" and IsPlayerSpell(ns.data.travelForms["Ghost Wolf"]) then
-        table.insert(RAV_data.mounts.travelForm, ns.data.travelForms["Ghost Wolf"])
+    elseif className == "SHAMAN" then
+        if IsPlayerSpell(ns.data.travelForms["Ghost Wolf"]) then
+            table.insert(RAV_data.mounts.travelForm, ns.data.travelForms["Ghost Wolf"])
+        end
     end
+    RAV_data.mounts.broom = {}
+    -- local broomName, broomID = GetItemSpell(37011)
+    -- if (IsUsableSpell(broomID)) then
+    --     RAV_data.mounts.broom.name = broomName
+    --     for bag=0, NUM_BAG_SLOTS do
+    --         for slot=1, GetContainerNumSlots(bag) do
+    --             if 37011 == GetContainerItemID(bag, slot) then
+    --                 RAV_data.mounts.broom.bag = bag
+    --                 RAV_data.mounts.broom.slot = slot
+    --             end
+    --         end
+    --     end
+    -- end
+    RAV_data.mounts.moonfang = {}
+    -- local moonfangName, moonfangID = GetItemSpell(37011)
+    -- if (IsUsableSpell(moonfangID)) then
+    --     RAV_data.mounts.moonfang.name = moonfangName
+    --     for bag=0, NUM_BAG_SLOTS do
+    --         for slot=1, GetContainerNumSlots(bag) do
+    --             if 105898 == GetContainerItemID(bag, slot) then
+    --                 RAV_data.mounts.moonfang.bag = bag
+    --                 RAV_data.mounts.moonfang.slot = slot
+    --             end
+    --         end
+    --     end
+    -- end
 end
 
 function ns:MountUpHandler(specificType)
@@ -594,23 +635,32 @@ function ns:MountUpHandler(specificType)
     -- Clone
     elseif RAV_data.options.clone ~= "none" and cloneMountID and not normalMountModifier and not vendorMountModifier and not passengerMountModifier then
         CMJ.SummonByID(cloneMountID)
-    -- Modifier keys & Standard summons
+    -- Modifier Keys
     elseif haveVendorMounts and vendorMountModifier then
         ns:MountSummon(RAV_data.mounts.vendor)
     elseif havePassengerFlyingMounts and flyable and passengerMountModifier and not normalMountModifier then
         ns:MountSummon(RAV_data.mounts.passengerFlying)
     elseif havePassengerGroundMounts and passengerMountModifier and (not flyable or (flyable and normalMountModifier)) then
         ns:MountSummon(RAV_data.mounts.passengerGround)
+    -- The Rest...
     elseif haveVashjirMounts and IsSwimming() and not normalMountModifier and inVashjir then
         ns:MountSummon(RAV_data.mounts.vashjir)
     elseif haveSwimmingMounts and IsSwimming() and not normalMountModifier then
         ns:MountSummon(RAV_data.mounts.swimming)
-    elseif haveFlyingMounts and ((IsSwimming() and flyable and normalMountModifier) or (flyable and not normalMountModifier) or (not IsSwimming() and not flyable and normalMountModifier)) then
-        ns:MountSummon(RAV_data.mounts.flying)
+    elseif (haveBroom or haveFlyingMounts) and ((IsSwimming() and flyable and normalMountModifier) or (flyable and not normalMountModifier) or (not IsSwimming() and not flyable and normalMountModifier)) then
+        if (haveBroom) then
+            UseContainerItem(RAV_data.mounts.broom.bag, RAV_data.mounts.broom.slot, true)
+        else
+            ns:MountSummon(RAV_data.mounts.flying)
+        end
     elseif inAhnQiraj and haveAhnQirajMounts then
         ns:MountSummon(RAV_data.mounts.ahnqiraj)
-    elseif haveGroundMounts then
-        ns:MountSummon(RAV_data.mounts.ground)
+    elseif haveMoonfang or haveGroundMounts then
+        if (haveMoonfang) then
+            UseContainerItem(RAV_data.mounts.moonfang.bag, RAV_data.mounts.moonfang.slot, true)
+        else
+            ns:MountSummon(RAV_data.mounts.ground)
+        end
     elseif haveFlyingMounts then
         ns:MountSummon(RAV_data.mounts.flying)
     elseif haveChauffeurMounts then
@@ -644,7 +694,7 @@ function ns:TooltipLabels()
         end
     end)
 
-    GameTooltip:HookScript("OnTooltipSetSpell", function(self)
+    hooksecurefunc(GameTooltip, "SetMountBySpellID", function(self, ...)
         local spellID = select(2, self:GetSpell())
         if spellID then
             for i = 1, self:NumLines() do
@@ -669,6 +719,8 @@ function ns:CreateOpenOptionsButton(parent)
         PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)
         InterfaceOptionsFrame_OpenToCategory(ns.Options)
         InterfaceOptionsFrame_OpenToCategory(ns.Options)
+        Settings.OpenToCategory(ns.Options)
+        Settings.OpenToCategory(ns.Options)
     end)
 end
 

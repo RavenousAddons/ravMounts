@@ -13,6 +13,7 @@ function ravMounts_OnLoad(self)
     self:RegisterEvent("UPDATE_SHAPESHIFT_FORMS")
     self:RegisterEvent("GROUP_ROSTER_UPDATE")
     self:RegisterEvent("CHAT_MSG_ADDON")
+    self:RegisterEvent("BAG_UPDATE")
     if className == "DRUID" then
         self:RegisterEvent("ZONE_CHANGED")
     end
@@ -21,7 +22,8 @@ end
 function ravMounts_OnEvent(self, event, arg, ...)
     if event == "PLAYER_LOGIN" then
         ns:SetDefaultOptions()
-        InterfaceOptions_AddCategory(ns.Options)
+        local category = Settings.RegisterCanvasLayoutCategory(ns.Options, ns.name)
+        Settings.RegisterAddOnCategory(category)
         if not RAV_version then
             ns:PrettyPrint(L.Install:format(ns.color, ns.version))
         elseif RAV_version ~= ns.version then
@@ -71,6 +73,8 @@ function ravMounts_OnEvent(self, event, arg, ...)
                 ns.updateFound = true
             end
         end
+    elseif event == "BAG_UPDATE" then
+        ns:MountListHandler()
     end
 end
 
@@ -81,6 +85,8 @@ SlashCmdList["RAVMOUNTS"] = function(message)
         PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)
         InterfaceOptionsFrame_OpenToCategory(ns.Options)
         InterfaceOptionsFrame_OpenToCategory(ns.Options)
+        Settings.OpenToCategory(ns.Options)
+        Settings.OpenToCategory(ns.Options)
     elseif message == "f" or message:match("force") then
         ns:PrettyPrint(L.Force)
         ns:MountListHandler()

@@ -25,7 +25,6 @@ ns.data = {
     },
     travelForms = {
         ["Cat Form"] = 768,
-        ["Flight Form"] = 165962,
         ["Travel Form"] = 783,
         ["Ghost Wolf"] = 2645,
     },
