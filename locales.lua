@@ -76,3 +76,4 @@ local mapIDs = ns.data.mapIDs
 L.AhnQiraj = CM.GetMapInfo(mapIDs.ahnqiraj[#mapIDs.ahnqiraj]).name
 L.Vashjir = CM.GetMapInfo(mapIDs.vashjir[#mapIDs.vashjir]).name
 L.Maw = CM.GetMapInfo(mapIDs.maw[#mapIDs.maw]).name
+L.DragonIsles = CM.GetMapInfo(mapIDs.maw[#mapIDs.dragonisles]).name

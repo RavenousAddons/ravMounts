@@ -1,6 +1,9 @@
 local _, ns = ...
 
 local spellsByContinent = {
+    -- Dragonflight
+    [2444] = 376777, -- Dragonriding Basics
+
     -- Shadowlands
     [2364] = -1, -- The Maw
     [2363] = -1, -- Queen's Conservatory (Night Fae)

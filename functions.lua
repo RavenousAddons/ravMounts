@@ -8,7 +8,7 @@ local mapIDs = ns.data.mapIDs
 
 local _, className = UnitClass("player")
 local faction, _ = UnitFactionGroup("player")
-local flyable, cloneMountID, mapID, inAhnQiraj, inVashjir, inMaw, haveGroundMounts, haveFlyingMounts, havePassengerGroundMounts, havePassengerFlyingMounts, haveVendorMounts, haveSwimmingMounts, haveAhnQirajMounts, haveVashjirMounts, haveMawMounts, haveChauffeurMounts, haveBroom, haveMoonfang, normalMountModifier, vendorMountModifier, passengerMountModifier
+local flyable, cloneMountID, mapID, inAhnQiraj, inVashjir, inMaw, inDragonIsles, haveGroundMounts, haveFlyingMounts, havePassengerGroundMounts, havePassengerFlyingMounts, haveVendorMounts, haveSwimmingMounts, haveAhnQirajMounts, haveVashjirMounts, haveMawMounts, haveDragonIslesMounts, haveChauffeurMounts, haveBroom, haveMoonfang, normalMountModifier, vendorMountModifier, passengerMountModifier
 local prevControl
 local dropdowns = {}
 local mountModifiers = {
@@ -109,6 +109,7 @@ function ns:AssignVariables()
     inAhnQiraj = contains(mapIDs.ahnqiraj, mapID)
     inVashjir = contains(mapIDs.vashjir, mapID)
     inMaw = contains(mapIDs.maw, mapID)
+    inDragonIsles = contains(mapIDs.dragonisles, mapID)
     haveGroundMounts = next(RAV_data.mounts.ground) ~= nil and true or false
     haveFlyingMounts = next(RAV_data.mounts.flying) ~= nil and true or false
     havePassengerGroundMounts = next(RAV_data.mounts.passengerGround) ~= nil and true or false
@@ -118,6 +119,7 @@ function ns:AssignVariables()
     haveAhnQirajMounts = next(RAV_data.mounts.ahnqiraj) ~= nil and true or false
     haveVashjirMounts = next(RAV_data.mounts.vashjir) ~= nil and true or false
     haveMawMounts = next(RAV_data.mounts.maw) ~= nil and true or false
+    haveDragonIslesMounts = next(RAV_data.mounts.dragonisles) ~= nil and true or false
     haveChauffeurMounts = next(RAV_data.mounts.chauffeur) ~= nil and true or false
     haveTravelForm = next(RAV_data.mounts.travelForm) ~= nil and true or false
     haveBroom = RAV_data.mounts.broom.slot ~= nil and true or false
@@ -158,7 +160,7 @@ function ns:EnsureMacro()
     if hasBeenCached and not UnitAffectingCombat("player") and RAV_data.options.macro then
         ns:AssignVariables()
         local icon = "INV_Misc_QuestionMark"
-        local flying = haveFlyingMounts and RAV_data.mounts.flying or nil
+        local flying = (inDragonIsles and haveDragonIslesMounts) and RAV_data.mounts.dragonisles or haveFlyingMounts and RAV_data.mounts.flying or nil
         local ground = (inAhnQiraj and haveAhnQirajMounts) and RAV_data.mounts.ahnqiraj or haveGroundMounts and RAV_data.mounts.ground or nil
         local vendor = haveVendorMounts and RAV_data.mounts.vendor or nil
         local passenger = (flyable and havePassengerFlyingMounts) and RAV_data.mounts.passengerFlying or havePassengerGroundMounts and RAV_data.mounts.passengerGround or nil
@@ -485,6 +487,7 @@ function ns:MountListHandler()
     RAV_data.mounts.ahnqiraj = {}
     RAV_data.mounts.vashjir = {}
     RAV_data.mounts.maw = {}
+    RAV_data.mounts.dragonisles = {}
     RAV_data.mounts.chauffeur = {}
     mapID = CM.GetBestMapForUnit("player")
     inNazjatar = contains(mapIDs.nazjatar, mapID)
@@ -500,6 +503,7 @@ function ns:MountListHandler()
         local isAhnQirajMount = contains(mountTypes.ahnqiraj, mountType)
         local isVashjirMount = contains(mountTypes.vashjir, mountType)
         local isMawMount = contains(mountIDs.maw, mountID)
+        local isDragonIslesMount = contains(mountIDs.dragonisles, mountID)
         local isChauffeurMount = contains(mountTypes.chauffeur, mountType)
         local isFlexMount = contains(mountIDs.flex, mountID)
         local hasGroundRiding = hasGroundRiding()
@@ -547,6 +551,9 @@ function ns:MountListHandler()
                 end
                 if isMawMount then
                     table.insert(RAV_data.mounts.maw, mountID)
+                end
+                if isDragonIslesMount then
+                    table.insert(RAV_data.mounts.dragonisles, mountID)
                 end
             end
             if isChauffeurMount then
@@ -617,6 +624,10 @@ function ns:MountUpHandler(specificType)
         ns:MountSummon(RAV_data.mounts.flying)
     elseif (specificType == "aq" or specificType:match("ahn") or specificType:match("qiraj")) and haveAhnQirajMounts then
         ns:MountSummon(RAV_data.mounts.ahnqiraj)
+    elseif specificType:match("maw") and haveMawMounts then
+        ns:MountSummon(RAV_data.mounts.maw)
+    elseif (specificType == "df" or specificType == "di" or specificType == "dr" or specificType:match("dragon")) and haveDragonIslesMounts then
+        ns:MountSummon(RAV_data.mounts.dragonisles)
     elseif specificType == "ground" and haveGroundMounts then
         ns:MountSummon(RAV_data.mounts.ground)
     elseif specificType == "chauffeur" and haveChauffeurMounts then
@@ -647,9 +658,11 @@ function ns:MountUpHandler(specificType)
         ns:MountSummon(RAV_data.mounts.vashjir)
     elseif haveSwimmingMounts and IsSwimming() and not normalMountModifier then
         ns:MountSummon(RAV_data.mounts.swimming)
-    elseif (haveBroom or haveFlyingMounts) and ((IsSwimming() and flyable and normalMountModifier) or (flyable and not normalMountModifier) or (not IsSwimming() and not flyable and normalMountModifier)) then
+    elseif (haveBroom or haveDragonIslesMounts or haveFlyingMounts) and ((IsSwimming() and flyable and normalMountModifier) or (flyable and not normalMountModifier) or (not IsSwimming() and not flyable and normalMountModifier)) then
         if (haveBroom) then
             UseContainerItem(RAV_data.mounts.broom.bag, RAV_data.mounts.broom.slot, true)
+        elseif (haveDragonIslesMounts) then
+            ns:MountSummon(RAV_data.mounts.dragonisles)
         else
             ns:MountSummon(RAV_data.mounts.flying)
         end

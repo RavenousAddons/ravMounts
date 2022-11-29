@@ -323,6 +323,15 @@ Options:SetScript("OnShow", function()
             fontObject = "GameFontNormal",
             offsetY = -small,
         },
+        {
+            type = "Label",
+            name = "CountDragonIsles",
+            parent = Options,
+            label = L.DragonIsles .. ": |cffffffff%s|r",
+            countMounts = "dragonisles",
+            fontObject = "GameFontNormal",
+            offsetY = -small,
+        },
         -- {
         --     type = "Label",
         --     name = "CountMaw",

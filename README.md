@@ -15,7 +15,7 @@
 2. Mark your favourite mounts in your Mount Journal as your normally would and use the macro. The Addon will act like the built-in "Summon Random Favorite Mount" button but will respond more intelligently:
     - it can more accurately detect when a zone is flyable
     - it can summon a swimming mount when you're underwater
-    - it can summon Maw-specific mounts you've learned when in The Maw (likewise for Ahn'Qiraj and Vashj'ir)
+    - it can summon Dragonriding mounts you've learned when in Dragon Isles (likewise for Ahn'Qiraj and Vashj'ir and The Maw)
     - using key-modifiers (alt, control, shift) with the macro can summon specific types of mounts (e.g. vendor mounts, passenger mounts)
     - it can even clone your target/focus' active mount if you have learned it too (great for mount-off competitions!)
 

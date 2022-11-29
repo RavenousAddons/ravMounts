@@ -103,6 +103,12 @@ ns.data = {
             1442, -- Corridor Creeper
             1441, -- Bound Shadehound
         },
+        dragonisles = {
+            1589, -- Renewed Proto-Drake
+            1590, -- Windborne Velocidrake
+            1563, -- Highland Drake
+            1591, -- Cliffside Wylderdrake
+        },
     },
     mapIDs = {
         ahnqiraj = {
@@ -124,6 +130,13 @@ ns.data = {
         maw = {
             1543, -- The Maw
             1648, -- The Maw
+        },
+        dragonisles = {
+            2022, -- The Waking Shores
+            2023, -- Ohn'ahran Plains
+            2024, -- The Azure Span
+            2024, -- Thaldraszus
+            2026, -- The Forbidden Reach
         },
     },
     partyMembers = 0,
