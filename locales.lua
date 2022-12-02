@@ -32,6 +32,7 @@ L.Ground = "Ground"
 L.Passenger = "Passenger"
 L.Chauffeur = "Chauffeur"
 L.Modifier = "Modifier"
+L.ZoneSpecific = "Zone-Specific"
 
 -- Check locale and assign appropriate
 local CURRENT_LOCALE = GetLocale()
@@ -73,7 +74,7 @@ if CURRENT_LOCALE == "svSE" then return end
 L.PassengerGround = L.Passenger .. " (" .. L.Ground .. ")"
 L.PassengerFlying = L.Passenger .. " (" .. _G.BATTLE_PET_NAME_3 .. ")"
 local mapIDs = ns.data.mapIDs
-L.AhnQiraj = CM.GetMapInfo(mapIDs.ahnqiraj[#mapIDs.ahnqiraj]).name
-L.Vashjir = CM.GetMapInfo(mapIDs.vashjir[#mapIDs.vashjir]).name
-L.Maw = CM.GetMapInfo(mapIDs.maw[#mapIDs.maw]).name
-L.DragonIsles = CM.GetMapInfo(mapIDs.maw[#mapIDs.dragonisles]).name
+L.AhnQiraj = CM.GetMapInfo(321).name
+L.Vashjir = CM.GetMapInfo(203).name
+L.Maw = CM.GetMapInfo(1543).name
+L.DragonIsles = CM.GetMapInfo(2057).name

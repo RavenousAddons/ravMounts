@@ -85,8 +85,6 @@ SlashCmdList["RAVMOUNTS"] = function(message)
         PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)
         InterfaceOptionsFrame_OpenToCategory(ns.Options)
         InterfaceOptionsFrame_OpenToCategory(ns.Options)
-        Settings.OpenToCategory(ns.Options)
-        Settings.OpenToCategory(ns.Options)
     elseif message == "f" or message:match("force") then
         ns:PrettyPrint(L.Force)
         ns:MountListHandler()

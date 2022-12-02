@@ -13,6 +13,7 @@ ns.data = {
         passengerMountModifier = "ctrl",
         swimmingMounts = true,
         normalSwimmingMounts = true,
+        zoneSpecificMounts = false,
         travelForm = true,
     },
     mountTypes = {
@@ -118,10 +119,10 @@ ns.data = {
             321, -- Ahn'Qiraj - Vault of C'Thun
         },
         vashjir = {
-            201, -- Kelp'thar Forest
-            203, -- Vashj'ir
-            204, -- Abyssal Depths
-            205, -- Shimmering Expanse
+            201,  -- Kelp'thar Forest
+            203,  -- Vashj'ir
+            204,  -- Abyssal Depths
+            205,  -- Shimmering Expanse
             1272, -- Vashj'ir
         },
         nazjatar = {
@@ -135,8 +136,10 @@ ns.data = {
             2022, -- The Waking Shores
             2023, -- Ohn'ahran Plains
             2024, -- The Azure Span
-            2024, -- Thaldraszus
+            2025, -- Thaldraszus
             2026, -- The Forbidden Reach
+            2085, -- The Primalist Future
+            2112, -- Valdrakken
         },
     },
     partyMembers = 0,

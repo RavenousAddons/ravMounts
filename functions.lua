@@ -543,16 +543,16 @@ function ns:MountListHandler()
                         table.insert(RAV_data.mounts.flying, mountID)
                     end
                 end
-                if isAhnQirajMount then
+                if isAhnQirajMount and (isFavorite or not RAV_data.options.zoneSpecificMounts) then
                     table.insert(RAV_data.mounts.ahnqiraj, mountID)
                 end
-                if isVashjirMount then
+                if isVashjirMount and (isFavorite or not RAV_data.options.zoneSpecificMounts) then
                     table.insert(RAV_data.mounts.vashjir, mountID)
                 end
-                if isMawMount then
+                if isMawMount and (isFavorite or not RAV_data.options.zoneSpecificMounts) then
                     table.insert(RAV_data.mounts.maw, mountID)
                 end
-                if isDragonIslesMount then
+                if isDragonIslesMount and (isFavorite or not RAV_data.options.zoneSpecificMounts) then
                     table.insert(RAV_data.mounts.dragonisles, mountID)
                 end
             end
@@ -658,10 +658,10 @@ function ns:MountUpHandler(specificType)
         ns:MountSummon(RAV_data.mounts.vashjir)
     elseif haveSwimmingMounts and IsSwimming() and not normalMountModifier then
         ns:MountSummon(RAV_data.mounts.swimming)
-    elseif (haveBroom or haveDragonIslesMounts or haveFlyingMounts) and ((IsSwimming() and flyable and normalMountModifier) or (flyable and not normalMountModifier) or (not IsSwimming() and not flyable and normalMountModifier)) then
+    elseif (haveBroom or (haveDragonIslesMounts and inDragonIsles) or haveFlyingMounts) and ((IsSwimming() and flyable and normalMountModifier) or (flyable and not normalMountModifier) or (not IsSwimming() and not flyable and normalMountModifier)) then
         if (haveBroom) then
             UseContainerItem(RAV_data.mounts.broom.bag, RAV_data.mounts.broom.slot, true)
-        elseif (haveDragonIslesMounts) then
+        elseif (haveDragonIslesMounts and inDragonIsles) then
             ns:MountSummon(RAV_data.mounts.dragonisles)
         else
             ns:MountSummon(RAV_data.mounts.flying)
@@ -732,8 +732,6 @@ function ns:CreateOpenOptionsButton(parent)
         PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)
         InterfaceOptionsFrame_OpenToCategory(ns.Options)
         InterfaceOptionsFrame_OpenToCategory(ns.Options)
-        Settings.OpenToCategory(ns.Options)
-        Settings.OpenToCategory(ns.Options)
     end)
 end
 

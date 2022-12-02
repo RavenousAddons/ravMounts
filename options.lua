@@ -10,6 +10,7 @@ Options.name = ns.name
 Options.controlTable = {}
 Options.okay = function(self)
     for _, control in pairs(self.controls) do
+        print(control.var)
         RAV_data.options[control.var] = control:GetValue()
     end
 end
@@ -223,6 +224,14 @@ Options:SetScript("OnShow", function()
             label = _G.TUTORIAL_TITLE28 .. " " .. _G.MOUNTS,
             tooltip = L.MountsTooltip:format(_G.TUTORIAL_TITLE28 .. " " .. _G.MOUNTS),
             var = "swimmingMounts",
+        },
+        {
+            type = "CheckBox",
+            name = "ZoneSpecificMounts",
+            parent = Options,
+            label = L.ZoneSpecific .. " " .. _G.MOUNTS,
+            tooltip = L.MountsTooltip:format(L.ZoneSpecific .. " " .. _G.MOUNTS),
+            var = "zoneSpecificMounts",
         },
         {
             type = "Label",

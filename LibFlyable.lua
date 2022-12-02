@@ -2,7 +2,9 @@ local _, ns = ...
 
 local spellsByContinent = {
     -- Dragonflight
-    [2444] = 376777, -- Dragonriding Basics
+    [2444] = 376777, -- Dragon Isles
+    [2512] = 376777, -- The Primalist Future
+    [2534] = 376777, -- Obsidian Citadel
 
     -- Shadowlands
     [2364] = -1, -- The Maw
