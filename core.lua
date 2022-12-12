@@ -32,7 +32,6 @@ function ravMounts_OnEvent(self, event, arg, ...)
         RAV_version = ns.version
         ns:MountListHandler()
         ns:TooltipLabels()
-        ns:CacheMounts()
         self:UnregisterEvent("PLAYER_LOGIN")
     elseif event == "ADDON_LOADED" and arg == "Blizzard_Collections" then
         ns:CreateOpenOptionsButton(MountJournal)

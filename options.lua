@@ -10,7 +10,6 @@ Options.name = ns.name
 Options.controlTable = {}
 Options.okay = function(self)
     for _, control in pairs(self.controls) do
-        print(control.var)
         RAV_data.options[control.var] = control:GetValue()
     end
 end

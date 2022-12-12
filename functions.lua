@@ -129,35 +129,9 @@ function ns:AssignVariables()
     passengerMountModifier = RAV_data.options.passengerMountModifier == "alt" and IsAltKeyDown() or RAV_data.options.passengerMountModifier == "ctrl" and IsControlKeyDown() or RAV_data.options.passengerMountModifier == "shift" and IsShiftKeyDown() or false
 end
 
-local hasBeenCached = false
-local function CacheMount(i, mountIDs)
-    local _, spellID = CMJ.GetMountInfoByID(mountIDs[i])
-    local spell = Spell:CreateFromSpellID(spellID)
-    if i < #mountIDs then
-        spell:ContinueOnSpellLoad(function()
-            CacheMount(i + 1, mountIDs)
-        end)
-    else
-        hasBeenCached = true
-        ns:EnsureMacro()
-    end
-end
-
-function ns:CacheMounts()
-    local mountIDs = {}
-    for type, mounts in pairs(RAV_data.mounts) do
-        if type ~= "allByName" and type ~= "allByID" then
-            for _, mountID in ipairs(mounts) do
-                table.insert(mountIDs, mountID)
-            end
-        end
-    end
-    CacheMount(1, mountIDs)
-end
-
 local hasSeenNoSpaceMessage = false
 function ns:EnsureMacro()
-    if hasBeenCached and not UnitAffectingCombat("player") and RAV_data.options.macro then
+    if RAV_data.options.macro and not UnitAffectingCombat("player") then
         ns:AssignVariables()
         local icon = "INV_Misc_QuestionMark"
         local flying = (inDragonIsles and haveDragonIslesMounts) and RAV_data.mounts.dragonisles or haveFlyingMounts and RAV_data.mounts.flying or nil
@@ -167,6 +141,7 @@ function ns:EnsureMacro()
         local swimming = (inVashjir and haveVashjirMounts) and RAV_data.mounts.vashjir or haveSwimmingMounts and RAV_data.mounts.swimming or nil
         local chauffeur = haveChauffeurMounts and RAV_data.mounts.chauffeur or nil
         local travelForm = haveTravelForm and RAV_data.mounts.travelForm or nil
+        local dragonisles = (inDragonIsles and haveDragonIslesMounts) and RAV_data.mounts.dragonisles or nil
         local broom = haveBroom and RAV_data.mounts.broom or nil
         local moonfang = haveMoonfang and RAV_data.mounts.moonfang or nil
         local body = "/ravm"
@@ -179,16 +154,21 @@ function ns:EnsureMacro()
             if (RAV_data.options.travelForm and travelForm) then
                 local travelFormName, _ = GetSpellInfo(travelForm[1])
                 if RAV_data.options.normalMountModifier ~= "none" then
-                    body = "[nomod:" .. RAV_data.options.normalMountModifier .. "] " .. travelFormName .. "\n" .. "/use [nomod:" .. RAV_data.options.normalMountModifier .. "] " .. travelFormName .. "\n" .. "/stopmacro [nomod]" .. body
-                    if broom or flying or moonfang or ground or chauffeur then
-                        mountName = broom and broom.name or flying and GetMountName(flying[random(#flying)]) or moonfang and moonfang.name or ground and GetMountName(ground[random(#ground)]) or chauffeur and GetMountName(chauffeur[random(#chauffeur)]) or nil
-                        if not mountName then
-                            ns:EnsureMacro()
-                            return
+                    if inDragonIsles and haveDragonIslesMounts then
+                        mountName = GetMountName(dragonisles[random(#dragonisles)])
+                        body = "[mod:" .. RAV_data.options.normalMountModifier .. "] " .. travelFormName .. "; " .. mountName .. "\n" .. "/use [mod:" .. RAV_data.options.normalMountModifier .. "] " .. travelFormName .. "\n" .. "/stopmacro [mod:" .. RAV_data.options.normalMountModifier .. "]" .. body
+                    else
+                        body = travelFormName .. "\n" .. "/use [nomod] " .. travelFormName .. "\n" .. "/stopmacro [nomod]" .. body
+                        if broom or flying or moonfang or ground or chauffeur then
+                            mountName = broom and broom.name or flying and GetMountName(flying[random(#flying)]) or moonfang and moonfang.name or ground and GetMountName(ground[random(#ground)]) or chauffeur and GetMountName(chauffeur[random(#chauffeur)]) or nil
+                            if not mountName then
+                                ns:EnsureMacro()
+                                return
+                            end
                         end
-                    end
-                    if mountName then
-                        body = "[mod:" .. RAV_data.options.normalMountModifier .. "] " .. mountName .. "; " .. body
+                        if mountName then
+                            body = "[mod:" .. RAV_data.options.normalMountModifier .. "] " .. mountName .. "; " .. body
+                        end
                     end
                 else
                     body = travelFormName .. "\n" .. "/use " .. travelFormName
@@ -658,11 +638,11 @@ function ns:MountUpHandler(specificType)
         ns:MountSummon(RAV_data.mounts.vashjir)
     elseif haveSwimmingMounts and IsSwimming() and not normalMountModifier then
         ns:MountSummon(RAV_data.mounts.swimming)
-    elseif (haveBroom or (haveDragonIslesMounts and inDragonIsles) or haveFlyingMounts) and ((IsSwimming() and flyable and normalMountModifier) or (flyable and not normalMountModifier) or (not IsSwimming() and not flyable and normalMountModifier)) then
-        if (haveBroom) then
-            UseContainerItem(RAV_data.mounts.broom.bag, RAV_data.mounts.broom.slot, true)
-        elseif (haveDragonIslesMounts and inDragonIsles) then
+    elseif ((inDragonIsles and haveDragonIslesMounts) or haveBroom or haveFlyingMounts) and (flyable and (not normalMountModifier or (normalMountModifier and (IsSwimming() or (className == "DRUID" or className == "SHAMAN") and not inDragonIsles)))) or (not flyable and not IsSwimming() and normalMountModifier) then
+        if (haveDragonIslesMounts and inDragonIsles) then
             ns:MountSummon(RAV_data.mounts.dragonisles)
+        elseif (haveBroom) then
+            UseContainerItem(RAV_data.mounts.broom.bag, RAV_data.mounts.broom.slot, true)
         else
             ns:MountSummon(RAV_data.mounts.flying)
         end
