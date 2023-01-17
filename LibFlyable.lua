@@ -4,6 +4,7 @@ local spellsByContinent = {
     -- Dragonflight
     [2444] = 376777, -- Dragon Isles
     [2512] = 376777, -- The Primalist Future
+    [2516] = 376777, -- The Nokhud Offensive
     [2534] = 376777, -- Obsidian Citadel
 
     -- Shadowlands

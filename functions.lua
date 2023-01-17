@@ -9,13 +9,8 @@ local mapIDs = ns.data.mapIDs
 local _, className = UnitClass("player")
 local faction, _ = UnitFactionGroup("player")
 local flyable, cloneMountID, mapID, inAhnQiraj, inVashjir, inMaw, inDragonIsles, haveGroundMounts, haveFlyingMounts, havePassengerGroundMounts, havePassengerFlyingMounts, haveVendorMounts, haveSwimmingMounts, haveAhnQirajMounts, haveVashjirMounts, haveMawMounts, haveDragonIslesMounts, haveChauffeurMounts, haveBroom, haveMoonfang, normalMountModifier, vendorMountModifier, passengerMountModifier
-local prevControl
-local dropdowns = {}
-local mountModifiers = {
-    "normalMountModifier",
-    "vendorMountModifier",
-    "passengerMountModifier",
-}
+
+local modifiers = {"none", "alt", "ctrl", "shift"}
 local tooltipLabels = {
     ["vendor"] = _G.BATTLE_PET_SOURCE_3,
     ["passengerGround"] = L.PassengerGround,
@@ -124,9 +119,9 @@ function ns:AssignVariables()
     haveTravelForm = next(RAV_data.mounts.travelForm) ~= nil and true or false
     haveBroom = RAV_data.mounts.broom.slot ~= nil and true or false
     haveMoonfang = RAV_data.mounts.moonfang.slot ~= nil and true or false
-    normalMountModifier = RAV_data.options.normalMountModifier == "alt" and IsAltKeyDown() or RAV_data.options.normalMountModifier == "ctrl" and IsControlKeyDown() or RAV_data.options.normalMountModifier == "shift" and IsShiftKeyDown() or false
-    vendorMountModifier = RAV_data.options.vendorMountModifier == "alt" and IsAltKeyDown() or RAV_data.options.vendorMountModifier == "ctrl" and IsControlKeyDown() or RAV_data.options.vendorMountModifier == "shift" and IsShiftKeyDown() or false
-    passengerMountModifier = RAV_data.options.passengerMountModifier == "alt" and IsAltKeyDown() or RAV_data.options.passengerMountModifier == "ctrl" and IsControlKeyDown() or RAV_data.options.passengerMountModifier == "shift" and IsShiftKeyDown() or false
+    normalMountModifier = RAV_data.options.normalMountModifier == 2 and IsAltKeyDown() or RAV_data.options.normalMountModifier == 3 and IsControlKeyDown() or RAV_data.options.normalMountModifier == 4 and IsShiftKeyDown() or false
+    vendorMountModifier = RAV_data.options.vendorMountModifier == 2 and IsAltKeyDown() or RAV_data.options.vendorMountModifier == 3 and IsControlKeyDown() or RAV_data.options.vendorMountModifier == 4 and IsShiftKeyDown() or false
+    passengerMountModifier = RAV_data.options.passengerMountModifier == 2 and IsAltKeyDown() or RAV_data.options.passengerMountModifier == 3 and IsControlKeyDown() or RAV_data.options.passengerMountModifier == 4 and IsShiftKeyDown() or false
 end
 
 local hasSeenNoSpaceMessage = false
@@ -153,10 +148,10 @@ function ns:EnsureMacro()
             body = "\n" .. body
             if (RAV_data.options.travelForm and travelForm) then
                 local travelFormName, _ = GetSpellInfo(travelForm[1])
-                if RAV_data.options.normalMountModifier ~= "none" then
+                if RAV_data.options.normalMountModifier ~= 1 then
                     if inDragonIsles and haveDragonIslesMounts then
                         mountName = GetMountName(dragonisles[random(#dragonisles)])
-                        body = "[mod:" .. RAV_data.options.normalMountModifier .. "] " .. travelFormName .. "; " .. mountName .. "\n" .. "/use [mod:" .. RAV_data.options.normalMountModifier .. "] " .. travelFormName .. "\n" .. "/stopmacro [mod:" .. RAV_data.options.normalMountModifier .. "]" .. body
+                        body = "[mod:" .. modifiers[RAV_data.options.normalMountModifier] .. "] " .. travelFormName .. "; " .. mountName .. "\n" .. "/use [mod:" .. modifiers[RAV_data.options.normalMountModifier] .. "] " .. travelFormName .. "\n" .. "/stopmacro [mod:" .. modifiers[RAV_data.options.normalMountModifier] .. "]" .. body
                     else
                         body = travelFormName .. "\n" .. "/use [nomod] " .. travelFormName .. "\n" .. "/stopmacro [nomod]" .. body
                         if broom or flying or moonfang or ground or chauffeur then
@@ -167,7 +162,7 @@ function ns:EnsureMacro()
                             end
                         end
                         if mountName then
-                            body = "[mod:" .. RAV_data.options.normalMountModifier .. "] " .. mountName .. "; " .. body
+                            body = "[mod:" .. modifiers[RAV_data.options.normalMountModifier] .. "] " .. mountName .. "; " .. body
                         end
                     end
                 else
@@ -189,42 +184,41 @@ function ns:EnsureMacro()
                         return
                     end
                     if (broom or flyable) and (moonfang or ground) then
-                        if RAV_data.options.normalMountModifier ~= "none" then
-                            body = "[swimming,mod:" .. RAV_data.options.normalMountModifier .. "][nomod:" .. RAV_data.options.normalMountModifier .. "] " .. mountName .. "; " .. body
+                        if RAV_data.options.normalMountModifier ~= 1 then -- none
+                            body = "[swimming,mod:" .. modifiers[RAV_data.options.normalMountModifier] .. "][nomod:" .. modifiers[RAV_data.options.normalMountModifier] .. "] " .. mountName .. "; " .. body
                         else
                             body = "[] " .. mountName .. "; " .. body
                         end
-                    elseif (moonfang or ground) and RAV_data.options.normalMountModifier ~= "none" then
-                        body = "[noswimming,mod:" .. RAV_data.options.normalMountModifier .. "] " .. mountName .. "; " .. body
+                    elseif (moonfang or ground) and RAV_data.options.normalMountModifier ~= 1 then -- none
+                        body = "[noswimming,mod:" .. modifiers[RAV_data.options.normalMountModifier] .. "] " .. mountName .. "; " .. body
                     else
                         body = mountName .. body
                     end
                 end
                 if chauffeur and ground == nil and flying == nil then
                     icon = "inv_misc_key_06"
-                    _, spellID = CMJ.GetMountInfoByID(chauffeur[random(#chauffeur)])
-                    mountName, _ = GetSpellInfo(spellID)
+                    mountName, _ = CMJ.GetMountInfoByID(chauffeur[1])
                     body = mountName .. body
                 end
             end
             if swimming and travelForm == nil then
                 _, spellID = CMJ.GetMountInfoByID(swimming[random(#swimming)])
                 mountName, _ = GetSpellInfo(spellID)
-                if RAV_data.options.normalMountModifier ~= "none" then
-                    body = "[swimming,nomod:" .. RAV_data.options.normalMountModifier .. "] " .. mountName .. ((flying or ground or chauffeur) and "; " or "") .. body
+                if RAV_data.options.normalMountModifier ~= 1 then -- none
+                    body = "[swimming,nomod:" .. modifiers[RAV_data.options.normalMountModifier] .. "] " .. mountName .. ((flying or ground or chauffeur) and "; " or "") .. body
                 else
                     body = "[swimming] " .. mountName .. ((flying or ground or chauffeur) and "; " or "") .. body
                 end
             end
-            if vendor and RAV_data.options.vendorMountModifier ~= "none" then
+            if vendor and RAV_data.options.vendorMountModifier ~= 1 then -- none
                 _, spellID = CMJ.GetMountInfoByID(vendor[random(#vendor)])
                 mountName, _ = GetSpellInfo(spellID)
-                body = "[mod:" .. RAV_data.options.vendorMountModifier .. "] " .. mountName .. ((flying or ground or chauffeur or swimming) and "; " or "") .. body
+                body = "[mod:" .. modifiers[RAV_data.options.vendorMountModifier] .. "] " .. mountName .. ((flying or ground or chauffeur or swimming) and "; " or "") .. body
             end
-            if passenger and RAV_data.options.passengerMountModifier ~= "none" then
+            if passenger and RAV_data.options.passengerMountModifier ~= 1 then -- none
                 _, spellID = CMJ.GetMountInfoByID(passenger[random(#passenger)])
                 mountName, _ = GetSpellInfo(spellID)
-                body = "[mod:" .. RAV_data.options.passengerMountModifier .. "] " .. mountName .. ((flying or ground or chauffeur or swimming or vendor) and "; " or "") .. body
+                body = "[mod:" .. modifiers[RAV_data.options.passengerMountModifier] .. "] " .. mountName .. ((flying or ground or chauffeur or swimming or vendor) and "; " or "") .. body
             end
             body = "#showtooltip " .. body
         end
@@ -244,184 +238,6 @@ function ns:EnsureMacro()
     end
 end
 
-function ns:RegisterDefaultOption(key, value)
-    if RAV_data.options[key] == nil then
-        RAV_data.options[key] = value
-    end
-end
-
-function ns:SetDefaultOptions()
-    if RAV_data == nil then
-        RAV_data = {}
-    end
-    if RAV_data.options == nil then
-        RAV_data.options = {}
-    end
-    if RAV_data.options.flexMounts == true or RAV_data.options.flexMounts == false then
-        RAV_data.options.flexMounts = nil
-    end
-    if RAV_data.options.clone == true or RAV_data.options.clone == false then
-        RAV_data.options.clone = nil
-    end
-    for k, v in pairs(defaults) do
-        ns:RegisterDefaultOption(k, v)
-    end
-end
-
-function ns:RegisterControl(control, parentFrame)
-    if (not parentFrame) or (not control) then
-        return
-    end
-    parentFrame.controls = parentFrame.controls or {}
-    table.insert(parentFrame.controls, control)
-end
-
-function ns:CreateLabel(cfg)
-    cfg.initialPoint = cfg.initialPoint or "TOPLEFT"
-    cfg.relativePoint = cfg.relativePoint or "BOTTOMLEFT"
-    cfg.offsetX = cfg.offsetX or 0
-    cfg.offsetY = cfg.offsetY or -16
-    cfg.relativeTo = cfg.relativeTo or prevControl
-    cfg.fontObject = cfg.fontObject or "GameFontNormalLarge"
-
-    local label = cfg.parent:CreateFontString(cfg.name, "ARTWORK", cfg.fontObject)
-    label.label = cfg.label
-    label.type = cfg.type
-    label:SetPoint(cfg.initialPoint, cfg.relativeTo, cfg.relativePoint, cfg.offsetX, cfg.offsetY)
-    if cfg.width then
-        label:SetWidth(cfg.width)
-    end
-    label:SetJustifyH("LEFT")
-    if cfg.haveMounts then
-        label.haveMounts = cfg.haveMounts
-        if table.maxn(RAV_data.mounts[cfg.haveMounts]) > 0 then
-            label:SetText(cfg.label:format(_G.AVAILABLE))
-        else
-            label:SetText(cfg.label:format(_G.UNAVAILABLE))
-        end
-    elseif cfg.countMounts then
-        label.countMounts = cfg.countMounts
-        label:SetText(cfg.label:format(table.maxn(RAV_data.mounts[cfg.countMounts])))
-    else
-        label:SetText(cfg.label)
-    end
-
-    ns:RegisterControl(label, cfg.parent)
-    if not cfg.ignorePlacement then
-        prevControl = label
-    end
-
-    return label
-end
-
-function ns:CreateCheckBox(cfg)
-    cfg.initialPoint = cfg.initialPoint or "TOPLEFT"
-    cfg.relativePoint = cfg.relativePoint or "BOTTOMLEFT"
-    cfg.offsetX = cfg.offsetX or 0
-    cfg.offsetY = cfg.offsetY or -6
-    cfg.relativeTo = cfg.relativeTo or prevControl
-
-    local checkBox = CreateFrame("CheckButton", cfg.name, cfg.parent, "InterfaceOptionsCheckButtonTemplate")
-    checkBox.var = cfg.var
-    checkBox.label = cfg.label
-    checkBox.type = cfg.type
-    checkBox:SetPoint(cfg.initialPoint, cfg.relativeTo, cfg.relativePoint, cfg.offsetX, cfg.offsetY)
-    checkBox.Text:SetJustifyH("LEFT")
-    checkBox.Text:SetText(cfg.label)
-    if cfg.tooltip then
-        checkBox.tooltipText = cfg.tooltip
-    end
-
-    checkBox.GetValue = function()
-        return checkBox:GetChecked()
-    end
-    checkBox.SetValue = function()
-        checkBox:SetChecked(RAV_data.options[cfg.var])
-    end
-
-    checkBox:SetScript("OnClick", function(self)
-        checkBox.value = self:GetChecked()
-        PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-        RAV_data.options[checkBox.var] = checkBox:GetChecked()
-        ns:MountListHandler()
-        ns:EnsureMacro()
-        ns:RefreshControls(ns.Options.controls)
-    end)
-
-    ns:RegisterControl(checkBox, cfg.parent)
-    if not cfg.ignorePlacement then
-        prevControl = checkBox
-    end
-    return checkBox
-end
-
-function ns:CreateDropDown(cfg)
-    cfg.initialPoint = cfg.initialPoint or "TOPLEFT"
-    cfg.relativePoint = cfg.relativePoint or "BOTTOMLEFT"
-    cfg.offsetX = cfg.offsetX or 0
-    cfg.offsetY = cfg.offsetY or -6
-    cfg.relativeTo = cfg.relativeTo or prevControl
-    cfg.width = cfg.width or 130
-
-    dropdowns[cfg.var] = CreateFrame("Frame", cfg.name, cfg.parent, "UIDropDownMenuTemplate")
-    dropdowns[cfg.var].var = cfg.var
-    dropdowns[cfg.var].label = cfg.label
-    dropdowns[cfg.var].type = cfg.type
-    dropdowns[cfg.var]:SetPoint(cfg.initialPoint, cfg.relativeTo, cfg.relativePoint, cfg.offsetX, cfg.offsetY)
-    UIDropDownMenu_SetWidth(dropdowns[cfg.var], cfg.width)
-    UIDropDownMenu_SetText(dropdowns[cfg.var], cfg.label)
-    UIDropDownMenu_Initialize(dropdowns[cfg.var], function()
-        for _, value in ipairs(cfg.options) do
-            local info = UIDropDownMenu_CreateInfo()
-            info.text = value:gsub("^%l", string.upper)
-            info.checked = RAV_data.options[cfg.var] == value and true or false
-            if not info.checked and value ~= "none" and cfg.group == "mountModifier" then
-                for _, mountModifier in ipairs(mountModifiers) do
-                    if RAV_data.options[mountModifier] == value then
-                        info.disabled = true
-                    end
-                end
-            end
-            info.func = function(option)
-                RAV_data.options[cfg.var] = option.value:lower()
-                info.checked = true
-                ns:RefreshControls(ns.Options.controls)
-            end
-            UIDropDownMenu_AddButton(info)
-        end
-    end)
-
-    ns:RegisterControl(dropdowns[cfg.var], cfg.parent)
-    if not cfg.ignorePlacement then
-        prevControl = dropdowns[cfg.var]
-    end
-    return dropdowns[cfg.var]
-end
-
-function ns:RefreshControls(controls)
-    ns:MountListHandler()
-    ns:EnsureMacro()
-    for _, control in pairs(controls) do
-        if control.type == "CheckBox" then
-            control:SetValue(control)
-            control.oldValue = control:GetValue()
-        elseif control.type == "DropDown" then
-            UIDropDownMenu_SetText(dropdowns[control.var], control.label .. ": " .. RAV_data.options[control.var]:gsub("^%l", string.upper))
-        elseif control.haveMounts then
-            if table.maxn(RAV_data.mounts[control.haveMounts]) > 0 then
-                control:SetText(control.label:format(_G.AVAILABLE))
-            else
-                control:SetText(control.label:format(_G.UNAVAILABLE))
-            end
-            control.oldValue = control:GetText()
-        elseif control.countMounts then
-            control:SetText(control.label:format(table.maxn(RAV_data.mounts[control.countMounts])))
-            control.oldValue = control:GetText()
-        end
-    end
-    CloseDropDownMenus()
-end
-
 function ns:MountSummon(list)
     if not UnitAffectingCombat("player") and #list > 0 then
         local iter = 10 -- "magic" number
@@ -436,11 +252,11 @@ end
 
 function ns:GetCloneMount()
     local clone = false
-    if RAV_data.options.clone == "both" then
+    if RAV_data.options.clone == 4 then -- both
         clone = UnitIsPlayer("target") and "target" or UnitIsPlayer("focus") and "focus" or false
-    elseif RAV_data.options.clone == "target" then
+    elseif RAV_data.options.clone == 2 then -- target
         clone = UnitIsPlayer("target") and "target" or false
-    elseif RAV_data.options.clone == "focus" then
+    elseif RAV_data.options.clone == 3 then -- focus
         clone = UnitIsPlayer("focus") and "focus" or false
     end
     if clone then
@@ -495,10 +311,10 @@ function ns:MountListHandler()
                 table.insert(RAV_data.mounts.allByID, mountID)
                 if isFlyingMount and (not RAV_data.options.normalMounts or isFavorite) and not isVendorMount and not isPassengerFlyingMount and not isPassengerGroundMount then
                     if isFlexMount then
-                        if RAV_data.options.flexMounts == "both" or RAV_data.options.flexMounts == "ground" then
+                        if RAV_data.options.flexMounts == 3 or RAV_data.options.flexMounts == 1 then -- both or target
                             table.insert(RAV_data.mounts.ground, mountID)
                         end
-                        if hasFlyingRiding and RAV_data.options.flexMounts == "both" or RAV_data.options.flexMounts == "flying" then
+                        if hasFlyingRiding and RAV_data.options.flexMounts == 3 or RAV_data.options.flexMounts == 2 then -- both or focus
                             table.insert(RAV_data.mounts.flying, mountID)
                         end
                     elseif hasFlyingRiding then
@@ -617,14 +433,20 @@ function ns:MountUpHandler(specificType)
     -- Check for /mountspecial modifiers
     elseif vendorMountModifier and passengerMountModifier and (IsMounted() or UnitInVehicle("player")) then
         DoEmote(EMOTE171_TOKEN)
-    -- If mounted, in a vehicle, or shapeshifted, then dismount
-    elseif IsMounted() or UnitInVehicle("player") or ((className == "DRUID" or className == "SHAMAN") and GetShapeshiftForm() > 0) then
-        CancelShapeshiftForm()
-        VehicleExit()
+    -- If mounted, then dismount
+    elseif IsMounted() then
         Dismount()
         UIErrorsFrame:Clear()
+    -- If in a vehicle, then exit the vehicle
+    elseif UnitInVehicle("player") then
+        VehicleExit()
+        UIErrorsFrame:Clear()
+    -- If in travel form, then cancel form
+    elseif RAV_data.options.travelForm == true and ((className == "DRUID" and GetShapeshiftForm() == 3) or (className == "SHAMAN" and GetShapeshiftForm() == 16)) then
+        CancelShapeshiftForm()
+        UIErrorsFrame:Clear()
     -- Clone
-    elseif RAV_data.options.clone ~= "none" and cloneMountID and not normalMountModifier and not vendorMountModifier and not passengerMountModifier then
+    elseif RAV_data.options.clone ~= 1 and cloneMountID and not normalMountModifier and not vendorMountModifier and not passengerMountModifier then
         CMJ.SummonByID(cloneMountID)
     -- Modifier Keys
     elseif haveVendorMounts and vendorMountModifier then
@@ -700,7 +522,49 @@ function ns:TooltipLabels()
     end)
 end
 
-function ns:CreateOpenOptionsButton(parent)
+function ns:RegisterDefaultOption(key, value)
+    -- Temporary shim to fix old options
+    if type(RAV_data.options[key]) == "string" then
+        RAV_data.options[key] = value
+    end
+    if RAV_data.options[key] == nil then
+        RAV_data.options[key] = value
+    end
+end
+
+function ns:SetDefaultSettings()
+    if RAV_data == nil then
+        RAV_data = {}
+    end
+    if RAV_data.options == nil then
+        RAV_data.options = {}
+    end
+    for k, v in pairs(defaults) do
+        ns:RegisterDefaultOption(k, v)
+    end
+end
+
+function ns:CreateCheckBox(category, variable, name, tooltip)
+    local setting = Settings.RegisterAddOnSetting(category, name, variable, type(defaults[variable]), RAV_data.options[variable])
+    Settings.SetOnValueChangedCallback(variable, function(event)
+        RAV_data.options[variable] = setting:GetValue()
+        ns:MountListHandler()
+        ns:EnsureMacro()
+    end)
+    Settings.CreateCheckBox(category, setting, tooltip)
+end
+
+function ns:CreateDropDown(category, variable, name, options, tooltip)
+    local setting = Settings.RegisterAddOnSetting(category, name, variable, type(defaults[variable]), RAV_data.options[variable])
+    Settings.SetOnValueChangedCallback(variable, function(event)
+        RAV_data.options[variable] = setting:GetValue()
+        ns:MountListHandler()
+        ns:EnsureMacro()
+    end)
+    Settings.CreateDropDown(category, setting, options, tooltip)
+end
+
+function ns:CreateOpenSettingsButton()
     local OpenOptions = CreateFrame("Button", ADDON_NAME .. "OpenOptionsButton", MountJournal, "UIPanelButtonTemplate")
     OpenOptions:SetPoint("BOTTOMRIGHT", MountJournal, "BOTTOMRIGHT", -4, 4)
     local OpenOptionsLabel = OpenOptions:CreateFontString(nil, "ARTWORK", "GameFontNormal")
@@ -710,8 +574,7 @@ function ns:CreateOpenOptionsButton(parent)
     OpenOptions:RegisterForClicks("AnyUp")
     OpenOptions:SetScript("OnMouseUp", function(self)
         PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)
-        InterfaceOptionsFrame_OpenToCategory(ns.Options)
-        InterfaceOptionsFrame_OpenToCategory(ns.Options)
+        Settings.OpenToCategory(ns.name)
     end)
 end
 

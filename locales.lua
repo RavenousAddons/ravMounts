@@ -17,7 +17,7 @@ L.Update = "Thanks for updating to |cff%1$sv%2$s|r!" -- ns.color, ns.version
 L.UpdateFound = "v%s is now available for download. Please update!" -- sentVersion
 L.Support = "Check out the Addon on |rGitHub|cffffffff, |rWoWInterface|cffffffff, or |rCurse|cffffffff for more info and support!"
 L.NoMacroSpace = "Unfortunately, you don't have enough global macro space for the macro to be created!"
-L.Macro = "Automatic macro |r%s|cffffffff under |r%s|cffffffff." -- ns.name, _G.GENERAL_MACROS
+L.Macro = "Generate Macro"
 L.MacroTooltip = "When enabled, a macro called |cffffffff%s|r will be automatically created and managed for you under |cffffffffGeneral Macros|r." -- ns.name
 L.NormalSwimming = "Expanded Swimming Mounts"
 L.NormalSwimmingTooltip = "When enabled, Swimming mounts will also count as Ground/Flying mounts."
@@ -28,10 +28,13 @@ L.MountsTooltip = "When enabled, only %s marked as favorites will be summoned." 
 L.CountHeading = "Collected Data:"
 L.Force = "Mount Journal data collected, sorted, and ready to go!"
 L.Cloneable = "Cloneable"
+L.CloneableTooltip = "When enabled, allows cloning of players' mounts you see around you."
+L.FlexibleTooltip = "Choose how Flying mounts that look like Ground mounts should be catalogued."
 L.Ground = "Ground"
 L.Passenger = "Passenger"
 L.Chauffeur = "Chauffeur"
 L.Modifier = "Modifier"
+L.ModifierTooltip = "Choose which modifier key to use to call %s." -- type
 L.ZoneSpecific = "Zone-Specific"
 
 -- Check locale and assign appropriate

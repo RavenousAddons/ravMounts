@@ -21,9 +21,8 @@ end
 
 function ravMounts_OnEvent(self, event, arg, ...)
     if event == "PLAYER_LOGIN" then
-        ns:SetDefaultOptions()
-        local category = Settings.RegisterCanvasLayoutCategory(ns.Options, ns.name)
-        Settings.RegisterAddOnCategory(category)
+        ns:SetDefaultSettings()
+        ns:CreateSettingsPanel()
         if not RAV_version then
             ns:PrettyPrint(L.Install:format(ns.color, ns.version))
         elseif RAV_version ~= ns.version then
@@ -34,21 +33,15 @@ function ravMounts_OnEvent(self, event, arg, ...)
         ns:TooltipLabels()
         self:UnregisterEvent("PLAYER_LOGIN")
     elseif event == "ADDON_LOADED" and arg == "Blizzard_Collections" then
-        ns:CreateOpenOptionsButton(MountJournal)
+        ns:CreateOpenSettingsButton()
         self:UnregisterEvent("ADDON_LOADED")
     elseif event == "ZONE_CHANGED_NEW_AREA" or event == "MOUNT_JOURNAL_SEARCH_UPDATED" or event =="PLAYER_SPECIALIZATION_CHANGED" or event == "UPDATE_SHAPESHIFT_FORMS" then
         ns:MountListHandler()
         ns:EnsureMacro()
-        if ns.Options and ns.Options.controls then
-            ns:RefreshControls(ns.Options.controls)
-        end
     elseif event == "ZONE_CHANGED" and travelFormCondition ~= (IsOutdoors() or IsSubmerged()) then
         travelFormCondition = (IsOutdoors() or IsSubmerged())
         ns:MountListHandler()
         ns:EnsureMacro()
-        if ns.Options and ns.Options.controls then
-            ns:RefreshControls(ns.Options.controls)
-        end
     elseif event == "GROUP_ROSTER_UPDATE" then
         local partyMembers = GetNumSubgroupMembers()
         local raidMembers = IsInRaid() and GetNumGroupMembers() or 0
@@ -82,15 +75,11 @@ SlashCmdList["RAVMOUNTS"] = function(message)
         ns:PrettyPrint(L.Version:format(ns.version))
     elseif message == "c" or message:match("con") or message == "h" or message:match("help") or message == "o" or message:match("opt") or message == "s" or message:match("sett") or message:match("togg") then
         PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)
-        InterfaceOptionsFrame_OpenToCategory(ns.Options)
-        InterfaceOptionsFrame_OpenToCategory(ns.Options)
+        Settings.OpenToCategory(ns.name)
     elseif message == "f" or message:match("force") then
         ns:PrettyPrint(L.Force)
         ns:MountListHandler()
         ns:EnsureMacro()
-        if ns.Options and ns.Options.controls then
-            ns:RefreshControls(ns.Options.controls)
-        end
     else
         ns:MountUpHandler(message)
     end

@@ -3,17 +3,17 @@ local _, ns = ...
 ns.data = {
     defaults = {
         macro = true,
-        clone = "none",
-        flexMounts = "both",
+        clone = 4,
+        flexMounts = 2,
         normalMounts = true,
-        normalMountModifier = "alt",
+        normalMountModifier = 2,
         vendorMounts = true,
-        vendorMountModifier = "shift",
+        vendorMountModifier = 4,
         passengerMounts = true,
-        passengerMountModifier = "ctrl",
+        passengerMountModifier = 3,
         swimmingMounts = true,
-        normalSwimmingMounts = true,
-        zoneSpecificMounts = false,
+        normalSwimmingMounts = false,
+        zoneSpecificMounts = true,
         travelForm = true,
     },
     mountTypes = {
@@ -139,6 +139,7 @@ ns.data = {
             2025, -- Thaldraszus
             2026, -- The Forbidden Reach
             2085, -- The Primalist Future
+            2093, -- The Nokhud Offensive
             2112, -- Valdrakken
         },
     },
