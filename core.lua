@@ -30,7 +30,6 @@ function ravMounts_OnEvent(self, event, arg, ...)
         end
         RAV_version = ns.version
         ns:MountListHandler()
-        ns:TooltipLabels()
         self:UnregisterEvent("PLAYER_LOGIN")
     elseif event == "ADDON_LOADED" and arg == "Blizzard_Collections" then
         ns:CreateOpenSettingsButton()

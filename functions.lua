@@ -11,12 +11,6 @@ local faction, _ = UnitFactionGroup("player")
 local flyable, cloneMountID, mapID, inAhnQiraj, inVashjir, inMaw, inDragonIsles, haveGroundMounts, haveFlyingMounts, havePassengerGroundMounts, havePassengerFlyingMounts, haveVendorMounts, haveSwimmingMounts, haveAhnQirajMounts, haveVashjirMounts, haveMawMounts, haveDragonIslesMounts, haveChauffeurMounts, haveBroom, haveMoonfang, normalMountModifier, vendorMountModifier, passengerMountModifier
 
 local modifiers = {"none", "alt", "ctrl", "shift"}
-local tooltipLabels = {
-    ["vendor"] = _G.BATTLE_PET_SOURCE_3,
-    ["passengerGround"] = L.PassengerGround,
-    ["passengerFlying"] = L.PassengerFlying,
-    ["flex"] = _G.PLAYER_DIFFICULTY4,
-}
 
 local CM = C_Map
 local CMJ = C_MountJournal
@@ -52,36 +46,6 @@ local function hasItemInBags()
         end
     end
     return false
-end
-
-local function addLabelsFromSpell(target, spellID, showCloneable)
-    if showCloneable == nil then showCloneable = true end
-    local type, cloneable
-    for mountType, label in pairs(tooltipLabels) do
-        for _, mountID in ipairs(ns.data.mountIDs[mountType]) do
-            local _, lookup, _ = CMJ.GetMountInfoByID(mountID)
-            if tonumber(lookup) == tonumber(spellID) then
-                type = label
-                break
-            end
-        end
-        if type then
-            break
-        end
-    end
-    if showCloneable then
-        for _, mountID in ipairs(RAV_data.mounts.allByID) do
-            local _, lookup, _ = CMJ.GetMountInfoByID(mountID)
-            if lookup == spellID then
-                cloneable = true
-                break
-            end
-        end
-    end
-    if type or (showCloneable and cloneable) then
-        target:AddLine("|cff" .. ns.color .. ns.name .. ":|r " .. (type and type or "") .. ((type and showCloneable and cloneable) and ", " or "") .. ((showCloneable and cloneable) and L.Cloneable or ""), 1, 1, 1)
-    end
-    target:Show()
 end
 
 local function GetMountName(mountID)
@@ -259,11 +223,16 @@ function ns:GetCloneMount()
     elseif RAV_data.options.clone == 3 then -- focus
         clone = UnitIsPlayer("focus") and "focus" or false
     end
+
     if clone then
-        for buffIndex = 1, 40 do
-            local mountIndex = contains(RAV_data.mounts.allByName, UnitBuff(clone, buffIndex))
-            if mountIndex then
-                return RAV_data.mounts.allByID[mountIndex]
+        local i, spellID, mountID
+        for i = 1, 40 do
+            spellID = select(10, UnitBuff(clone, i, "HELPFUL"))
+            if spellID then
+                mountID = CMJ.GetMountFromSpell(spellID)
+                if mountID then
+                    return CMJ.GetMountUsabilityByID(mountID, IsIndoors()) and mountID or false
+                end
             end
         end
     end
@@ -272,8 +241,6 @@ end
 
 function ns:MountListHandler()
     RAV_data.mounts = {}
-    RAV_data.mounts.allByName = {}
-    RAV_data.mounts.allByID = {}
     RAV_data.mounts.ground = {}
     RAV_data.mounts.flying = {}
     RAV_data.mounts.vendor = {}
@@ -307,8 +274,6 @@ function ns:MountListHandler()
         -- 0 = Horde, 1 = Alliance
         if isCollected and not (mountFaction == 0 and faction ~= "Horde") and not (mountFaction == 1 and faction ~= "Alliance") then
             if hasGroundRiding then
-                table.insert(RAV_data.mounts.allByName, mountName)
-                table.insert(RAV_data.mounts.allByID, mountID)
                 if isFlyingMount and (not RAV_data.options.normalMounts or isFavorite) and not isVendorMount and not isPassengerFlyingMount and not isPassengerGroundMount then
                     if isFlexMount then
                         if RAV_data.options.flexMounts == 3 or RAV_data.options.flexMounts == 1 then -- both or target
@@ -483,43 +448,6 @@ function ns:MountUpHandler(specificType)
     else
         ns:PrettyPrint(_G.MOUNT_JOURNAL_NO_VALID_FAVORITES)
     end
-end
-
-function ns:TooltipLabels()
-    hooksecurefunc(GameTooltip, "SetUnitAura", function(self, ...)
-        local unit = select(1, ...)
-        local spellID = select(10, UnitAura(...))
-        if unit ~= "player" and spellID then
-            addLabelsFromSpell(self, spellID)
-        end
-    end)
-
-    hooksecurefunc(GameTooltip, "SetUnitBuff", function(self, ...)
-        local unit = select(1, ...)
-        local spellID = select(10, UnitBuff(...))
-        if unit ~= "player" and spellID then
-            addLabelsFromSpell(self, spellID)
-        end
-    end)
-
-    hooksecurefunc("SetItemRef", function(link)
-        if link:find("^spell:") then
-            local spellID, _ = strsplit(":", link:sub(7))
-            addLabelsFromSpell(ItemRefTooltip, spellID, false)
-        end
-    end)
-
-    hooksecurefunc(GameTooltip, "SetMountBySpellID", function(self, ...)
-        local spellID = select(2, self:GetSpell())
-        if spellID then
-            for i = 1, self:NumLines() do
-                if _G["GameTooltipTextLeft"..i]:GetText():match(ns.name) then
-                    return
-                end
-            end
-            addLabelsFromSpell(self, spellID, false)
-        end
-    end)
 end
 
 function ns:RegisterDefaultOption(key, value)
