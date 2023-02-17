@@ -98,6 +98,7 @@ ns.data = {
             1414, -- Sinrunner Blanchy
             1426, -- Ascended Skymane
             1511, -- Wandering Arden Doe
+            1577, -- Ash'adar, Harbinger of Dawn
         },
         maw = {
             1304, -- Mawsworn Soulhunter
