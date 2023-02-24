@@ -17,9 +17,9 @@ ns.data = {
         travelForm = true,
     },
     mountTypes = {
-        ground = {230, 398, 408},
+        ground = {230, 398, 408, 412},
         flying = {247, 248, 407},
-        swimming = {231, 254, 407},
+        swimming = {231, 254, 407, 412},
         ahnqiraj = {241},
         vashjir = {232},
         chauffeur = {284},

@@ -23,12 +23,14 @@ function ravMounts_OnEvent(self, event, arg, ...)
     if event == "PLAYER_LOGIN" then
         ns:SetDefaultSettings()
         ns:CreateSettingsPanel()
-        if not RAV_version then
-            ns:PrettyPrint(L.Install:format(ns.color, ns.version))
-        elseif RAV_version ~= ns.version then
-            ns:PrettyPrint(L.Update:format(ns.color, ns.version))
+        if not ns.version:match("-") then
+            if not RAV_version then
+                ns:PrettyPrint(L.Install:format(ns.color, ns.version))
+            elseif RAV_version ~= ns.version then
+                ns:PrettyPrint(L.Update:format(ns.color, ns.version))
+            end
+            RAV_version = ns.version
         end
-        RAV_version = ns.version
         ns:MountListHandler()
         self:UnregisterEvent("PLAYER_LOGIN")
     elseif event == "ADDON_LOADED" and arg == "Blizzard_Collections" then
@@ -45,9 +47,9 @@ function ravMounts_OnEvent(self, event, arg, ...)
         local partyMembers = GetNumSubgroupMembers()
         local raidMembers = IsInRaid() and GetNumGroupMembers() or 0
         if IsInGroup(LE_PARTY_CATEGORY_INSTANCE) and (partyMembers > ns.data.partyMembers or raidMembers > ns.data.raidMembers) then
-            ns:SendUpdate("INSTANCE_CHAT");
+            ns:SendUpdate("INSTANCE_CHAT")
         elseif raidMembers == 0 and partyMembers > ns.data.partyMembers then
-            ns:SendUpdate("PARTY");
+            ns:SendUpdate("PARTY")
         elseif raidMembers > ns.data.raidMembers then
             ns:SendUpdate("RAID")
         end
@@ -57,11 +59,13 @@ function ravMounts_OnEvent(self, event, arg, ...)
         local message, channel, sender, _ = ...
         if message:match("V:") and not ns.updateFound then
             local version = message:gsub("V:", "")
-            local v1, v2, v3 = strsplit(".", version)
-            local c1, c2, c3 = strsplit(".", ns.version)
-            if v1 > c1 or (v1 == c1 and v2 > c2) or (v1 == c1 and v2 == c2 and v3 > c3) then
-                ns:PrettyPrint(L.UpdateFound:format(version))
-                ns.updateFound = true
+            if not version:match("-") then
+                local v1, v2, v3 = strsplit(".", version)
+                local c1, c2, c3 = strsplit(".", ns.version)
+                if v1 > c1 or (v1 == c1 and v2 > c2) or (v1 == c1 and v2 == c2 and v3 > c3) then
+                    ns:PrettyPrint(L.UpdateFound:format(version))
+                    ns.updateFound = true
+                end
             end
         end
     elseif event == "BAG_UPDATE" then

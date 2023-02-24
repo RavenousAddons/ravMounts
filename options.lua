@@ -1,8 +1,6 @@
 local ADDON_NAME, ns = ...
 local L = ns.L
 
-local defaults = ns.data.defaults
-
 function ns:CreateSettingsPanel()
     local category, layout = Settings.RegisterVerticalLayoutCategory(ns.name)
 
