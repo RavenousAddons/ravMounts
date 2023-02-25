@@ -322,6 +322,12 @@ function ns:MountListHandler()
             end
         end
     end
+    if hasGroundRiding and #RAV_data.mounts.ground == 0 and #RAV_data.mounts.passengerGround > 0 then
+        RAV_data.mounts.ground = RAV_data.mounts.passengerGround
+    end
+    if hasFlyingRiding and #RAV_data.mounts.flying == 0 and #RAV_data.mounts.passengerFlying > 0 then
+        RAV_data.mounts.flying = RAV_data.mounts.passengerFlying
+    end
     RAV_data.mounts.travelForm = {}
     if className == "DRUID" then
         if IsPlayerSpell(ns.data.travelForms["Travel Form"]) and (IsOutdoors() or IsSubmerged()) then
