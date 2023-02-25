@@ -90,7 +90,7 @@ end
 
 local hasSeenNoSpaceMessage = false
 function ns:EnsureMacro()
-    if RAV_data.options.macro and not UnitAffectingCombat("player") then
+    if RAV_data and RAV_data.options.macro and not UnitAffectingCombat("player") then
         ns:AssignVariables()
         local icon = "INV_Misc_QuestionMark"
         local flying = (inDragonIsles and haveDragonIslesMounts) and RAV_data.mounts.dragonisles or haveFlyingMounts and RAV_data.mounts.flying or nil
@@ -239,7 +239,43 @@ function ns:GetCloneMount()
     return false
 end
 
+function ns:MountIdentifier()
+    local i, spellID, mountID
+    for i = 1, 40 do
+        spellID = select(10, UnitBuff("player", i, "HELPFUL"))
+        if spellID then
+            mountID = CMJ.GetMountFromSpell(spellID)
+            if mountID then
+                local mountTypeString
+                for type, mountIDs in pairs(ns.data.mountIDs) do
+                    if contains(mountIDs, mountID) then
+                        mountTypeString = type
+                    end
+                end
+                if not mountTypeString then
+                    local _, _, _, _, mountType = CMJ.GetMountInfoExtraByID(mountID)
+                    for type, mountTypes in pairs(ns.data.mountTypes) do
+                        if contains(mountTypes, mountType) then
+                            mountTypeString = type
+                        end
+                    end
+                end
+                ns:PrettyPrint("Mount ID: " .. mountID .. " | Type: " .. mountTypeString .. " | Spell ID: " .. spellID)
+                return
+            end
+        end
+    end
+end
+
+local MountListHandlerTimeout = false
 function ns:MountListHandler()
+    if RAV_data == nil or MountListHandlerTimeout then
+        return
+    end
+    MountListHandlerTimeout = true
+    C_Timer.After(1, function()
+        MountListHandlerTimeout = false
+    end)
     RAV_data.mounts = {}
     RAV_data.mounts.ground = {}
     RAV_data.mounts.flying = {}
@@ -441,12 +477,10 @@ function ns:MountUpHandler(specificType)
         end
     elseif inAhnQiraj and haveAhnQirajMounts then
         ns:MountSummon(RAV_data.mounts.ahnqiraj)
-    elseif haveMoonfang or haveGroundMounts then
-        if (haveMoonfang) then
-            UseContainerItem(RAV_data.mounts.moonfang.bag, RAV_data.mounts.moonfang.slot, true)
-        else
-            ns:MountSummon(RAV_data.mounts.ground)
-        end
+    elseif haveMoonfang then
+        UseContainerItem(RAV_data.mounts.moonfang.bag, RAV_data.mounts.moonfang.slot, true)
+    elseif haveGroundMounts then
+        ns:MountSummon(RAV_data.mounts.ground)
     elseif haveFlyingMounts then
         ns:MountSummon(RAV_data.mounts.flying)
     elseif haveChauffeurMounts then

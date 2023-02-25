@@ -79,6 +79,8 @@ SlashCmdList["RAVMOUNTS"] = function(message)
     elseif message == "c" or message:match("con") or message == "h" or message:match("help") or message == "o" or message:match("opt") or message == "s" or message:match("sett") or message:match("togg") then
         PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)
         Settings.OpenToCategory(ns.name)
+    elseif message == "id" then
+        ns:MountIdentifier()
     elseif message == "f" or message:match("force") then
         ns:PrettyPrint(L.Force)
         ns:MountListHandler()
