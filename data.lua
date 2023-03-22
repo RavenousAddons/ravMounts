@@ -142,6 +142,7 @@ ns.data = {
             2085, -- The Primalist Future
             2093, -- The Nokhud Offensive
             2112, -- Valdrakken
+            2151, -- The Forbidden Reach
         },
     },
     partyMembers = 0,

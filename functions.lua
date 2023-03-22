@@ -541,8 +541,9 @@ function ns:CreateOpenSettingsButton()
     OpenOptions:SetWidth(OpenOptionsLabel:GetWidth() + 16)
     OpenOptions:RegisterForClicks("AnyUp")
     OpenOptions:SetScript("OnMouseUp", function(self)
-        PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)
-        Settings.OpenToCategory(ns.name)
+        -- Settings.OpenToCategory(ns.name)
+        local settingsCategoryID = _G[ADDON_NAME].categoryID
+        Settings.OpenToCategory(ADDON_NAME)
     end)
 end
 

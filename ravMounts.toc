@@ -1,5 +1,5 @@
-## Interface: 100005
-## Version: 2.8.8
+## Interface: 100007
+## Version: 2.8.9
 
 ## Name: Ravenous Mounts
 ## Title: Ravenous |cff9eb8c9Mounts|r
