@@ -134,6 +134,7 @@ ns.data = {
             1648, -- The Maw
         },
         dragonisles = {
+            1978, -- Dragon Isles Great Sea
             2022, -- The Waking Shores
             2023, -- Ohn'ahran Plains
             2024, -- The Azure Span
