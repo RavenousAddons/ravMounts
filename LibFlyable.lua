@@ -6,6 +6,7 @@ local spellsByContinent = {
     [2512] = 376777, -- The Primalist Future
     [2516] = 376777, -- The Nokhud Offensive
     [2534] = 376777, -- Obsidian Citadel
+    [2454] = 376777, -- Zaralek Cavern
 
     -- Shadowlands
     [2364] = -1, -- The Maw

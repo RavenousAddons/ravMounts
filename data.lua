@@ -86,6 +86,7 @@ ns.data = {
             834, -- Prestigious Azure Courser
             836, -- Prestigious Midnight Courser
             961, -- Lucid Nightmare
+            1190, -- Pureheart Courser
             1222, -- Vulpine Familiar
             1290, -- Squeakers, the Trickster
             1291, -- Lucky Yun
@@ -143,6 +144,7 @@ ns.data = {
             2085, -- The Primalist Future
             2093, -- The Nokhud Offensive
             2112, -- Valdrakken
+            2133, -- Zaralek Cavern
             2151, -- The Forbidden Reach
         },
     },

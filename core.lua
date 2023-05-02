@@ -91,6 +91,6 @@ SlashCmdList["RAVMOUNTS"] = function(message)
         ns:MountUpHandler(message)
     end
 end
-SLASH_RAVMOUNTS1 = "/ravm"
-SLASH_RAVMOUNTS2 = "/ravmounts"
-SLASH_RAVMOUNTS3 = "/ravenousmounts"
+SLASH_RAVMOUNTS1 = "/" .. string.lower(ADDON_NAME)
+SLASH_RAVMOUNTS2 = "/" .. string.lower(ns.name:gsub("%s+", ""))
+SLASH_RAVMOUNTS3 = "/" .. ns.command

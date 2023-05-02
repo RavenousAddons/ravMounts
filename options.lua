@@ -7,11 +7,7 @@ function ns:CreateSettingsPanel()
     layout:AddInitializer(CreateSettingsListSectionHeaderInitializer(_G.GAMEOPTIONS_MENU .. ":"))
 
     do
-        local variable = "macro"
-        local name = L.Macro
-        local tooltip = L.MacroTooltip:format(ns.name)
-
-        ns:CreateCheckBox(category, variable, name, tooltip)
+        ns:CreateCheckBox(category, "macro", L.Macro, L.MacroTooltip:format(ns.name))
     end
 
     do
