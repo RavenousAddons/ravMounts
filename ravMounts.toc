@@ -1,11 +1,12 @@
 ## Interface: 100100
-## Version: 2.8.11
+## Version: 2.8.12
 
 ## Name: Ravenous Mounts
 ## Title: Ravenous |cff9eb8c9Mounts|r
 ## Notes: Summons optimal mounts based on your Mount Journal Favorites.|n|n|cffbbbbbbSlash command: /ravm|r
 ## Author: RavenousAddons
-## IconAtlas: mountequipment-slot-background
+## AddonCompartmentFunc: ravMounts_SettingsOpen
+## IconAtlas: racing
 
 ## SavedVariables: RAV_version
 ## SavedVariablesPerCharacter: RAV_data, RAV_macroBody

@@ -73,14 +73,16 @@ function ravMounts_OnEvent(self, event, arg, ...)
     end
 end
 
+function ravMounts_SettingsOpen()
+    PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)
+    Settings.OpenToCategory(ns.Settings:GetID())
+end
+
 SlashCmdList["RAVMOUNTS"] = function(message)
     if message == "version" or message == "v" then
         ns:PrettyPrint(L.Version:format(ns.version))
     elseif message == "c" or message:match("con") or message == "h" or message:match("help") or message == "o" or message:match("opt") or message == "s" or message:match("sett") or message:match("togg") then
-        PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)
-        -- Settings.OpenToCategory(ns.name)
-        local settingsCategoryID = _G[ADDON_NAME].categoryID
-        Settings.OpenToCategory(ADDON_NAME)
+        ravMounts_SettingsOpen()
     elseif message == "id" then
         ns:MountIdentifier()
     elseif message == "f" or message:match("force") then
