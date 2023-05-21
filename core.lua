@@ -73,16 +73,32 @@ function ravMounts_OnEvent(self, event, arg, ...)
     end
 end
 
-function ravMounts_SettingsOpen()
-    PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)
-    Settings.OpenToCategory(ns.Settings:GetID())
+function ravMounts_OnAddonCompartmentClick(addonName, buttonName)
+    if buttonName == "MiddleButton" then
+        CollectionsJournal:Show()
+        MountJournal:Show()
+        return
+    elseif buttonName == "RightButton" then
+        ns:MountUpHandler("")
+        return
+    end
+    ns:OpenSettings()
+end
+
+function ravMounts_OnAddonCompartmentEnter()
+    GameTooltip:SetOwner(AddonCompartmentFrame, "ANCHOR_TOPRIGHT")
+    GameTooltip:SetText(ns.name .. "        v" .. ns.version)
+    GameTooltip:AddLine(" ", 1, 1, 1, true)
+    GameTooltip:AddLine(L.AddonCompartmentTooltip1, 1, 1, 1, true)
+    GameTooltip:AddLine(L.AddonCompartmentTooltip2, 1, 1, 1, true)
+    GameTooltip:Show()
 end
 
 SlashCmdList["RAVMOUNTS"] = function(message)
     if message == "version" or message == "v" then
         ns:PrettyPrint(L.Version:format(ns.version))
     elseif message == "c" or message:match("con") or message == "h" or message:match("help") or message == "o" or message:match("opt") or message == "s" or message:match("sett") or message:match("togg") then
-        ravMounts_SettingsOpen()
+        ns:OpenSettings()
     elseif message == "id" then
         ns:MountIdentifier()
     elseif message == "f" or message:match("force") then

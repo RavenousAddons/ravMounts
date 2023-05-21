@@ -36,6 +36,8 @@ L.Chauffeur = "Chauffeur"
 L.Modifier = "Modifier"
 L.ModifierTooltip = "Choose which modifier key to use to call %s." -- type
 L.ZoneSpecific = "Zone-Specific"
+L.AddonCompartmentTooltip1 = "|cff" .. ns.color .. "Left-Click:|r Open Settings"
+L.AddonCompartmentTooltip2 = "|cff" .. ns.color .. "Right-Click:|r Summon Mount"
 
 -- Check locale and assign appropriate
 local CURRENT_LOCALE = GetLocale()

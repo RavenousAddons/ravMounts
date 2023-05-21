@@ -18,11 +18,12 @@ ns.data = {
     },
     mountTypes = {
         ground = {230, 398, 408, 412},
-        flying = {247, 248, 407},
+        flying = {242, 247, 248, 407},
         swimming = {231, 254, 407, 412},
         ahnqiraj = {241},
         vashjir = {232},
         chauffeur = {284},
+        dragonriding = {402},
     },
     travelForms = {
         ["Cat Form"] = 768,
@@ -107,9 +108,10 @@ ns.data = {
             1441, -- Bound Shadehound
         },
         dragonisles = {
+            1563, -- Highland Drake
+            1588, -- Winding Slitherdrake
             1589, -- Renewed Proto-Drake
             1590, -- Windborne Velocidrake
-            1563, -- Highland Drake
             1591, -- Cliffside Wylderdrake
         },
     },

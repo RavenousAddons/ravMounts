@@ -557,3 +557,8 @@ function ns:SendUpdate(type)
     RAV_data.updateTimeoutTime = currentTime + ns.data.updateTimeout
     C_ChatInfo.SendAddonMessage(ADDON_NAME, "V:" .. ns.version, type)
 end
+
+function ns:OpenSettings()
+    PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)
+    Settings.OpenToCategory(ns.Settings:GetID())
+end
