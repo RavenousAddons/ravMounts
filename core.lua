@@ -74,9 +74,8 @@ function ravMounts_OnEvent(self, event, arg, ...)
 end
 
 function ravMounts_OnAddonCompartmentClick(addonName, buttonName)
-    if buttonName == "MiddleButton" then
-        CollectionsJournal:Show()
-        MountJournal:Show()
+    if buttonName == "MiddleButton" and not UnitAffectingCombat("player") then
+        ToggleCollectionsJournal(1)
         return
     elseif buttonName == "RightButton" then
         ns:MountUpHandler("")
@@ -86,11 +85,12 @@ function ravMounts_OnAddonCompartmentClick(addonName, buttonName)
 end
 
 function ravMounts_OnAddonCompartmentEnter()
-    GameTooltip:SetOwner(AddonCompartmentFrame, "ANCHOR_TOPRIGHT")
+    GameTooltip:SetOwner(DropDownList1)
     GameTooltip:SetText(ns.name .. "        v" .. ns.version)
     GameTooltip:AddLine(" ", 1, 1, 1, true)
     GameTooltip:AddLine(L.AddonCompartmentTooltip1, 1, 1, 1, true)
     GameTooltip:AddLine(L.AddonCompartmentTooltip2, 1, 1, 1, true)
+    GameTooltip:AddLine(L.AddonCompartmentTooltip3, 1, 1, 1, true)
     GameTooltip:Show()
 end
 
