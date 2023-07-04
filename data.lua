@@ -66,6 +66,7 @@ ns.data = {
             421, -- Winged Guardian
             439, -- Tyrael's Charger
             451, -- Jeweled Onyx Panther
+            454, -- Cindermane Charger
             455, -- Obsidian Nightwing
             456, -- Sapphire Panther
             457, -- Jade Panther
@@ -113,6 +114,7 @@ ns.data = {
             1589, -- Renewed Proto-Drake
             1590, -- Windborne Velocidrake
             1591, -- Cliffside Wylderdrake
+            1744, -- Grotto Netherwing Drake
         },
     },
     mapIDs = {
