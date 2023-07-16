@@ -150,6 +150,7 @@ ns.data = {
             2112, -- Valdrakken
             2133, -- Zaralek Cavern
             2151, -- The Forbidden Reach
+            2199, -- Time Rift (Thaldraszus)
         },
     },
     partyMembers = 0,
