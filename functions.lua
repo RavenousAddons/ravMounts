@@ -547,7 +547,7 @@ function ns:CreateOpenSettingsButton()
     end)
 end
 
-function ns:SendUpdate(type)
+function ns:SendVersionUpdate(type)
     local currentTime = GetTime()
     if (RAV_data.updateTimeoutTime) then
         if (currentTime < RAV_data.updateTimeoutTime) then

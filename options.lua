@@ -116,8 +116,8 @@ function ns:CreateSettingsPanel()
             local container = Settings.CreateControlTextContainer()
             container:Add(1, _G.LFG_TYPE_NONE)
             container:Add(2, _G.MINIMAP_TRACKING_TARGET)
-            container:Add(3, _G.FOCUS)
-            container:Add(4, _G.STATUS_TEXT_BOTH)
+            container:Add(3, _G.MINIMAP_TRACKING_FOCUS)
+            container:Add(4, _G.MINIMAP_TRACKING_TARGET .. " / " .. _G.MINIMAP_TRACKING_FOCUS)
             return container:GetData()
         end
 
@@ -133,7 +133,7 @@ function ns:CreateSettingsPanel()
             local container = Settings.CreateControlTextContainer()
             container:Add(1, L.Ground)
             container:Add(2, _G.BATTLE_PET_NAME_3)
-            container:Add(3, _G.STATUS_TEXT_BOTH)
+            container:Add(3, L.Ground .. " / " .. _G.BATTLE_PET_NAME_3)
             return container:GetData()
         end
 

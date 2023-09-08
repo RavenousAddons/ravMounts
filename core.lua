@@ -51,11 +51,11 @@ function ravMounts_OnEvent(self, event, arg, ...)
         local partyMembers = GetNumSubgroupMembers()
         local raidMembers = IsInRaid() and GetNumGroupMembers() or 0
         if IsInGroup(LE_PARTY_CATEGORY_INSTANCE) and (partyMembers > ns.data.partyMembers or raidMembers > ns.data.raidMembers) then
-            ns:SendUpdate("INSTANCE_CHAT")
+            ns:SendVersionUpdate("INSTANCE_CHAT")
         elseif raidMembers == 0 and partyMembers > ns.data.partyMembers then
-            ns:SendUpdate("PARTY")
+            ns:SendVersionUpdate("PARTY")
         elseif raidMembers > ns.data.raidMembers then
-            ns:SendUpdate("RAID")
+            ns:SendVersionUpdate("RAID")
         end
         ns.data.partyMembers = partyMembers
         ns.data.raidMembers = raidMembers
