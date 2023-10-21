@@ -81,8 +81,8 @@ function ns:AssignVariables()
     haveDragonIslesMounts = next(RAV_data.mounts.dragonisles) ~= nil and true or false
     haveChauffeurMounts = next(RAV_data.mounts.chauffeur) ~= nil and true or false
     haveTravelForm = next(RAV_data.mounts.travelForm) ~= nil and true or false
-    haveBroom = RAV_data.mounts.broom.slot ~= nil and true or false
-    haveMoonfang = RAV_data.mounts.moonfang.slot ~= nil and true or false
+    haveBroom = (RAV_data.mounts.broom ~= nil and RAV_data.mounts.broom.slot ~= nil) and true or false
+    haveMoonfang = (RAV_data.mounts.moonfang ~= nil and RAV_data.mounts.moonfang.slot ~= nil) and true or false
     normalMountModifier = RAV_data.options.normalMountModifier == 2 and IsAltKeyDown() or RAV_data.options.normalMountModifier == 3 and IsControlKeyDown() or RAV_data.options.normalMountModifier == 4 and IsShiftKeyDown() or false
     vendorMountModifier = RAV_data.options.vendorMountModifier == 2 and IsAltKeyDown() or RAV_data.options.vendorMountModifier == 3 and IsControlKeyDown() or RAV_data.options.vendorMountModifier == 4 and IsShiftKeyDown() or false
     passengerMountModifier = RAV_data.options.passengerMountModifier == 2 and IsAltKeyDown() or RAV_data.options.passengerMountModifier == 3 and IsControlKeyDown() or RAV_data.options.passengerMountModifier == 4 and IsShiftKeyDown() or false
@@ -101,9 +101,12 @@ function ns:EnsureMacro()
         local chauffeur = haveChauffeurMounts and RAV_data.mounts.chauffeur or nil
         local travelForm = haveTravelForm and RAV_data.mounts.travelForm or nil
         local dragonisles = (inDragonIsles and haveDragonIslesMounts) and RAV_data.mounts.dragonisles or nil
-        local broom = haveBroom and RAV_data.mounts.broom or nil
+        local broom = (haveBroom and flyable and not inDragonIsles) and RAV_data.mounts.broom or nil
         local moonfang = haveMoonfang and RAV_data.mounts.moonfang or nil
         local body = "/ravm"
+        if broom then
+            body = "/use [swimming,mod:" .. modifiers[RAV_data.options.normalMountModifier] .. "][nomod] " .. broom.name .. "\n/stopmacro [swimming,mod:" .. modifiers[RAV_data.options.normalMountModifier] .. "][nomod]\n" .. body
+        end
         if className == "DRUID" or className == "SHAMAN" then
             body = "/cancelform\n" .. body
         end
@@ -133,7 +136,7 @@ function ns:EnsureMacro()
                     body = travelFormName .. "\n" .. "/use " .. travelFormName
                 end
             else
-                if moonfang or ground then
+                if not broom and (moonfang or ground) then
                     mountName = moonfang and moonfang.name or GetMountName(ground[random(#ground)])
                     if not mountName then
                         ns:EnsureMacro()
@@ -147,7 +150,9 @@ function ns:EnsureMacro()
                         ns:EnsureMacro()
                         return
                     end
-                    if (broom or flyable) and (moonfang or ground) then
+                    if broom then
+                        body = broom.name .. "; " .. body
+                    elseif flyable and (moonfang or ground) then
                         if RAV_data.options.normalMountModifier ~= 1 then -- none
                             body = "[swimming,mod:" .. modifiers[RAV_data.options.normalMountModifier] .. "][nomod:" .. modifiers[RAV_data.options.normalMountModifier] .. "] " .. mountName .. "; " .. body
                         else
@@ -377,25 +382,27 @@ function ns:MountListHandler()
         end
     end
     RAV_data.mounts.broom = {}
-    -- local broomName, broomID = GetItemSpell(37011)
-    -- if (IsUsableSpell(broomID)) then
-    --     RAV_data.mounts.broom.name = broomName
-    --     for bag=0, NUM_BAG_SLOTS do
-    --         for slot=1, GetContainerNumSlots(bag) do
-    --             if 37011 == GetContainerItemID(bag, slot) then
-    --                 RAV_data.mounts.broom.bag = bag
-    --                 RAV_data.mounts.broom.slot = slot
-    --             end
-    --         end
-    --     end
-    -- end
+    local broomName, broomID = GetItemSpell(37011)
+    local usable, _ = IsUsableSpell(broomID)
+    if (usable) then
+        RAV_data.mounts.broom.name = broomName
+        for bag=0, NUM_BAG_SLOTS do
+            for slot=0, C_Container.GetContainerNumSlots(bag) do
+                if 37011 == C_Container.GetContainerItemID(bag, slot) then
+                    RAV_data.mounts.broom.bag = bag
+                    RAV_data.mounts.broom.slot = slot
+                end
+            end
+        end
+    end
     RAV_data.mounts.moonfang = {}
-    -- local moonfangName, moonfangID = GetItemSpell(37011)
-    -- if (IsUsableSpell(moonfangID)) then
+    -- local moonfangName, moonfangID = GetItemSpell(101675)
+    -- local usable, _ = IsUsableSpell(moonfangID)
+    -- if (usable) then
     --     RAV_data.mounts.moonfang.name = moonfangName
     --     for bag=0, NUM_BAG_SLOTS do
-    --         for slot=1, GetContainerNumSlots(bag) do
-    --             if 105898 == GetContainerItemID(bag, slot) then
+    --         for slot=1, C_Container.GetContainerNumSlots(bag) do
+    --             if 105898 == C_Container.GetContainerItemID(bag, slot) then
     --                 RAV_data.mounts.moonfang.bag = bag
     --                 RAV_data.mounts.moonfang.slot = slot
     --             end
@@ -470,15 +477,15 @@ function ns:MountUpHandler(specificType)
     elseif ((inDragonIsles and haveDragonIslesMounts) or haveBroom or haveFlyingMounts) and (flyable and (not normalMountModifier or (normalMountModifier and (IsSwimming() or (className == "DRUID" or className == "SHAMAN") and not inDragonIsles)))) or (not flyable and not IsSwimming() and normalMountModifier) then
         if (haveDragonIslesMounts and inDragonIsles) then
             ns:MountSummon(RAV_data.mounts.dragonisles)
-        elseif (haveBroom) then
-            UseContainerItem(RAV_data.mounts.broom.bag, RAV_data.mounts.broom.slot, true)
+        -- elseif haveBroom then
+        --     C_Container.UseContainerItem(RAV_data.mounts.broom.bag, RAV_data.mounts.broom.slot)
         else
             ns:MountSummon(RAV_data.mounts.flying)
         end
     elseif inAhnQiraj and haveAhnQirajMounts then
         ns:MountSummon(RAV_data.mounts.ahnqiraj)
-    elseif haveMoonfang then
-        UseContainerItem(RAV_data.mounts.moonfang.bag, RAV_data.mounts.moonfang.slot, true)
+    -- elseif haveMoonfang then
+    --     C_Container.UseContainerItem(RAV_data.mounts.moonfang.bag, RAV_data.mounts.moonfang.slot)
     elseif haveGroundMounts then
         ns:MountSummon(RAV_data.mounts.ground)
     elseif haveFlyingMounts then
