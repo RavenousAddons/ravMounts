@@ -493,8 +493,6 @@ function ns:MountUpHandler(specificType)
     elseif ((inDragonIsles and haveDragonIslesMounts) or haveBroom or haveFlyingMounts) and (flyable and (not normalMountModifier or (normalMountModifier and (IsSwimming() or (className == "DRUID" or className == "SHAMAN") and not inDragonIsles)))) or (not flyable and not IsSwimming() and normalMountModifier) then
         if (haveDragonIslesMounts and inDragonIsles) then
             ns:MountSummon(RAV_data.mounts.dragonisles)
-        -- elseif haveBroom then
-        --     C_Container.UseContainerItem(RAV_data.mounts.broom.bag, RAV_data.mounts.broom.slot)
         else
             ns:MountSummon(RAV_data.mounts.flying)
         end
@@ -582,17 +580,24 @@ function ns:CreateDropDown(category, variable, name, options, tooltip)
 end
 
 function ns:CreateOpenSettingsButton()
-    local OpenOptions = CreateFrame("Button", ADDON_NAME .. "OpenOptionsButton", MountJournal, "UIPanelButtonTemplate")
-    OpenOptions:SetPoint("BOTTOMRIGHT", MountJournal, "BOTTOMRIGHT", -4, 4)
-    local OpenOptionsLabel = OpenOptions:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-    OpenOptionsLabel:SetPoint("CENTER", OpenOptions, "CENTER")
-    OpenOptionsLabel:SetText(ns.name)
-    OpenOptions:SetWidth(OpenOptionsLabel:GetWidth() + 16)
-    OpenOptions:RegisterForClicks("AnyUp")
-    OpenOptions:SetScript("OnMouseUp", function(self)
-        -- Settings.OpenToCategory(ns.name)
-        local settingsCategoryID = _G[ADDON_NAME].categoryID
-        Settings.OpenToCategory(ADDON_NAME)
+    local OpenSettingsButton = CreateFrame("Button", ADDON_NAME .. "OpenSettingsButtonButton", MountJournal, "UIPanelButtonTemplate")
+    OpenSettingsButton:SetPoint("BOTTOMRIGHT", MountJournal, "BOTTOMRIGHT", -4, 4)
+    local OpenSettingsButtonLabel = OpenSettingsButton:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+    OpenSettingsButtonLabel:SetPoint("CENTER", OpenSettingsButton, "CENTER")
+    OpenSettingsButtonLabel:SetText(ns.name)
+    OpenSettingsButton:SetWidth(OpenSettingsButtonLabel:GetWidth() + 32)
+    OpenSettingsButton:RegisterForClicks("AnyUp")
+    OpenSettingsButton:SetScript("OnMouseUp", function(self)
+        ns:OpenSettings()
+    end)
+    OpenSettingsButton:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self or UIParent)
+        GameTooltip:SetText("|cffffffff" .. ns.name .. "|r")
+        GameTooltip:AddLine("Open AddOn options.")
+        GameTooltip:Show()
+    end)
+    OpenSettingsButton:SetScript("OnLeave", function(self)
+        GameTooltip:Hide()
     end)
 end
 
