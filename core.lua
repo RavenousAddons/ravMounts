@@ -8,6 +8,8 @@ function ravMounts_OnLoad(self)
     self:RegisterEvent("PLAYER_LOGIN")
     self:RegisterEvent("ADDON_LOADED")
     self:RegisterEvent("ZONE_CHANGED_NEW_AREA")
+    self:RegisterEvent("ZONE_CHANGED")
+    self:RegisterEvent("ZONE_CHANGED_INDOORS")
     self:RegisterEvent("MOUNT_JOURNAL_USABILITY_CHANGED")
     self:RegisterEvent("MOUNT_JOURNAL_SEARCH_UPDATED")
     self:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
@@ -15,10 +17,6 @@ function ravMounts_OnLoad(self)
     self:RegisterEvent("GROUP_ROSTER_UPDATE")
     self:RegisterEvent("CHAT_MSG_ADDON")
     self:RegisterEvent("BAG_UPDATE")
-    if className == "DRUID" then
-        self:RegisterEvent("ZONE_CHANGED")
-        self:RegisterEvent("ZONE_CHANGED_INDOORS")
-    end
 end
 
 function ravMounts_OnEvent(self, event, arg, ...)
@@ -35,15 +33,12 @@ function ravMounts_OnEvent(self, event, arg, ...)
             RAV_version = ns.version
         end
         ns:MountListHandler()
+        ns:AttachTooltipLabels()
         self:UnregisterEvent("PLAYER_LOGIN")
     elseif event == "ADDON_LOADED" and arg == "Blizzard_Collections" then
         ns:CreateOpenSettingsButton()
         self:UnregisterEvent("ADDON_LOADED")
-    elseif event == "ZONE_CHANGED_NEW_AREA" or event == "MOUNT_JOURNAL_USABILITY_CHANGED" or event == "MOUNT_JOURNAL_SEARCH_UPDATED" or event =="PLAYER_SPECIALIZATION_CHANGED" or event == "UPDATE_SHAPESHIFT_FORMS" then
-        travelFormCondition = (IsOutdoors() or IsSubmerged())
-        ns:MountListHandler()
-        ns:EnsureMacro()
-    elseif (event == "ZONE_CHANGED" or event == "ZONE_CHANGED_INDOORS") and travelFormCondition ~= (IsOutdoors() or IsSubmerged()) then
+    elseif event == "ZONE_CHANGED_NEW_AREA" or event == "MOUNT_JOURNAL_USABILITY_CHANGED" or event == "MOUNT_JOURNAL_SEARCH_UPDATED" or event =="PLAYER_SPECIALIZATION_CHANGED" or event == "UPDATE_SHAPESHIFT_FORMS" or event == "ZONE_CHANGED" or event == "ZONE_CHANGED_INDOORS" then
         travelFormCondition = (IsOutdoors() or IsSubmerged())
         ns:MountListHandler()
         ns:EnsureMacro()
