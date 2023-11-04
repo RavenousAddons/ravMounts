@@ -115,6 +115,7 @@ ns.data = {
             1590, -- Windborne Velocidrake
             1591, -- Cliffside Wylderdrake
             1744, -- Grotto Netherwing Drake
+            1792, -- Algarian Stormrider
         },
     },
     mapIDs = {
