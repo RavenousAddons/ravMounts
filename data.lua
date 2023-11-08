@@ -14,6 +14,7 @@ ns.data = {
         swimmingMounts = true,
         normalSwimmingMounts = false,
         zoneSpecificMounts = true,
+        preferDragonRiding = true,
         travelForm = true,
     },
     mountTypes = {
@@ -152,6 +153,7 @@ ns.data = {
             2133, -- Zaralek Cavern
             2151, -- The Forbidden Reach
             2199, -- Time Rift (Thaldraszus)
+            2200, -- Emerald Dream
         },
     },
     partyMembers = 0,

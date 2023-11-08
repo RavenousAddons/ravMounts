@@ -92,6 +92,14 @@ function ns:CreateSettingsPanel()
     end
 
     do
+        local variable = "preferDragonRiding"
+        local name = L.PreferDragonRiding
+        local tooltip = L.PreferDragonRidingTooltip
+
+        ns:CreateCheckBox(category, variable, name, tooltip)
+    end
+
+    do
         local variable = "travelForm"
         local name = L.TravelForm
         local tooltip = L.TravelFormTooltip

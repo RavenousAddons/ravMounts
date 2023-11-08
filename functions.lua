@@ -110,7 +110,7 @@ function ns:EnsureMacro()
 
     ns:AssignVariables()
     local icon = "INV_Misc_QuestionMark"
-    local flying = (inDragonIsles and haveDragonIslesMounts) and mounts.dragonisles or haveFlyingMounts and mounts.flying or nil
+    local flying = (inDragonIsles and haveDragonIslesMounts and options.preferDragonRiding) and mounts.dragonisles or haveFlyingMounts and mounts.flying or nil
     local ground = (inAhnQiraj and haveAhnQirajMounts) and mounts.ahnqiraj or haveGroundMounts and mounts.ground or nil
     local vendor = haveVendorMounts and mounts.vendor or nil
     local passenger = (flyable and havePassengerFlyingMounts) and mounts.passengerFlying or havePassengerGroundMounts and mounts.passengerGround or nil
@@ -133,7 +133,7 @@ function ns:EnsureMacro()
         if (options.travelForm and travelForm) then
             local travelFormName, _ = GetSpellInfo(travelForm[1])
             if options.normalMountModifier ~= 1 then
-                if inDragonIsles and haveDragonIslesMounts then
+                if inDragonIsles and haveDragonIslesMounts and options.preferDragonRiding then
                     mountName = GetMountName(dragonisles[random(#dragonisles)])
                     body = "[mod:" .. modifiers[options.normalMountModifier] .. "] " .. travelFormName .. "; " .. mountName .. "\n" .. "/use [mod:" .. modifiers[options.normalMountModifier] .. "] " .. travelFormName .. "\n" .. "/stopmacro [mod:" .. modifiers[options.normalMountModifier] .. "]" .. body
                 else
@@ -428,6 +428,9 @@ function ns:MountListHandler()
 end
 
 function ns:MountUpHandler(specificType)
+    local mounts = RAV_data.mounts
+    local options = RAV_data.options
+
     -- Uses the in-game Interface Setting "Controls" → "Auto Dismount in Flight"
     if IsFlying() and GetCVar("autoDismountFlying") == "0" then
         return
@@ -435,29 +438,29 @@ function ns:MountUpHandler(specificType)
     ns:AssignVariables()
     -- Check for specific types
     if (specificType:match("vend") or specificType:match("repair") or specificType:match("trans") or specificType:match("mog")) and haveVendorMounts then
-        ns:MountSummon(RAV_data.mounts.vendor)
+        ns:MountSummon(mounts.vendor)
     elseif (specificType:match("2") or specificType:match("two") or specificType:match("multi") or specificType:match("passenger")) and havePassengerFlyingMounts and flyable then
-        ns:MountSummon(RAV_data.mounts.passengerFlying)
+        ns:MountSummon(mounts.passengerFlying)
     elseif specificType:match("fly") and (specificType:match("2") or specificType:match("two") or specificType:match("multi") or specificType:match("passenger")) and havePassengerFlyingMounts then
-        ns:MountSummon(RAV_data.mounts.passengerFlying)
+        ns:MountSummon(mounts.passengerFlying)
     elseif (specificType:match("2") or specificType:match("two") or specificType:match("multi") or specificType:match("passenger")) and havePassengerGroundMounts then
-        ns:MountSummon(RAV_data.mounts.passengerGround)
+        ns:MountSummon(mounts.passengerGround)
     elseif specificType:match("swim") and haveSwimmingMounts then
-        ns:MountSummon(RAV_data.mounts.swimming)
+        ns:MountSummon(mounts.swimming)
     elseif (specificType == "vj" or specificType:match("vash") or specificType:match("jir")) and haveVashjirMounts then
-        ns:MountSummon(RAV_data.mounts.vashjir)
+        ns:MountSummon(mounts.vashjir)
     elseif specificType:match("fly") and haveFlyingMounts then
-        ns:MountSummon(RAV_data.mounts.flying)
+        ns:MountSummon(mounts.flying)
     elseif (specificType == "aq" or specificType:match("ahn") or specificType:match("qiraj")) and haveAhnQirajMounts then
-        ns:MountSummon(RAV_data.mounts.ahnqiraj)
+        ns:MountSummon(mounts.ahnqiraj)
     elseif specificType:match("maw") and haveMawMounts then
-        ns:MountSummon(RAV_data.mounts.maw)
+        ns:MountSummon(mounts.maw)
     elseif (specificType == "df" or specificType == "di" or specificType == "dr" or specificType:match("dragon")) and haveDragonIslesMounts then
-        ns:MountSummon(RAV_data.mounts.dragonisles)
+        ns:MountSummon(mounts.dragonisles)
     elseif specificType == "ground" and haveGroundMounts then
-        ns:MountSummon(RAV_data.mounts.ground)
+        ns:MountSummon(mounts.ground)
     elseif specificType == "chauffeur" and haveChauffeurMounts then
-        ns:MountSummon(RAV_data.mounts.chauffeur)
+        ns:MountSummon(mounts.chauffeur)
     elseif (specificType == "copy" or specificType == "clone") and cloneMountID then
         CMJ.SummonByID(cloneMountID)
     -- Check for /mountspecial modifiers
@@ -472,40 +475,40 @@ function ns:MountUpHandler(specificType)
         VehicleExit()
         UIErrorsFrame:Clear()
     -- If in travel form, then cancel form
-    elseif RAV_data.options.travelForm == true and ((className == "DRUID" and GetShapeshiftForm() == 3) or (className == "SHAMAN" and GetShapeshiftForm() == 16)) then
+    elseif options.travelForm == true and ((className == "DRUID" and GetShapeshiftForm() == 3) or (className == "SHAMAN" and GetShapeshiftForm() == 16)) then
         CancelShapeshiftForm()
         UIErrorsFrame:Clear()
     -- Clone
-    elseif RAV_data.options.clone ~= 1 and cloneMountID and not normalMountModifier and not vendorMountModifier and not passengerMountModifier then
+    elseif options.clone ~= 1 and cloneMountID and not normalMountModifier and not vendorMountModifier and not passengerMountModifier then
         CMJ.SummonByID(cloneMountID)
     -- Modifier Keys
     elseif haveVendorMounts and vendorMountModifier then
-        ns:MountSummon(RAV_data.mounts.vendor)
+        ns:MountSummon(mounts.vendor)
     elseif havePassengerFlyingMounts and flyable and passengerMountModifier and not normalMountModifier then
-        ns:MountSummon(RAV_data.mounts.passengerFlying)
+        ns:MountSummon(mounts.passengerFlying)
     elseif havePassengerGroundMounts and passengerMountModifier and (not flyable or (flyable and normalMountModifier)) then
-        ns:MountSummon(RAV_data.mounts.passengerGround)
+        ns:MountSummon(mounts.passengerGround)
     -- The Rest...
     elseif haveVashjirMounts and IsSwimming() and not normalMountModifier and inVashjir then
-        ns:MountSummon(RAV_data.mounts.vashjir)
+        ns:MountSummon(mounts.vashjir)
     elseif haveSwimmingMounts and IsSwimming() and not normalMountModifier then
-        ns:MountSummon(RAV_data.mounts.swimming)
-    elseif ((inDragonIsles and haveDragonIslesMounts) or haveBroom or haveFlyingMounts) and (flyable and (not normalMountModifier or (normalMountModifier and (IsSwimming() or (className == "DRUID" or className == "SHAMAN") and not inDragonIsles)))) or (not flyable and not IsSwimming() and normalMountModifier) then
-        if (haveDragonIslesMounts and inDragonIsles) then
-            ns:MountSummon(RAV_data.mounts.dragonisles)
+        ns:MountSummon(mounts.swimming)
+    elseif ((inDragonIsles and haveDragonIslesMounts and options.preferDragonRiding) or haveBroom or haveFlyingMounts) and (flyable and (not normalMountModifier or (normalMountModifier and (IsSwimming() or (className == "DRUID" or className == "SHAMAN") and not inDragonIsles)))) or (not flyable and not IsSwimming() and normalMountModifier) then
+        if inDragonIsles and haveDragonIslesMounts and options.preferDragonRiding then
+            ns:MountSummon(mounts.dragonisles)
         else
-            ns:MountSummon(RAV_data.mounts.flying)
+            ns:MountSummon(mounts.flying)
         end
     elseif inAhnQiraj and haveAhnQirajMounts then
-        ns:MountSummon(RAV_data.mounts.ahnqiraj)
+        ns:MountSummon(mounts.ahnqiraj)
     -- elseif haveMoonfang then
-    --     C_Container.UseContainerItem(RAV_data.mounts.moonfang.bag, RAV_data.mounts.moonfang.slot)
+    --     C_Container.UseContainerItem(mounts.moonfang.bag, mounts.moonfang.slot)
     elseif haveGroundMounts then
-        ns:MountSummon(RAV_data.mounts.ground)
+        ns:MountSummon(mounts.ground)
     elseif haveFlyingMounts then
-        ns:MountSummon(RAV_data.mounts.flying)
+        ns:MountSummon(mounts.flying)
     elseif haveChauffeurMounts then
-        ns:MountSummon(RAV_data.mounts.chauffeur)
+        ns:MountSummon(mounts.chauffeur)
     else
         ns:PrettyPrint(_G.MOUNT_JOURNAL_NO_VALID_FAVORITES)
     end
