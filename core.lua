@@ -29,10 +29,10 @@ function ravMounts_OnEvent(self, event, arg, ...)
                 ns:PrettyPrint(L.Install:format(ns.color, ns.version))
             elseif RAV_version ~= ns.version then
                 ns:PrettyPrint(L.Update:format(ns.color, ns.version))
-                print("This update contains a new AddOn option to toggle your preference for Dragonriding mounts versus standard Flying mounts in the Dragon Isles.")
             end
             RAV_version = ns.version
         end
+        ns:PrettyPrint("This alpha update contains a change to the Alt key usage in Dragon Isles for switching between summoning Dragonriding or Flying mounts instead of Flying or Ground mounts.")
         ns:MountListHandler()
         ns:AttachTooltipLabels()
         self:UnregisterEvent("PLAYER_LOGIN")

@@ -109,7 +109,7 @@ ns.data = {
             1442, -- Corridor Creeper
             1441, -- Bound Shadehound
         },
-        dragonisles = {
+        dragonriding = {
             1563, -- Highland Drake
             1588, -- Winding Slitherdrake
             1589, -- Renewed Proto-Drake

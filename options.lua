@@ -1,19 +1,64 @@
 local ADDON_NAME, ns = ...
 local L = ns.L
 
+-- Reference default values and data tables.
+local defaults = ns.data.defaults
+
+local function CreateCheckBox(category, variable, name, tooltip)
+    local setting = Settings.RegisterAddOnSetting(category, name, variable, type(defaults[variable]), RAV_data.options[variable])
+    Settings.SetOnValueChangedCallback(variable, function(event)
+        RAV_data.options[variable] = setting:GetValue()
+        ns:MountListHandler()
+        ns:EnsureMacro()
+    end)
+    Settings.CreateCheckBox(category, setting, tooltip)
+end
+
+local function CreateDropDown(category, variable, name, options, tooltip)
+    local setting = Settings.RegisterAddOnSetting(category, name, variable, type(defaults[variable]), RAV_data.options[variable])
+    Settings.SetOnValueChangedCallback(variable, function(event)
+        RAV_data.options[variable] = setting:GetValue()
+        ns:MountListHandler()
+        ns:EnsureMacro()
+    end)
+    Settings.CreateDropDown(category, setting, options, tooltip)
+end
+
+function ns:CreateOpenSettingsButton()
+    local OpenSettingsButton = CreateFrame("Button", ADDON_NAME .. "OpenSettingsButtonButton", MountJournal, "UIPanelButtonTemplate")
+    OpenSettingsButton:SetPoint("BOTTOMRIGHT", MountJournal, "BOTTOMRIGHT", -4, 4)
+    local OpenSettingsButtonLabel = OpenSettingsButton:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+    OpenSettingsButtonLabel:SetPoint("CENTER", OpenSettingsButton, "CENTER")
+    OpenSettingsButtonLabel:SetText(ns.name)
+    OpenSettingsButton:SetWidth(OpenSettingsButtonLabel:GetWidth() + 32)
+    OpenSettingsButton:RegisterForClicks("AnyUp")
+    OpenSettingsButton:SetScript("OnMouseUp", function(self)
+        ns:OpenSettings()
+    end)
+    OpenSettingsButton:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self or UIParent)
+        GameTooltip:SetText("|cffffffff" .. ns.name .. "|r")
+        GameTooltip:AddLine("Open AddOn options.")
+        GameTooltip:Show()
+    end)
+    OpenSettingsButton:SetScript("OnLeave", function(self)
+        GameTooltip:Hide()
+    end)
+end
+
 function ns:CreateSettingsPanel()
     local category, layout = Settings.RegisterVerticalLayoutCategory(ns.name)
 
     layout:AddInitializer(CreateSettingsListSectionHeaderInitializer(_G.GAMEOPTIONS_MENU .. ":"))
 
     do
-        ns:CreateCheckBox(category, "macro", L.Macro, L.MacroTooltip:format(ns.name))
+        CreateCheckBox(category, "macro", L.Macro, L.MacroTooltip:format(ns.name))
     end
 
     do
         local variable = "normalMountModifier"
-        local name = L.Ground .. "/" .. _G.BATTLE_PET_NAME_3 .. " " .. _G.MOUNTS .. " " .. L.Modifier
-        local tooltip = L.ModifierTooltip:format(L.Ground .. "/" .. _G.BATTLE_PET_NAME_3 .. " " .. _G.MOUNTS)
+        local name = L.Alternate .. " " .. _G.MOUNTS .. " " .. L.Modifier
+        local tooltip = L.NormalModifierTooltip
 
         local function GetOptions()
             local container = Settings.CreateControlTextContainer()
@@ -34,7 +79,7 @@ function ns:CreateSettingsPanel()
             return container:GetData()
         end
 
-        ns:CreateDropDown(category, variable, name, GetOptions, tooltip)
+        CreateDropDown(category, variable, name, GetOptions, tooltip)
     end
 
     do
@@ -61,7 +106,7 @@ function ns:CreateSettingsPanel()
             return container:GetData()
         end
 
-        ns:CreateDropDown(category, variable, name, GetOptions, tooltip)
+        CreateDropDown(category, variable, name, GetOptions, tooltip)
     end
 
     do
@@ -88,7 +133,7 @@ function ns:CreateSettingsPanel()
             return container:GetData()
         end
 
-        ns:CreateDropDown(category, variable, name, GetOptions, tooltip)
+        CreateDropDown(category, variable, name, GetOptions, tooltip)
     end
 
     do
@@ -96,7 +141,7 @@ function ns:CreateSettingsPanel()
         local name = L.PreferDragonRiding
         local tooltip = L.PreferDragonRidingTooltip
 
-        ns:CreateCheckBox(category, variable, name, tooltip)
+        CreateCheckBox(category, variable, name, tooltip)
     end
 
     do
@@ -104,7 +149,7 @@ function ns:CreateSettingsPanel()
         local name = L.TravelForm
         local tooltip = L.TravelFormTooltip
 
-        ns:CreateCheckBox(category, variable, name, tooltip)
+        CreateCheckBox(category, variable, name, tooltip)
     end
 
     do
@@ -112,7 +157,7 @@ function ns:CreateSettingsPanel()
         local name = L.NormalSwimming
         local tooltip = L.NormalSwimmingTooltip
 
-        ns:CreateCheckBox(category, variable, name, tooltip)
+        CreateCheckBox(category, variable, name, tooltip)
     end
 
     do
@@ -129,7 +174,7 @@ function ns:CreateSettingsPanel()
             return container:GetData()
         end
 
-        ns:CreateDropDown(category, variable, name, GetOptions, tooltip)
+        CreateDropDown(category, variable, name, GetOptions, tooltip)
     end
 
     do
@@ -145,7 +190,7 @@ function ns:CreateSettingsPanel()
             return container:GetData()
         end
 
-        ns:CreateDropDown(category, variable, name, GetOptions, tooltip)
+        CreateDropDown(category, variable, name, GetOptions, tooltip)
     end
 
     layout:AddInitializer(CreateSettingsListSectionHeaderInitializer(L.FavoritesHeading))
@@ -155,7 +200,7 @@ function ns:CreateSettingsPanel()
         local name = L.Ground .. "/" .. _G.BATTLE_PET_NAME_3 .. " " .. _G.MOUNTS
         local tooltip = L.MountsTooltip:format(L.Ground .. "/" .. _G.BATTLE_PET_NAME_3 .. " " .. _G.MOUNTS)
 
-        ns:CreateCheckBox(category, variable, name, tooltip)
+        CreateCheckBox(category, variable, name, tooltip)
     end
 
     do
@@ -163,7 +208,7 @@ function ns:CreateSettingsPanel()
         local name = _G.BATTLE_PET_SOURCE_3 .. " " .. _G.MOUNTS
         local tooltip = L.MountsTooltip:format(_G.BATTLE_PET_SOURCE_3 .. " " .. _G.MOUNTS)
 
-        ns:CreateCheckBox(category, variable, name, tooltip)
+        CreateCheckBox(category, variable, name, tooltip)
     end
 
     do
@@ -171,7 +216,7 @@ function ns:CreateSettingsPanel()
         local name = L.Passenger .. " " .. _G.MOUNTS
         local tooltip = L.MountsTooltip:format(L.Passenger .. " " .. _G.MOUNTS)
 
-        ns:CreateCheckBox(category, variable, name, tooltip)
+        CreateCheckBox(category, variable, name, tooltip)
     end
 
     do
@@ -179,15 +224,15 @@ function ns:CreateSettingsPanel()
         local name = _G.TUTORIAL_TITLE28 .. " " .. _G.MOUNTS
         local tooltip = L.MountsTooltip:format(_G.TUTORIAL_TITLE28 .. " " .. _G.MOUNTS)
 
-        ns:CreateCheckBox(category, variable, name, tooltip)
+        CreateCheckBox(category, variable, name, tooltip)
     end
 
     do
         local variable = "zoneSpecificMounts"
         local name = L.ZoneSpecific .. " " .. _G.MOUNTS
-        local tooltip = L.MountsTooltip:format(L.ZoneSpecific .. " " .. _G.MOUNTS)
+        local tooltip = L.ZoneSpecificMountsTooltip
 
-        ns:CreateCheckBox(category, variable, name, tooltip)
+        CreateCheckBox(category, variable, name, tooltip)
     end
 
     Settings.RegisterAddOnCategory(category)
