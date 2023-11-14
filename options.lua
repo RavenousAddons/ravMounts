@@ -197,8 +197,8 @@ function ns:CreateSettingsPanel()
 
     do
         local variable = "normalMounts"
-        local name = L.Ground .. "/" .. _G.BATTLE_PET_NAME_3 .. " " .. _G.MOUNTS
-        local tooltip = L.MountsTooltip:format(L.Ground .. "/" .. _G.BATTLE_PET_NAME_3 .. " " .. _G.MOUNTS)
+        local name = L.Ground .. "/" .. _G.BATTLE_PET_NAME_3 .. "/" .. L.Dragonriding .. " " .. _G.MOUNTS
+        local tooltip = L.MountsTooltip:format(L.Ground .. "/" .. _G.BATTLE_PET_NAME_3 .. "/" .. L.Dragonriding .. " " .. _G.MOUNTS)
 
         CreateCheckBox(category, variable, name, tooltip)
     end

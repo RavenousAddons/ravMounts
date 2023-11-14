@@ -1,9 +1,6 @@
 local ADDON_NAME, ns = ...
 local L = ns.L
 
-local _, className = UnitClass("player")
-local travelFormCondition = (IsOutdoors() or IsSubmerged())
-
 function ravMounts_OnLoad(self)
     self:RegisterEvent("PLAYER_LOGIN")
     self:RegisterEvent("ADDON_LOADED")
@@ -29,10 +26,10 @@ function ravMounts_OnEvent(self, event, arg, ...)
                 ns:PrettyPrint(L.Install:format(ns.color, ns.version))
             elseif RAV_version ~= ns.version then
                 ns:PrettyPrint(L.Update:format(ns.color, ns.version))
+                ns:PrettyPrint("This version contains a change to the way the Ground/Flying Modifier Key works in the Dragon Isles to allow easier switching between Dragonriding and Flying mounts and also includes a new setting to choose your preference between Dragonriding mounts and Flying mounts.")
             end
             RAV_version = ns.version
         end
-        ns:PrettyPrint("This alpha update contains a change to the Alt key usage in Dragon Isles for switching between summoning Dragonriding or Flying mounts instead of Flying or Ground mounts.")
         ns:MountListHandler()
         ns:AttachTooltipLabels()
         self:UnregisterEvent("PLAYER_LOGIN")
@@ -40,7 +37,6 @@ function ravMounts_OnEvent(self, event, arg, ...)
         ns:CreateOpenSettingsButton()
         self:UnregisterEvent("ADDON_LOADED")
     elseif event == "ZONE_CHANGED_NEW_AREA" or event == "MOUNT_JOURNAL_USABILITY_CHANGED" or event == "MOUNT_JOURNAL_SEARCH_UPDATED" or event =="PLAYER_SPECIALIZATION_CHANGED" or event == "UPDATE_SHAPESHIFT_FORMS" or event == "ZONE_CHANGED" or event == "ZONE_CHANGED_INDOORS" then
-        travelFormCondition = (IsOutdoors() or IsSubmerged())
         ns:MountListHandler()
         ns:EnsureMacro()
     elseif event == "GROUP_ROSTER_UPDATE" then

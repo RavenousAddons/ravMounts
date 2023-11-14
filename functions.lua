@@ -91,12 +91,15 @@ end
 
 -- Retrive the Mount ID of the Player's target/focus, based on options.
 local function GetCloneMountID()
+    -- Simplify references
+    local options = RAV_data.options
+
     local clone = false
-    if RAV_data.options.clone == 4 then -- both
+    if options.clone == 4 then -- both
         clone = UnitIsPlayer("target") and "target" or UnitIsPlayer("focus") and "focus" or false
-    elseif RAV_data.options.clone == 2 then -- target
+    elseif options.clone == 2 then -- target
         clone = UnitIsPlayer("target") and "target" or false
-    elseif RAV_data.options.clone == 3 then -- focus
+    elseif options.clone == 3 then -- focus
         clone = UnitIsPlayer("focus") and "focus" or false
     end
 
@@ -118,6 +121,9 @@ end
 -- Assign values to global variables. This function fires everytime the values
 -- are likely to change.
 local function AssignVariables()
+    -- Simplify references
+    local options = RAV_data.options
+
     flyable = ns:IsFlyableArea()
     cloneMountID = GetCloneMountID()
     mapID = CM.GetBestMapForUnit("player")
@@ -138,9 +144,9 @@ local function AssignVariables()
     haveChauffeurMounts = next(RAV_data.mounts.chauffeur) ~= nil and true or false
     haveTravelForm = next(RAV_data.mounts.travelForm) ~= nil and true or false
     haveBroom = (RAV_data.mounts.broom ~= nil and RAV_data.mounts.broom.slot ~= nil) and true or false
-    normalMountModifier = RAV_data.options.normalMountModifier == 2 and IsAltKeyDown() or RAV_data.options.normalMountModifier == 3 and IsControlKeyDown() or RAV_data.options.normalMountModifier == 4 and IsShiftKeyDown() or false
-    vendorMountModifier = RAV_data.options.vendorMountModifier == 2 and IsAltKeyDown() or RAV_data.options.vendorMountModifier == 3 and IsControlKeyDown() or RAV_data.options.vendorMountModifier == 4 and IsShiftKeyDown() or false
-    passengerMountModifier = RAV_data.options.passengerMountModifier == 2 and IsAltKeyDown() or RAV_data.options.passengerMountModifier == 3 and IsControlKeyDown() or RAV_data.options.passengerMountModifier == 4 and IsShiftKeyDown() or false
+    normalMountModifier = options.normalMountModifier == 2 and IsAltKeyDown() or options.normalMountModifier == 3 and IsControlKeyDown() or options.normalMountModifier == 4 and IsShiftKeyDown() or false
+    vendorMountModifier = options.vendorMountModifier == 2 and IsAltKeyDown() or options.vendorMountModifier == 3 and IsControlKeyDown() or options.vendorMountModifier == 4 and IsShiftKeyDown() or false
+    passengerMountModifier = options.passengerMountModifier == 2 and IsAltKeyDown() or options.passengerMountModifier == 3 and IsControlKeyDown() or options.passengerMountModifier == 4 and IsShiftKeyDown() or false
 end
 
 -- Summons a random mount from a given list of mounts.
@@ -154,6 +160,12 @@ local function MountSummon(list)
         end
         CMJ.SummonByID(list[n])
     end
+end
+
+local function GetRandomMountFromList(list)
+    local _, spellID = CMJ.GetMountInfoByID(list[random(#list)])
+    local mountName, _ = GetSpellInfo(spellID)
+    return mountName
 end
 
 ---
@@ -207,6 +219,9 @@ end
 
 -- Builds a list of chosen mounts and sorts them into categories.
 function ns:MountListHandler()
+    -- Simplify references
+    local options = RAV_data.options
+
     -- Check that we have created the AddOn data object and that we're not
     -- awaiting the timeout
     if RAV_data == nil or MountListHandlerTimeout then
@@ -218,8 +233,10 @@ function ns:MountListHandler()
     C_Timer.After(1, function()
         MountListHandlerTimeout = false
     end)
+
     -- Determine the Player's location as a Map ID
     mapID = CM.GetBestMapForUnit("player")
+
     -- Build a list of chosen mounts
     RAV_data.mounts = {}
     RAV_data.mounts.dragonriding = {}
@@ -244,8 +261,8 @@ function ns:MountListHandler()
         local _, _, _, _, mountType = CMJ.GetMountInfoExtraByID(mountID)
         -- Set up some checks that return boolean values about the mount
         local isDragonridingMount = contains(mountIDs.dragonriding, mountID)
-        local isFlyingMount = (contains(mountTypes.flying, mountType) and not isSwimmingMount) or (contains(mountTypes.flying, mountType) and isSwimmingMount and RAV_data.options.normalSwimmingMounts)
-        local isGroundMount = (contains(mountTypes.ground, mountType) and (not isSwimmingMount or mountType == 412)) or (contains(mountTypes.ground, mountType) and isSwimmingMount and RAV_data.options.normalSwimmingMounts)
+        local isFlyingMount = (contains(mountTypes.flying, mountType) and not isSwimmingMount) or (contains(mountTypes.flying, mountType) and isSwimmingMount and options.normalSwimmingMounts)
+        local isGroundMount = (contains(mountTypes.ground, mountType) and (not isSwimmingMount or mountType == 412)) or (contains(mountTypes.ground, mountType) and isSwimmingMount and options.normalSwimmingMounts)
         local isSwimmingMount = contains(mountTypes.swimming, mountType)
         local isVendorMount = contains(mountIDs.vendor, mountID)
         local isPassengerGroundMount = contains(mountIDs.passengerGround, mountID)
@@ -265,15 +282,19 @@ function ns:MountListHandler()
         if isCollected and not (mountFaction == 0 and faction ~= "Horde") and not (mountFaction == 1 and faction ~= "Alliance") then
             -- Check that the Player has Ground mount training
             if hasGroundRiding then
+                -- Dragonriding Mount
+                if isDragonridingMount and (isFavorite or not options.normalMounts) then
+                    table.insert(RAV_data.mounts.dragonriding, mountID)
+                end
                 -- Flying Mount
-                if isFlyingMount and (isFavorite or not RAV_data.options.normalMounts) and not isVendorMount and not isPassengerFlyingMount and not isPassengerGroundMount then
+                if isFlyingMount and (isFavorite or not options.normalMounts) and not isVendorMount and not isPassengerFlyingMount and not isPassengerGroundMount then
                     if isFlexMount then
                         -- both or ground
-                        if RAV_data.options.flexMounts == 3 or RAV_data.options.flexMounts == 1 then
+                        if options.flexMounts == 3 or options.flexMounts == 1 then
                             table.insert(RAV_data.mounts.ground, mountID)
                         end
                         -- both or flying
-                        if hasFlyingRiding and RAV_data.options.flexMounts == 3 or RAV_data.options.flexMounts == 2 then
+                        if hasFlyingRiding and options.flexMounts == 3 or options.flexMounts == 2 then
                             table.insert(RAV_data.mounts.flying, mountID)
                         end
                     elseif hasFlyingRiding then
@@ -281,43 +302,39 @@ function ns:MountListHandler()
                     end
                 end
                 -- Ground Mount
-                if isGroundMount and (isFavorite or not RAV_data.options.normalMounts) and not isVendorMount and not isPassengerFlyingMount and not isPassengerGroundMount then
+                if isGroundMount and (isFavorite or not options.normalMounts) and not isVendorMount and not isPassengerFlyingMount and not isPassengerGroundMount then
                     table.insert(RAV_data.mounts.ground, mountID)
                 end
                 -- Vendor Mount
-                if isVendorMount and (isFavorite or not RAV_data.options.vendorMounts) then
+                if isVendorMount and (isFavorite or not options.vendorMounts) then
                     table.insert(RAV_data.mounts.vendor, mountID)
                 end
                 -- Passenger Mount (Flying)
-                if hasFlyingRiding and isPassengerFlyingMount and (isFavorite or not RAV_data.options.passengerMounts) then
+                if hasFlyingRiding and isPassengerFlyingMount and (isFavorite or not options.passengerMounts) then
                     table.insert(RAV_data.mounts.passengerFlying, mountID)
                 end
                 -- Passenger Mount (Ground)
-                if isPassengerGroundMount and (isFavorite or not RAV_data.options.passengerMounts) then
+                if isPassengerGroundMount and (isFavorite or not options.passengerMounts) then
                     table.insert(RAV_data.mounts.passengerGround, mountID)
                 end
                 -- Swimming Mount
-                if isSwimmingMount and (isFavorite or not RAV_data.options.swimmingMounts) then
+                if isSwimmingMount and (isFavorite or not options.swimmingMounts) then
                     table.insert(RAV_data.mounts.swimming, mountID)
                     if inNazjatar and not contains(mountIDs.noFlyingSwimming, mountID) then
                         table.insert(RAV_data.mounts.flying, mountID)
                     end
                 end
                 -- Ahn'Qiraj (Zone-Specific)
-                if isAhnQirajMount and (isFavorite or not RAV_data.options.zoneSpecificMounts) then
+                if isAhnQirajMount and (isFavorite or not options.zoneSpecificMounts) then
                     table.insert(RAV_data.mounts.ahnqiraj, mountID)
                 end
                 -- Vashj'ir (Zone-Specific)
-                if isVashjirMount and (isFavorite or not RAV_data.options.zoneSpecificMounts) then
+                if isVashjirMount and (isFavorite or not options.zoneSpecificMounts) then
                     table.insert(RAV_data.mounts.vashjir, mountID)
                 end
                 -- The Maw (Zone-Specific)
-                if isMawMount and (isFavorite or not RAV_data.options.zoneSpecificMounts) then
+                if isMawMount and (isFavorite or not options.zoneSpecificMounts) then
                     table.insert(RAV_data.mounts.maw, mountID)
-                end
-                -- Dragon Isles (Zone-Specific)
-                if isDragonridingMount and (isFavorite or not RAV_data.options.zoneSpecificMounts) then
-                    table.insert(RAV_data.mounts.dragonriding, mountID)
                 end
             end
             -- Chauffeur
@@ -425,7 +442,11 @@ function ns:MountUpHandler(specificType)
     elseif haveVendorMounts and vendorMountModifier then
         MountSummon(mounts.vendor)
     elseif havePassengerFlyingMounts and flyable and passengerMountModifier and not normalMountModifier then
-        MountSummon(mounts.passengerFlying)
+        if inDragonIsles and haveDragonridingMounts and options.preferDragonRiding then
+            MountSummon(mounts.dragonriding)
+        else
+            MountSummon(mounts.passengerFlying)
+        end
     elseif havePassengerGroundMounts and passengerMountModifier and (not flyable or (flyable and normalMountModifier)) then
         MountSummon(mounts.passengerGround)
     -- Vashj'ir
@@ -451,7 +472,7 @@ function ns:MountUpHandler(specificType)
             end
         end
     -- Flying
-    elseif (haveBroom or haveFlyingMounts) and (flyable and not normalMountModifier) or (not flyable and normalMountModifier) then
+    elseif (haveBroom or haveFlyingMounts) and ((flyable and not normalMountModifier) or ((not flyable or IsSwimming()) and normalMountModifier)) then
         MountSummon(mounts.flying)
     -- Ahn'Qiraj
     elseif inAhnQiraj and haveAhnQirajMounts then
@@ -477,7 +498,18 @@ function ns:EnsureMacro()
     local mounts = RAV_data.mounts
     local options = RAV_data.options
 
-    -- Unable to create/modify the macro without data or whilst the Player is in combat
+    -- Ensure there's space for the macro if it doesn't yet exist
+    local numberOfMacros, _ = GetNumMacros()
+    if GetMacroIndexByName(ns.name) == 0 and numberOfMacros >= 120 then
+        -- Warn the Player once that there isn't space to create the macro
+        if not hasSeenNoSpaceMessage then
+            hasSeenNoSpaceMessage = true
+            ns:PrettyPrint(L.NoMacroSpace)
+        end
+        return
+    end
+
+    -- Ensure the data object exists, the Macro option is enabled, and we're not in
     if not RAV_data or not options.macro or UnitAffectingCombat("player") then
         return
     end
@@ -489,119 +521,91 @@ function ns:EnsureMacro()
     local dragonriding = (inDragonIsles and haveDragonridingMounts) and mounts.dragonriding or nil
     local flying = haveFlyingMounts and mounts.flying or nil
     local ground = (inAhnQiraj and haveAhnQirajMounts) and mounts.ahnqiraj or haveGroundMounts and mounts.ground or nil
-    local vendor = haveVendorMounts and mounts.vendor or nil
-    local passenger = (flyable and havePassengerFlyingMounts) and mounts.passengerFlying or havePassengerGroundMounts and mounts.passengerGround or nil
+    local passenger = (options.passengerMountModifier ~= 1 and flyable and havePassengerFlyingMounts) and mounts.passengerFlying or (options.passengerMountModifier ~= 1 and havePassengerGroundMounts) and mounts.passengerGround or nil -- any setting except "None"
+    local vendor = (options.vendorMountModifier ~= 1 and haveVendorMounts) and mounts.vendor or nil -- any setting except "None"
     local swimming = (inVashjir and haveVashjirMounts) and mounts.vashjir or haveSwimmingMounts and mounts.swimming or nil
     local chauffeur = haveChauffeurMounts and mounts.chauffeur or nil
-    local travelForm = haveTravelForm and mounts.travelForm or nil
     local broom = (haveBroom and not inDragonIsles) and mounts.broom or nil
-
-    -- This part is tricky because we build the macro backwards
-
-    local body = "/" .. ns.command
-    if broom and className ~= "DRUID" then
-        body = "/use [swimming,mod:" .. modifiers[options.normalMountModifier] .. "][nomod,nomounted] " .. broom.name .. "\n/stopmacro [swimming,mod:" .. modifiers[options.normalMountModifier] .. "][nomod,nomounted]\n" .. body
+    local travelForm = haveTravelForm and mounts.travelForm or nil
+    if travelForm then
+        local travelFormName, _ = GetSpellInfo(travelForm[1])
     end
-    if className == "DRUID" or className == "SHAMAN" then
-        body = "/cancelform\n" .. body
-    end
-    local mountName
+
+    -- Build up the Macro as a string
+    local body = "#showtooltip "
     if dragonriding or flying or broom or ground or chauffeur or vendor or passenger or swimming or (options.travelForm and travelForm) then
-        body = "\n" .. body
-        if (options.travelForm and travelForm) then
-            local travelFormName, _ = GetSpellInfo(travelForm[1])
-            if options.normalMountModifier ~= 1 then -- none
-                if inDragonIsles and haveDragonridingMounts and options.preferDragonRiding then
-                    mountName = GetMountName(dragonriding[random(#dragonriding)])
-                    body = "[mod:" .. modifiers[options.normalMountModifier] .. "] " .. travelFormName .. "; " .. mountName .. "\n" .. "/use [mod:" .. modifiers[options.normalMountModifier] .. "] " .. travelFormName .. "\n" .. "/stopmacro [mod:" .. modifiers[options.normalMountModifier] .. "]" .. body
-                else
-                    body = travelFormName .. "\n" .. "/use [nomod] " .. travelFormName .. "\n" .. "/stopmacro [nomod]" .. body
-                    if broom or flying or ground or chauffeur then
-                        mountName = broom and broom.name or flying and GetMountName(flying[random(#flying)]) or ground and GetMountName(ground[random(#ground)]) or chauffeur and GetMountName(chauffeur[random(#chauffeur)]) or nil
-                        if not mountName then
-                            ns:EnsureMacro()
-                            return
-                        end
-                    end
-                    if mountName then
-                        body = "[mod:" .. modifiers[options.normalMountModifier] .. "] " .. mountName .. "; " .. body
-                    end
-                end
+        -- Passenger (Ground & Flying)
+        if passenger then
+            body = body .. "[mod:" .. modifiers[options.passengerMountModifier] .. "] " .. GetRandomMountFromList(passenger)
+        end
+
+        -- Vendor
+        if vendor then
+            body = body .. (passenger and "; ") .. "[mod:" .. modifiers[options.vendorMountModifier] .. "] " .. GetRandomMountFromList(vendor)
+        end
+
+        -- Swimming
+        if swimming then
+            if (dragonriding or flying or ground) and options.normalMountModifier ~= 1 then -- any setting except "None"
+                body = body .. ((passenger or vendor) and "; ") .. "[swimming,nomod:" .. modifiers[options.normalMountModifier] .. "] " .. ((options.travelForm and travelForm) and travelFormName or GetRandomMountFromList(swimming))
             else
-                body = travelFormName .. "\n" .. "/use " .. travelFormName
+                body = body .. ((passenger or vendor) and "; ") .. "[swimming] " .. ((options.travelForm and travelForm) and travelFormName or GetRandomMountFromList(swimming))
             end
+        end
+
+        -- In Dragonriding zone
+        if dragonriding then
+            -- Normal Mount Modifier is set
+            if options.normalMountModifier ~= 1 and ((options.travelForm and travelForm) or broom or flying) then -- any setting except "None"
+                body = body .. ((passenger or vendor or swimming) and "; ") .. "[swimming,mod:" .. modifiers[options.normalMountModifier] .. "][nomod:" .. modifiers[options.normalMountModifier] .. "] " .. (options.preferDragonRiding and GetRandomMountFromList(dragonriding) or ((options.travelForm and travelForm) and travelFormName or broom and broom.name or GetRandomMountFromList(flying)))
+                body = body .. "; " .. (options.preferDragonRiding and ((options.travelForm and travelForm) and travelFormName or broom and broom.name or GetRandomMountFromList(flying)) or GetRandomMountFromList(dragonriding))
+            elseif options.preferDragonRiding then
+                body = body .. ((passenger or vendor or swimming) and "; ") .. GetRandomMountFromList(dragonriding)
+            else
+                body = body .. ((passenger or vendor or swimming) and "; ") .. GetRandomMountFromList((travelFormName or broom or flying))
+            end
+        -- Outside Dragonriding zone
         else
-            if not broom and ground then
-                mountName = (inDragonIsles and haveDragonridingMounts) and (options.preferDragonRiding and GetMountName(flying[random(#flying)]) or GetMountName(dragonriding[random(#dragonriding)])) or GetMountName(ground[random(#ground)])
-                if not mountName then
-                    ns:EnsureMacro()
-                    return
-                end
-                body = mountName .. body
-            end
-            if broom or dragonriding or flying then
-                mountName = broom and broom.name or dragonriding and GetMountName(dragonriding[random(#dragonriding)]) or GetMountName(flying[random(#flying)])
-                if not mountName then
-                    ns:EnsureMacro()
-                    return
-                end
-                if broom then
-                    body = broom.name .. "; " .. body
-                elseif flyable and ground then
-                    if options.normalMountModifier ~= 1 then -- none
-                        body = "[swimming,mod:" .. modifiers[options.normalMountModifier] .. "][nomod:" .. modifiers[options.normalMountModifier] .. "] " .. mountName .. "; " .. body
-                    else
-                        body = "[] " .. mountName .. "; " .. body
-                    end
-                elseif ((inDragonIsles and haveDragonridingMounts) or ground) and options.normalMountModifier ~= 1 then -- none
-                    body = "[noswimming,mod:" .. modifiers[options.normalMountModifier] .. "] " .. mountName .. "; " .. body
-                else
-                    body = mountName .. body
-                end
-            end
-            if chauffeur and ground == nil and dragonriding == nil and flying == nil then
-                icon = "inv_misc_key_06"
-                mountName, _ = CMJ.GetMountInfoByID(chauffeur[1])
-                body = mountName .. body
-            end
-        end
-        if swimming and travelForm == nil then
-            _, spellID = CMJ.GetMountInfoByID(swimming[random(#swimming)])
-            mountName, _ = GetSpellInfo(spellID)
-            if options.normalMountModifier ~= 1 then -- none
-                body = "[swimming,nomod:" .. modifiers[options.normalMountModifier] .. "] " .. mountName .. ((dragonriding or flying or ground or chauffeur) and "; " or "") .. body
+            if options.normalMountModifier ~= 1 and ((options.travelForm and travelForm) or broom or flying) and ground then -- any setting except "None"
+                body = body .. ((passenger or vendor or swimming) and "; ") .. "[swimming,mod:" .. modifiers[options.normalMountModifier] .. "][nomod:" .. modifiers[options.normalMountModifier] .. "] " .. ((options.travelForm and travelForm) and travelFormName or broom and broom.name or GetRandomMountFromList(flying))
+                body = body .. "; " .. GetRandomMountFromList(ground)
+            elseif (options.travelForm and travelForm) or broom or flying then
+                body = body .. ((passenger or vendor or swimming) and "; ") .. ((options.travelForm and travelForm) and travelFormName or broom and broom.name or GetRandomMountFromList(flying))
             else
-                body = "[swimming] " .. mountName .. ((dragonriding or flying or ground or chauffeur) and "; " or "") .. body
+                body = body .. ((passenger or vendor or swimming) and "; ") .. GetRandomMountFromList(ground)
             end
         end
-        if vendor and options.vendorMountModifier ~= 1 then -- none
-            _, spellID = CMJ.GetMountInfoByID(vendor[random(#vendor)])
-            mountName, _ = GetSpellInfo(spellID)
-            body = "[mod:" .. modifiers[options.vendorMountModifier] .. "] " .. mountName .. ((dragonriding or flying or ground or chauffeur or swimming) and "; " or "") .. body
-        end
-        if passenger and options.passengerMountModifier ~= 1 then -- none
-            _, spellID = CMJ.GetMountInfoByID(passenger[random(#passenger)])
-            mountName, _ = GetSpellInfo(spellID)
-            body = "[mod:" .. modifiers[options.passengerMountModifier] .. "] " .. mountName .. ((dragonriding or flying or ground or chauffeur or swimming or vendor) and "; " or "") .. body
-        end
-        body = "#showtooltip " .. body
+    -- No mounts available, try the Chauffeur
+    elseif chauffeur then
+        icon = "inv_misc_key_06"
+        body = body .. GetRandomMountFromList(chauffeur)
     end
-    local numberOfMacros, _ = GetNumMacros()
+
+    -- TODO Substitute in Travel Forms for Druids & Shamans
+    -- if travelForm then
+    --     body = body .. "\n/cancelform"
+    -- end
+
+    -- Add the AddOn command to the end
+    body = body .. "\n/" .. ns.command
+
+    -- Edit the Macro if it exists
     if GetMacroIndexByName(ns.name) > 0 then
         if body ~= RAV_macroBody then
             EditMacro(GetMacroIndexByName(ns.name), ns.name, icon, body)
             RAV_macroBody = body
         end
-    elseif numberOfMacros < 120 then
+    -- Otherwise, create a new Macro
+    else
         CreateMacro(ns.name, icon, body)
         RAV_macroBody = body
-    elseif not hasSeenNoSpaceMessage then
-        hasSeenNoSpaceMessage = true
-        ns:PrettyPrint(L.NoMacroSpace)
     end
 end
 
 function ns:AttachTooltipLabels()
+    -- Simplify references
+    local options = RAV_data.options
+
     local function callback(tooltip, data)
         if tooltip == GameTooltip then
             -- type 10 yields mount IDs, from the mount journal
@@ -609,7 +613,7 @@ function ns:AttachTooltipLabels()
                 local identified = false
                 for type, mountIDs in pairs(mountIDs) do
                     if contains(mountIDs, data.id) then
-                        tooltip:AddLine(ns:PrettyMessage(TitleCase(type):gsub("Ahnqiraj", "Ahn'Qiraj"):gsub("Vashjir", "Vash'jir"):gsub("Passengerground", "Passenger (Ground)"):gsub("Passengerflying", "Passenger (Flying)"):gsub("Noflyingswimming", "Swimming"):gsub("Flex", RAV_data.options.flexMounts == 3 and "Flex (Ground & Flying)" or RAV_data.options.flexMounts == 2 and "Flex (Flying)" or "Flex (Ground)"):gsub("Maw", "The Maw"):gsub("Dragonisles", "Dragonriding")))
+                        tooltip:AddLine(ns:PrettyMessage(TitleCase(type):gsub("Ahnqiraj", "Ahn'Qiraj"):gsub("Vashjir", "Vash'jir"):gsub("Passengerground", "Passenger (Ground)"):gsub("Passengerflying", "Passenger (Flying)"):gsub("Noflyingswimming", "Swimming"):gsub("Flex", options.flexMounts == 3 and "Flex (Ground & Flying)" or options.flexMounts == 2 and "Flex (Flying)" or "Flex (Ground)"):gsub("Maw", "The Maw"):gsub("Dragonisles", "Dragonriding")))
                         identified = true
                     end
                 end
