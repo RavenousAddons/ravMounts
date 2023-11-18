@@ -571,7 +571,7 @@ function ns:EnsureMacro()
                 body = body .. "; " .. GetRandomMountFromList(ground)
             elseif (options.travelForm and travelForm) or broom or flying then
                 body = body .. ((passenger or vendor or swimming) and "; ") .. ((options.travelForm and travelForm) and travelFormName or broom and broom.name or GetRandomMountFromList(flying))
-            else
+            elseif ground then
                 body = body .. ((passenger or vendor or swimming) and "; ") .. GetRandomMountFromList(ground)
             end
         end

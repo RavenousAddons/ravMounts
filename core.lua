@@ -26,7 +26,6 @@ function ravMounts_OnEvent(self, event, arg, ...)
                 ns:PrettyPrint(L.Install:format(ns.color, ns.version))
             elseif RAV_version ~= ns.version then
                 ns:PrettyPrint(L.Update:format(ns.color, ns.version))
-                ns:PrettyPrint("This version contains a change to the way the Ground/Flying Modifier Key works in the Dragon Isles to allow easier switching between Dragonriding and Flying mounts and also includes a new setting to choose your preference between Dragonriding mounts and Flying mounts.")
             end
             RAV_version = ns.version
         end
