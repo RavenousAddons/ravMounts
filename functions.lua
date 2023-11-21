@@ -511,7 +511,7 @@ function ns:EnsureMacro()
         return
     end
 
-    -- Ensure the data object exists, the Macro option is enabled, and we're not in
+    -- Ensure the data object exists, the Macro option is enabled, and we're not in combat
     if not RAV_data or not options.macro or UnitAffectingCombat("player") then
         return
     end
@@ -534,25 +534,36 @@ function ns:EnsureMacro()
         travelFormName, _ = GetSpellInfo(travelForm[1])
     end
 
-    local condition
-
     -- Build up the Macro as a string
     local body = "#showtooltip "
+    local condition
     if dragonriding or flying or broom or ground or chauffeur or vendor or passenger or swimming or travelForm then
         -- Passenger (Ground & Flying)
         if passenger then
+            if not #passenger then
+                ns:EnsureMacro()
+                return
+            end
             body = body .. "[mod:" .. modifiers[options.passengerMountModifier] .. "] " .. GetRandomMountFromList(passenger)
         end
         condition = passenger
 
         -- Vendor
         if vendor then
+            if not #vendor then
+                ns:EnsureMacro()
+                return
+            end
             body = body .. (condition and "; ") .. "[mod:" .. modifiers[options.vendorMountModifier] .. "] " .. GetRandomMountFromList(vendor)
         end
         condition = condition or vendor
 
         -- Swimming
         if swimming and not travelForm then
+            if not #swimming then
+                ns:EnsureMacro()
+                return
+            end
             if (dragonriding or flying or ground) and options.normalMountModifier ~= 1 then -- any setting except "None"
                 body = body .. (condition and "; ") .. "[swimming,nomod:" .. modifiers[options.normalMountModifier] .. "] " .. (travelForm and travelFormName or GetRandomMountFromList(swimming))
             else
@@ -563,6 +574,10 @@ function ns:EnsureMacro()
 
         -- In Dragonriding zone
         if dragonriding then
+            if not #dragonriding and not #flying then
+                ns:EnsureMacro()
+                return
+            end
             -- Normal Mount Modifier is set
             if options.normalMountModifier ~= 1 and (travelForm or broom or flying) then -- any setting except "None"
                 body = body .. (condition and "; ") .. "[swimming,mod:" .. modifiers[options.normalMountModifier] .. "][nomod:" .. modifiers[options.normalMountModifier] .. "] " .. (options.preferDragonRiding and GetRandomMountFromList(dragonriding) or (travelForm and travelFormName or broom and broom.name or GetRandomMountFromList(flying)))
@@ -574,7 +589,11 @@ function ns:EnsureMacro()
             end
         -- Outside Dragonriding zone
         else
-            if flyable then
+            if flyable and flying then
+                if not #flying and not #ground then
+                    ns:EnsureMacro()
+                    return
+                end
                 -- Normal Mount Modifier is set
                 if options.normalMountModifier ~= 1 and (travelForm or broom or flying) and ground then -- any setting except "None"
                     body = body .. (condition and "; ") .. "[swimming,mod:" .. modifiers[options.normalMountModifier] .. "][nomod:" .. modifiers[options.normalMountModifier] .. "] " .. (travelForm and travelFormName or broom and broom.name or GetRandomMountFromList(flying))
@@ -582,12 +601,20 @@ function ns:EnsureMacro()
                 else
                     body = body .. (condition and "; ") .. (travelForm and travelFormName or broom and broom.name or GetRandomMountFromList(flying))
                 end
-            else
+            elseif ground then
+                if not #ground then
+                    ns:EnsureMacro()
+                    return
+                end
                 body = body .. (condition and "; ") .. (travelForm and travelFormName or GetRandomMountFromList(ground))
             end
         end
     -- No mounts available, try the Chauffeur
     elseif chauffeur then
+        if not #chauffeur then
+            ns:EnsureMacro()
+            return
+        end
         icon = "inv_misc_key_06"
         body = body .. GetRandomMountFromList(chauffeur)
     end

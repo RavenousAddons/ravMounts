@@ -26,6 +26,7 @@ function ravMounts_OnEvent(self, event, arg, ...)
                 ns:PrettyPrint(L.Install:format(ns.color, ns.version))
             elseif RAV_version ~= ns.version then
                 ns:PrettyPrint(L.Update:format(ns.color, ns.version))
+                print("This update contains bugfixes and further work towards making the AddOn work more smoothly for all classes, as well as continued work on Dragonriding mounts being available in Azeroth.")
             end
             RAV_version = ns.version
         end
