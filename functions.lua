@@ -622,7 +622,7 @@ function ns:EnsureMacro()
         else
             -- Normal Mount Modifier is set
             if options.normalMountModifier ~= 1 and (travelForm or broom or flying) and (ground or chauffeur) then
-                if not travelForm and not broom and not #flying and not #ground and not #chauffeur then
+                if (not travelForm and not broom and not #flying) or (not #ground and not #chauffeur) then
                     ns:EnsureMacro()
                     return
                 end
@@ -630,8 +630,8 @@ function ns:EnsureMacro()
                     body = body .. (condition and "; ") .. "[swimming,mod:" .. modifiers[options.normalMountModifier] .. "][nomod:" .. modifiers[options.normalMountModifier] .. "] " .. (travelForm and travelFormName or broom and broom.name or GetRandomMountFromList(flying))
                     body = body .. "; " .. GetRandomMountFromList(ground or chauffeur)
                 else
-                    body = body .. (condition and "; ") .. "[swimming,mod:" .. modifiers[options.normalMountModifier] .. "][nomod:" .. modifiers[options.normalMountModifier] .. "] " .. (travelForm and travelFormName or broom and broom.name or GetRandomMountFromList(flying))
-                    body = body .. "; " .. GetRandomMountFromList(ground or chauffeur)
+                    body = body .. (condition and "; ") .. "[swimming,mod:" .. modifiers[options.normalMountModifier] .. "][nomod:" .. modifiers[options.normalMountModifier] .. "] " .. GetRandomMountFromList(ground or chauffeur)
+                    body = body .. "; " .. (travelForm and travelFormName or broom and broom.name or GetRandomMountFromList(flying))
                 end
             else
                 if flyable and (travelForm or broom or flying) then
