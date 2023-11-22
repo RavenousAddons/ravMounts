@@ -19,6 +19,10 @@ local MountListHandlerTimeout = false
 -- Key Modifiers.
 local modifiers = {"none", "alt", "ctrl", "shift"}
 
+-- Icon Replacement
+local tarecgosaMount, _ = GetSpellInfo(407555)
+local tarecgosaStaff = C_Item.GetItemNameByID(71086)
+
 -- Shoten API references.
 local CM = C_Map
 local CMJ = C_MountJournal
@@ -165,6 +169,9 @@ end
 local function GetRandomMountFromList(list)
     local _, spellID = CMJ.GetMountInfoByID(list[random(#list)])
     local mountName, _ = GetSpellInfo(spellID)
+    if mountName == tarecgosaMount then
+        return tarecgosaStaff
+    end
     return mountName
 end
 
