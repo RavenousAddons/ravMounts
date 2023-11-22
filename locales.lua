@@ -11,46 +11,63 @@ end })
 local CM = C_Map
 
 -- Default (English)
-L.Version = "%s is the current version." -- ns.version
-L.Install = "Thanks for installing |cff%1$sv%2$s|r!" -- ns.color, ns.version
-L.Update = "Thanks for updating to |cff%1$sv%2$s|r!" -- ns.color, ns.version
-L.UpdateFound = "v%s is now available for download. Please update!" -- sentVersion
-L.Support = "Check out the Addon on |rGitHub|cffffffff, |rWoWInterface|cffffffff, or |rCurse|cffffffff for more info and support!"
-L.NoMacroSpace = "Unfortunately, you don't have enough global macro space for the macro to be created!"
-L.Macro = "Generate Macro"
-L.MacroTooltip = "When enabled, a macro called |cffffffff%s|r will be automatically created and managed for you under |cffffffffGeneral Macros|r." -- ns.name
-L.NormalSwimming = "Expanded Swimming Mounts"
-L.NormalSwimmingTooltip = "When enabled, Swimming mounts will also count as Ground/Flying mounts."
-L.PreferDragonRiding = "Prefer Dragonriding Mounts  |cffff0000NEW!|r"
-L.PreferDragonRidingTooltip = "When enabled, Dragonriding mounts will be used instead of Flying mounts in appropriate zones."
-L.TravelForm = "Use Shapeshift Forms"
-L.TravelFormTooltip = "When enabled, Class Shapeshift Forms, if available, will be utilised as a priority over Ground/Flying mounts."
-L.FavoritesHeading = "Types which use Favorites:"
-L.MountsTooltip = "When enabled, only %s marked as favorites will be summoned." -- type
-L.ZoneSpecificMountsTooltip = L.MountsTooltip:format(L.ZoneSpecific .. " " .. _G.MOUNTS) .. "|nThis includes Ahn'Qiraj, Vashj'ir, and The Maw."
-L.CountHeading = "Collected Data:"
-L.Force = "Mount Journal data collected, sorted, and ready to go!"
-L.Cloneable = "Cloneable"
-L.CloneableTooltip = "When enabled, allows cloning of players' mounts you see around you."
-L.FlexibleTooltip = "Choose how Flying mounts that look like Ground mounts should be catalogued."
-L.Alternate = "Alternate"
-L.Dragonriding = "Dragonriding"
-L.Ground = "Ground"
-L.Passenger = "Passenger"
-L.Chauffeur = "Chauffeur"
-L.Modifier = "Modifier"
-L.ModifierTooltip = "Choose which modifier key to use to call %s." -- type
-L.NormalModifierTooltip = L.ModifierTooltip:format(L.Alternate .. " " .. _G.MOUNTS) .. "|nWhere Dragonriding is possible, this alternates between Dragonriding and Flying mounts; otherwise, it alternates between Flying and Ground mounts. Additionally, when swimming, this will trigger a non-swimming mount to be summoned instead."
-L.ZoneSpecific = "Zone-Specific"
 L.AddonCompartmentTooltip1 = "|cff" .. ns.color .. "Left-Click:|r Open Settings"
 L.AddonCompartmentTooltip2 = "|cff" .. ns.color .. "Middle-Click:|r Open Mount Journal"
 L.AddonCompartmentTooltip3 = "|cff" .. ns.color .. "Right-Click:|r Summon Mount"
+L.Alternate = "Alternate"
+L.Chauffeur = "Chauffeur"
+L.Cloneable = "Cloneable"
+L.CloneableTooltip = "When enabled, allows cloning of players' mounts you see around you."
+L.CountHeading = "Collected Data:"
+L.Dragonriding = "Dragonriding"
+L.FavoritesHeading = "Types which use Favorites:"
+L.FlexibleTooltip = "Choose how Flying mounts that look like Ground mounts should be catalogued."
+L.Force = "Mount Journal data collected, sorted, and ready to go!"
+L.Ground = "Ground"
+L.Install = "Thanks for installing |cff%1$sversion %2$s|r!" -- ns.color, ns.version
+L.Macro = "Generate Macro"
+L.MacroTooltip = "When enabled, a macro called |cffffffff%s|r will be automatically created and managed for you under |cffffffffGeneral Macros|r." -- ns.name
+L.Modifier = "Modifier"
+L.ModifierTooltip = "Choose which modifier key to use to call %s." -- type
+L.MountsTooltip = "When enabled, only %s marked as favorites will be summoned." -- type
+L.NoMacroSpace = "Unfortunately, you don't have enough global macro space for the macro to be created!"
+L.NormalModifierTooltip = L.ModifierTooltip:format(L.Alternate .. " " .. _G.MOUNTS) .. "|nWhere Dragonriding is possible, this alternates between Dragonriding and Flying mounts; otherwise, it alternates between Flying and Ground mounts. Additionally, when swimming, this will trigger a non-swimming mount to be summoned instead."
+L.NormalSwimming = "Expanded Swimming Mounts"
+L.NormalSwimmingTooltip = "When enabled, Swimming mounts will also count as Ground/Flying mounts."
+L.Passenger = "Passenger"
+L.PreferDragonRiding = "Prefer Dragonriding Mounts  |cffff0000NEW!|r"
+L.PreferDragonRidingTooltip = "When enabled, Dragonriding mounts will be used instead of Flying mounts in appropriate zones."
+L.Support = "Check out the Addon on |rGitHub|cffffffff, |rWoWInterface|cffffffff, or |rCurse|cffffffff for more info and support!"
+L.TravelForm = "Use Shapeshift Forms"
+L.TravelFormTooltip = "When enabled, Class Shapeshift Forms, if available, will be utilised as a priority over Ground/Flying mounts."
+L.Update = "Thanks for updating to |cff%1$sversion %2$s|r!" -- ns.color, ns.version
+L.UpdateFound = "Version %s is now available for download. Please update!" -- sentVersion
+L.Version = "%s is the current version." -- ns.version
+L.ZoneSpecific = "Zone-Specific"
+L.ZoneSpecificMountsTooltip = L.MountsTooltip:format(L.ZoneSpecific .. " " .. _G.MOUNTS) .. "|nThis includes Ahn'Qiraj, Vashj'ir, and The Maw."
 
 -- Check locale and assign appropriate
 local CURRENT_LOCALE = GetLocale()
 
 -- German
-if CURRENT_LOCALE == "deDE" then return end
+if CURRENT_LOCALE == "deDE" then
+    L.Cloneable = "Klonbar"
+    L.CountHeading = "Gesammelte Daten:"
+    L.FavoritesHeading = "Typen, die Favoriten verwenden:"
+    L.Force = "Mount Journal-Daten sind gesammelt, sortiert und einsatzbereit!"
+    L.Ground = "Reittiere"
+    L.Install = "Danke für die Installation von |cff%1$sVersion %2$s|r!" -- ns.color, ns.version
+    L.Macro = "Automatisch Makro erstellen/verwalten"
+    L.MacroTooltip = "Wenn diese Funktion aktiviert ist, wird automatisch ein Makro mit dem Namen |cffffffff%s|r erstellt und für Sie unter |cffffffffGeneral Macros|r verwaltet." -- ns.name
+    L.Modifier = "Modifikator"
+    L.MountsTooltip = "Wenn diese Option aktiviert ist, werden nur %s, die als Favoriten markiert sind, aufgerufen." -- type
+    L.NoMacroSpace = "Leider hast du nicht genug globalen Makroplatz, um das Makro zu erstellen!"
+    L.NoMounts = "Leider hast du keine Reittiere, die du zu diesem Zeitpunkt aufrufen kannst!"
+    L.Passenger = "Passagiere"
+    L.Support = "Schau dir das Addon auf |rGitHub|cffffffff, |rWoWInterface|cffffffff, oder |rCurse|cffffffff für weitere Informationen und Unterstützung an!"
+    L.Update = "Danke für das Update auf |cff%1$sVersion %2$s|r!" -- ns.color, ns.version
+    L.Version = "%s ist die aktuelle Version." -- ns.version
+end
 
 -- Spanish
 if CURRENT_LOCALE == "esES" then return end
@@ -75,60 +92,60 @@ if CURRENT_LOCALE == "koKR" then return end
 
 -- Simplified Chinese
 if CURRENT_LOCALE == "zhCN" then
-    L.Version = "当前版本：%s" -- ns.version
-    L.Install = "感谢使用 |cff%1$sv%2$s|r！" -- ns.color, ns.version
-    L.Update = "感谢更新 |cff%1$sv%2$s|r！" -- ns.color, ns.version
-    L.UpdateFound = "v%s 可用，请更新！" -- sentVersion
-    L.Support = "请至 |rGitHub|cffffffff、|rWoWInterface|cffffffff 或 |rCurse|cffffffff 获取更多信息与插件支持！"
-    L.NoMacroSpace = "你的通用宏已满，无法座骑宏！"
-    L.Macro = "创建宏"
-    L.MacroTooltip = "在你的通用宏自动创建一个叫做 |cffffffff%s|r 的座骑宏。 " -- ns.name
-    L.NormalSwimming = "扩展游泳座骑"
-    L.NormalSwimmingTooltip = "启用后，游泳座骑也会被当作地面或飞行座骑。"
-    L.TravelForm = "使用旅行形态"
-    L.TravelFormTooltip = "启用此选项后，地面与飞行座骑将优先使用旅行行态。"
-    L.FavoritesHeading = "使用偏好座骑的类型："
-    L.MountsTooltip = "启用此选项后，只会召唤被标记为偏好座骑的 %s。" -- type
-    L.Cloneable = "可模仿"
-    L.CloneableTooltip = "启用此选项后，当你附近的玩家召唤了什么座骑，就召唤和该玩家相同的座骑。"
-    L.FlexibleTooltip = "对于那些可以当成地面座骑使用的飞行座骑，请选择要将它们作为哪种类型来召唤。"
-    L.Ground = "地面"
-    L.Passenger = "载人"
-    L.Modifier = "组合键"
-    L.ModifierTooltip = "选择指定召唤 %s 的组合键。" -- type
-    L.ZoneSpecific = "区域限定"
     L.AddonCompartmentTooltip1 = "|cff" .. ns.color .. "左键点击：|r开启设置"
     L.AddonCompartmentTooltip2 = "|cff" .. ns.color .. "中键点击：|r开启座骑列表"
     L.AddonCompartmentTooltip3 = "|cff" .. ns.color .. "右键点击：|r召唤座骑"
+    L.Cloneable = "可模仿"
+    L.CloneableTooltip = "启用此选项后，当你附近的玩家召唤了什么座骑，就召唤和该玩家相同的座骑。"
+    L.FavoritesHeading = "使用偏好座骑的类型："
+    L.FlexibleTooltip = "对于那些可以当成地面座骑使用的飞行座骑，请选择要将它们作为哪种类型来召唤。"
+    L.Ground = "地面"
+    L.Install = "感谢使用 |cff%1$sv%2$s|r！" -- ns.color, ns.version
+    L.Macro = "创建宏"
+    L.MacroTooltip = "在你的通用宏自动创建一个叫做 |cffffffff%s|r 的座骑宏。 " -- ns.name
+    L.Modifier = "组合键"
+    L.ModifierTooltip = "选择指定召唤 %s 的组合键。" -- type
+    L.MountsTooltip = "启用此选项后，只会召唤被标记为偏好座骑的 %s。" -- type
+    L.NoMacroSpace = "你的通用宏已满，无法座骑宏！"
+    L.NormalSwimming = "扩展游泳座骑"
+    L.NormalSwimmingTooltip = "启用后，游泳座骑也会被当作地面或飞行座骑。"
+    L.Passenger = "载人"
+    L.Support = "请至 |rGitHub|cffffffff、|rWoWInterface|cffffffff 或 |rCurse|cffffffff 获取更多信息与插件支持！"
+    L.TravelForm = "使用旅行形态"
+    L.TravelFormTooltip = "启用此选项后，地面与飞行座骑将优先使用旅行行态。"
+    L.Update = "感谢更新 |cff%1$sv%2$s|r！" -- ns.color, ns.version
+    L.UpdateFound = "v%s 可用，请更新！" -- sentVersion
+    L.Version = "当前版本：%s" -- ns.version
+    L.ZoneSpecific = "区域限定"
  end
 
 -- Traditional Chinese
 if CURRENT_LOCALE == "zhTW" then
-    L.Version = "目前版本：%s" -- ns.version
-    L.Install = "感謝使用 |cff%1$sv%2$s|r！" -- ns.color, ns.version
-    L.Update = "感謝更新 |cff%1$sv%2$s|r！" -- ns.color, ns.version
-    L.UpdateFound = "v%s 可用，請更新！" -- sentVersion
-    L.Support = "請至 |rGitHub|cffffffff、|rWoWInterface|cffffffff 或 |rCurse|cffffffff 獲取插件的詳細資訊與支援！"
-    L.NoMacroSpace = "你的一般巨集已滿，無法創建巨集！"
-    L.Macro = "創建巨集"
-    L.MacroTooltip = "在你的一般巨集自動創建一個叫做 |cffffffff%s|r 的座騎巨集。" -- ns.name
-    L.NormalSwimming = "拓展游泳座騎"
-    L.NormalSwimmingTooltip = "啟用後，游泳座騎也會被當作地面或飛行座騎。"
-    L.TravelForm = "使用旅行形態"
-    L.TravelFormTooltip = "啟用此選項後，地面與飛行座騎將優先使用旅行行態。"
-    L.FavoritesHeading = "使用最愛座騎的類型："
-    L.MountsTooltip = "啟用此選項後，只會召喚被標記為最愛座騎的 %s。" -- type
-    L.Cloneable = "可模仿"
-    L.CloneableTooltip = "啟用此選項後，當你附近的玩家召喚了什麼座騎，就召喚和該玩家相同的座騎。"
-    L.FlexibleTooltip = "對於那些可以當成地面座騎使用的飛行座騎，請選擇要將它們作為哪種類型來召喚。"
-    L.Ground = "地面"
-    L.Passenger = "載人"
-    L.Modifier = "組合鍵"
-    L.ModifierTooltip = "選擇指定召喚 %s 的組合鍵。" -- type
-    L.ZoneSpecific = "區域限定"
     L.AddonCompartmentTooltip1 = "|cff" .. ns.color .. "左鍵點擊：|r開啟設定"
     L.AddonCompartmentTooltip2 = "|cff" .. ns.color .. "中鍵點擊：|r開啟座騎列表"
     L.AddonCompartmentTooltip3 = "|cff" .. ns.color .. "右鍵點擊：|r召喚座騎"
+    L.Cloneable = "可模仿"
+    L.CloneableTooltip = "啟用此選項後，當你附近的玩家召喚了什麼座騎，就召喚和該玩家相同的座騎。"
+    L.FavoritesHeading = "使用最愛座騎的類型："
+    L.FlexibleTooltip = "對於那些可以當成地面座騎使用的飛行座騎，請選擇要將它們作為哪種類型來召喚。"
+    L.Ground = "地面"
+    L.Install = "感謝使用 |cff%1$sv%2$s|r！" -- ns.color, ns.version
+    L.Macro = "創建巨集"
+    L.MacroTooltip = "在你的一般巨集自動創建一個叫做 |cffffffff%s|r 的座騎巨集。" -- ns.name
+    L.Modifier = "組合鍵"
+    L.ModifierTooltip = "選擇指定召喚 %s 的組合鍵。" -- type
+    L.MountsTooltip = "啟用此選項後，只會召喚被標記為最愛座騎的 %s。" -- type
+    L.NoMacroSpace = "你的一般巨集已滿，無法創建巨集！"
+    L.NormalSwimming = "拓展游泳座騎"
+    L.NormalSwimmingTooltip = "啟用後，游泳座騎也會被當作地面或飛行座騎。"
+    L.Passenger = "載人"
+    L.Support = "請至 |rGitHub|cffffffff、|rWoWInterface|cffffffff 或 |rCurse|cffffffff 獲取插件的詳細資訊與支援！"
+    L.TravelForm = "使用旅行形態"
+    L.TravelFormTooltip = "啟用此選項後，地面與飛行座騎將優先使用旅行行態。"
+    L.Update = "感謝更新 |cff%1$sv%2$s|r！" -- ns.color, ns.version
+    L.UpdateFound = "v%s 可用，請更新！" -- sentVersion
+    L.Version = "目前版本：%s" -- ns.version
+    L.ZoneSpecific = "區域限定"
 return end
 
 -- Swedish
@@ -137,7 +154,6 @@ if CURRENT_LOCALE == "svSE" then return end
 -- Automatic
 L.PassengerGround = L.Passenger .. " (" .. L.Ground .. ")"
 L.PassengerFlying = L.Passenger .. " (" .. _G.BATTLE_PET_NAME_3 .. ")"
-local mapIDs = ns.data.mapIDs
 L.AhnQiraj = CM.GetMapInfo(321).name
 L.Vashjir = CM.GetMapInfo(203).name
 L.Maw = CM.GetMapInfo(1543).name
