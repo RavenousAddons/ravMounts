@@ -26,6 +26,7 @@ function ravMounts_OnEvent(self, event, arg, ...)
                 ns:PrettyPrint(L.Install:format(ns.color, ns.version))
             elseif RAV_version ~= ns.version then
                 ns:PrettyPrint(L.Update:format(ns.color, ns.version))
+                print("Apologies for some bugs and issues in recent updates. I've been attempted to clean up the AddOn's code to make it leaner and to help set up future updates to be done quickly and more easily. Thanks for your patience!")
             end
             RAV_version = ns.version
         end

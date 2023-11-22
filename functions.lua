@@ -193,6 +193,7 @@ function ns:SetDefaultSettings()
     for k, v in pairs(defaults) do
         RegisterDefaultOption(k, v)
     end
+    RAV_data.data = ns.data
 end
 
 -- Open the AddOn Settings page
@@ -440,15 +441,12 @@ function ns:MountUpHandler(specificType)
     -- Clone
     elseif options.clone ~= 1 and cloneMountID and not normalMountModifier and not vendorMountModifier and not passengerMountModifier then
         CMJ.SummonByID(cloneMountID)
-    -- Modifier Keys for Vendor and Passenger Mounts
-    elseif haveVendorMounts and vendorMountModifier then
+    -- Vendor Mounts through Modifier Key
+    elseif vendorMountModifier and haveVendorMounts then
         MountSummon(mounts.vendor)
+    -- Passenger Mounts through Modifier Key
     elseif havePassengerFlyingMounts and flyable and passengerMountModifier and not normalMountModifier then
-        if inDragonIsles and haveDragonridingMounts and options.preferDragonRiding then
-            MountSummon(mounts.dragonriding)
-        else
-            MountSummon(mounts.passengerFlying)
-        end
+        MountSummon(mounts.passengerFlying)
     elseif havePassengerGroundMounts and passengerMountModifier and (not flyable or (flyable and normalMountModifier)) then
         MountSummon(mounts.passengerGround)
     -- Vashj'ir
