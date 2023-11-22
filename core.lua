@@ -26,7 +26,6 @@ function ravMounts_OnEvent(self, event, arg, ...)
                 ns:PrettyPrint(L.Install:format(ns.color, ns.version))
             elseif RAV_version ~= ns.version then
                 ns:PrettyPrint(L.Update:format(ns.color, ns.version))
-                print("Apologies for some bugs and issues in recent updates. I've been attempted to clean up the AddOn's code to make it leaner and to help set up future updates to be done quickly and more easily. Thanks for your patience!")
             end
             RAV_version = ns.version
         end
@@ -37,8 +36,10 @@ function ravMounts_OnEvent(self, event, arg, ...)
         ns:CreateOpenSettingsButton()
         self:UnregisterEvent("ADDON_LOADED")
     elseif event == "ZONE_CHANGED_NEW_AREA" or event == "MOUNT_JOURNAL_USABILITY_CHANGED" or event == "MOUNT_JOURNAL_SEARCH_UPDATED" or event =="PLAYER_SPECIALIZATION_CHANGED" or event == "UPDATE_SHAPESHIFT_FORMS" or event == "ZONE_CHANGED" or event == "ZONE_CHANGED_INDOORS" then
-        ns:MountListHandler()
-        ns:EnsureMacro()
+        C_Timer.After(0, function()
+            ns:MountListHandler()
+            ns:EnsureMacro()
+        end)
     elseif event == "GROUP_ROSTER_UPDATE" then
         local partyMembers = GetNumSubgroupMembers()
         local raidMembers = IsInRaid() and GetNumGroupMembers() or 0

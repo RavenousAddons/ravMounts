@@ -492,7 +492,15 @@ function ns:MountUpHandler(specificType)
     end
 end
 
+local ensuredMacroTimeout = 0
 function ns:EnsureMacro()
+    -- Prevent throttling
+    local currentTime = GetServerTime()
+    if currentTime < ensuredMacroTimeout then
+        return
+    end
+    ensuredMacroTimeout = currentTime + 2
+
     -- Simplify references
     local icon = "INV_Misc_QuestionMark"
     local mounts = RAV_data.mounts
@@ -527,7 +535,7 @@ function ns:EnsureMacro()
     local chauffeur = haveChauffeurMounts and mounts.chauffeur or nil
     local broom = haveBroom and mounts.broom or nil
     local travelForm = (options.travelForm and haveTravelForm) and mounts.travelForm or nil
-    local travelFormName
+    local travelFormName = nil
     if travelForm then
         travelFormName, _ = GetSpellInfo(travelForm[1])
     end
@@ -580,7 +588,7 @@ function ns:EnsureMacro()
             -- Normal Mount Modifier is set
             if options.normalMountModifier ~= 1 then
                 if travelForm or broom or flying then
-                    if not travelForm and not broom and not #flying then
+                    if (travelForm and not travelFormName) or (broom and not broom.name) or (flying and not #flying) then
                         ns:EnsureMacro()
                         return
                     end
@@ -592,7 +600,7 @@ function ns:EnsureMacro()
                         body = body .. "; " .. GetRandomMountFromList(dragonriding)
                     end
                 elseif ground or chauffeur then
-                    if not #ground and not #chauffeur then
+                    if (ground and not #ground) or (chauffeur and not #chauffeur) then
                         ns:EnsureMacro()
                         return
                     end
@@ -603,13 +611,13 @@ function ns:EnsureMacro()
                 if options.preferDragonRiding then
                     body = body .. (condition and "; ") .. GetRandomMountFromList(dragonriding)
                 elseif travelForm or broom or flying then
-                    if not travelForm and not broom and not #flying then
+                    if (travelForm and not travelFormName) or (broom and not broom.name) or (flying and not #flying) then
                         ns:EnsureMacro()
                         return
                     end
                     body = body .. (condition and "; ") .. (travelForm and travelFormName or broom and broom.name or GetRandomMountFromList(flying))
                 else
-                    if not #ground and not #chauffeur then
+                    if (ground and not #ground) or (chauffeur and not #chauffeur) then
                         ns:EnsureMacro()
                         return
                     end
@@ -620,7 +628,7 @@ function ns:EnsureMacro()
         else
             -- Normal Mount Modifier is set
             if options.normalMountModifier ~= 1 and (travelForm or broom or flying) and (ground or chauffeur) then
-                if (not travelForm and not broom and not #flying) or (not #ground and not #chauffeur) then
+                if (travelForm and not travelFormName) or (broom and not broom.name) or (flying and not #flying) or (ground and not #ground) or (chauffeur and not #chauffeur) then
                     ns:EnsureMacro()
                     return
                 end
@@ -633,13 +641,13 @@ function ns:EnsureMacro()
                 end
             else
                 if flyable and (travelForm or broom or flying) then
-                    if not travelForm and not broom and not #flying then
+                    if (travelForm and not travelFormName) or (broom and not broom.name) or (flying and not #flying) then
                         ns:EnsureMacro()
                         return
                     end
                     body = body .. (condition and "; ") .. (travelForm and travelFormName or broom and broom.name or GetRandomMountFromList(flying))
                 else
-                    if not #ground and not #chauffeur then
+                    if (ground and not #ground) or (chauffeur and not #chauffeur) then
                         ns:EnsureMacro()
                         return
                     end
@@ -684,6 +692,8 @@ function ns:EnsureMacro()
         CreateMacro(ns.name, icon, body)
         RAV_macroBody = body
     end
+
+    ensuringMacro = false
 end
 
 function ns:AttachTooltipLabels()
