@@ -511,30 +511,12 @@ function ns:MountUpHandler(specificType)
 end
 
 function ns:EnsureMacro()
-    -- Prevent throttling
-    local currentTime = GetServerTime()
-    if currentTime < ensuredMacroTimeout then
-        return
-    end
-    ensuredMacroTimeout = currentTime + 2
-
     -- Simplify references
     local icon = "INV_Misc_QuestionMark"
     local mounts = RAV_data.mounts
     local options = RAV_data.options
 
-    -- Ensure there's space for the macro if it doesn't yet exist
-    local numberOfMacros, _ = GetNumMacros()
-    if GetMacroIndexByName(ns.name) == 0 and numberOfMacros >= 120 then
-        -- Warn the Player once that there isn't space to create the macro
-        if not hasSeenNoSpaceMessage then
-            hasSeenNoSpaceMessage = true
-            ns:PrettyPrint(L.NoMacroSpace)
-        end
-        return
-    end
-
-    -- Ensure the data object exists, the Macro option is enabled, and we're not in combat
+    -- Unable to create/modify the macro without data or whilst the Player is in combat
     if not RAV_data or not options.macro or UnitAffectingCombat("player") then
         return
     end
@@ -546,123 +528,116 @@ function ns:EnsureMacro()
     local dragonriding = (inDragonIsles and haveDragonridingMounts) and mounts.dragonriding or nil
     local flying = haveFlyingMounts and mounts.flying or nil
     local ground = (inAhnQiraj and haveAhnQirajMounts) and mounts.ahnqiraj or haveGroundMounts and mounts.ground or nil
-    local passenger = (options.passengerMountModifier ~= 1 and flyable and havePassengerFlyingMounts) and mounts.passengerFlying or (options.passengerMountModifier ~= 1 and havePassengerGroundMounts) and mounts.passengerGround or nil -- any setting except "None"
-    local vendor = (options.vendorMountModifier ~= 1 and haveVendorMounts) and mounts.vendor or nil -- any setting except "None"
+    local vendor = haveVendorMounts and mounts.vendor or nil
+    local passenger = (flyable and havePassengerFlyingMounts) and mounts.passengerFlying or havePassengerGroundMounts and mounts.passengerGround or nil
     local swimming = (inVashjir and haveVashjirMounts) and mounts.vashjir or haveSwimmingMounts and mounts.swimming or nil
     local chauffeur = haveChauffeurMounts and mounts.chauffeur or nil
-    local broom = haveBroom and mounts.broom or nil
-    local travelForm = (options.travelForm and haveTravelForm) and mounts.travelForm or {}
-    local travelFormName = nil
-    if travelForm then
-        travelFormName, _ = GetSpellInfo(travelForm[1])
+    local travelForm = haveTravelForm and mounts.travelForm or nil
+    local broom = (haveBroom and not inDragonIsles) and mounts.broom or nil
+
+    -- This part is tricky because we build the macro backwards
+
+    local body = "/" .. ns.command
+    if broom and className ~= "DRUID" then
+        body = "/use [swimming,mod:" .. modifiers[options.normalMountModifier] .. "][nomod,nomounted] " .. broom.name .. "\n/stopmacro [swimming,mod:" .. modifiers[options.normalMountModifier] .. "][nomod,nomounted]\n" .. body
     end
-
-    -- Build up the Macro as a string
-    local body = "#showtooltip "
-    local condition
-    if passenger or vendor or swimming or dragonriding or travelForm or broom or flying or ground then
-        -- Passenger (Ground & Flying)
-        if ListCheck(passenger) then
-            body = body .. "[mod:" .. modifiers[options.passengerMountModifier] .. "] " .. GetRandomMountFromList(passenger)
-            condition = passenger
-        end
-
-        -- Vendor
-        if ListCheck(vendor) then
-            body = body .. (condition and "; ") .. "[mod:" .. modifiers[options.vendorMountModifier] .. "] " .. GetRandomMountFromList(vendor)
-            condition = condition or vendor
-        end
-
-        -- Swimming
-        if ListCheck(swimming) and not travelForm then
-            -- Normal Mount Modifier is set
-            if options.normalMountModifier ~= 1 then
-                body = body .. (condition and "; ") .. "[swimming,nomod:" .. modifiers[options.normalMountModifier] .. "] " .. GetRandomMountFromList(swimming)
-            else
-                body = body .. (condition and "; ") .. "[swimming] " .. GetRandomMountFromList(swimming)
-            end
-            condition = condition or (swimming and not travelForm)
-        end
-
-        -- In Dragonriding zone
-        if ListCheck(dragonriding) then
-            -- Normal Mount Modifier is set
-            if options.normalMountModifier ~= 1 then
-                if travelForm or broom or ListCheck(flying) then
-                    if options.preferDragonRiding then
-                        body = body .. (condition and "; ") .. "[swimming,mod:" .. modifiers[options.normalMountModifier] .. "][nomod:" .. modifiers[options.normalMountModifier] .. "] " .. GetRandomMountFromList(dragonriding)
-                        body = body .. "; " .. (travelForm and travelFormName or broom and broom or GetRandomMountFromList(flying))
-                    else
-                        body = body .. (condition and "; ") .. "[swimming,mod:" .. modifiers[options.normalMountModifier] .. "][nomod:" .. modifiers[options.normalMountModifier] .. "] " .. (travelForm and travelFormName or broom and broom or GetRandomMountFromList(flying))
-                        body = body .. "; " .. GetRandomMountFromList(dragonriding)
-                    end
-                elseif ListCheck(ground) or ListCheck(chauffeur) then
-                    body = body .. (condition and "; ") .. "[swimming,mod:" .. modifiers[options.normalMountModifier] .. "][nomod:" .. modifiers[options.normalMountModifier] .. "] " .. GetRandomMountFromList(dragonriding)
-                    body = body .. "; " .. GetRandomMountFromList(ground or chauffeur)
-                end
-            else
-                if options.preferDragonRiding then
-                    body = body .. (condition and "; ") .. GetRandomMountFromList(dragonriding)
-                elseif travelForm or broom or ListCheck(flying) then
-                    body = body .. (condition and "; ") .. (travelForm and travelFormName or broom and broom or GetRandomMountFromList(flying))
-                elseif ListCheck(ground) or ListCheck(chauffeur) then
-                    body = body .. (condition and "; ") .. GetRandomMountFromList(ground or chauffeur)
-                end
-            end
-        -- Outside Dragonriding zone
-        else
-            -- Normal Mount Modifier is set
-            if options.normalMountModifier ~= 1 and (travelForm or broom or ListCheck(flying)) and (ListCheck(ground) or ListCheck(chauffeur)) then
-                if flyable then
-                    body = body .. (condition and "; ") .. "[swimming,mod:" .. modifiers[options.normalMountModifier] .. "][nomod:" .. modifiers[options.normalMountModifier] .. "] " .. (travelForm and travelFormName or broom and broom or GetRandomMountFromList(flying))
-                    body = body .. "; " .. GetRandomMountFromList(ground or chauffeur)
+    if className == "DRUID" or className == "SHAMAN" then
+        body = "/cancelform\n" .. body
+    end
+    local mountName
+    if dragonriding or flying or broom or ground or chauffeur or vendor or passenger or swimming or (options.travelForm and travelForm) then
+        body = "\n" .. body
+        if (options.travelForm and travelForm) then
+            local travelFormName, _ = GetSpellInfo(travelForm[1])
+            if options.normalMountModifier ~= 1 then -- none
+                if inDragonIsles and haveDragonridingMounts and options.preferDragonRiding then
+                    mountName = GetMountName(dragonriding[random(#dragonriding)])
+                    body = "[mod:" .. modifiers[options.normalMountModifier] .. "] " .. travelFormName .. "; " .. mountName .. "\n" .. "/use [mod:" .. modifiers[options.normalMountModifier] .. "] " .. travelFormName .. "\n" .. "/stopmacro [mod:" .. modifiers[options.normalMountModifier] .. "]" .. body
                 else
-                    body = body .. (condition and "; ") .. "[swimming,mod:" .. modifiers[options.normalMountModifier] .. "][nomod:" .. modifiers[options.normalMountModifier] .. "] " .. GetRandomMountFromList(ground or chauffeur)
-                    body = body .. "; " .. (travelForm and travelFormName or broom and broom or GetRandomMountFromList(flying))
+                    body = travelFormName .. "\n" .. "/use [nomod] " .. travelFormName .. "\n" .. "/stopmacro [nomod]" .. body
+                    if broom or flying or ground or chauffeur then
+                        mountName = broom and broom.name or flying and GetMountName(flying[random(#flying)]) or ground and GetMountName(ground[random(#ground)]) or chauffeur and GetMountName(chauffeur[random(#chauffeur)]) or nil
+                        if not mountName then
+                            ns:EnsureMacro()
+                            return
+                        end
+                    end
+                    if mountName then
+                        body = "[mod:" .. modifiers[options.normalMountModifier] .. "] " .. mountName .. "; " .. body
+                    end
                 end
             else
-                if flyable and (travelForm or broom or ListCheck(flying)) then
-                    body = body .. (condition and "; ") .. (travelForm and travelFormName or broom and broom or GetRandomMountFromList(flying))
-                elseif ListCheck(ground) or ListCheck(chauffeur) then
-                    body = body .. (condition and "; ") .. GetRandomMountFromList(ground or chauffeur)
-                end
-            end
-        end
-    -- No mounts available, try the Chauffeur
-    elseif ListCheck(chauffeur) then
-        icon = "inv_misc_key_06"
-        body = body .. GetRandomMountFromList(chauffeur)
-    end
-
-    -- Shapeshift Forms
-    if travelFormName then
-        if options.normalMountModifier ~= 1 then
-            if ListCheck(dragonriding) and options.preferDragonRiding then
-                body = body .. "\n/use [mod:" .. modifiers[options.normalMountModifier] .. "] " .. travelFormName .. "\n/stopmacro [mod:" .. modifiers[options.normalMountModifier] .. "]\n/cancelform"
-            else
-                body = body .. "\n/use [nomod:" .. modifiers[options.normalMountModifier] .. "] " .. travelFormName .. "\n/stopmacro [nomod:" .. modifiers[options.normalMountModifier] .. "]\n/cancelform"
+                body = travelFormName .. "\n" .. "/use " .. travelFormName
             end
         else
-            body = body .. "\n/use  " .. travelFormName .. "\n/stopmacro\n/cancelform"
+            if not broom and ground then
+                mountName = (inDragonIsles and haveDragonridingMounts) and (options.preferDragonRiding and GetMountName(flying[random(#flying)]) or GetMountName(dragonriding[random(#dragonriding)])) or GetMountName(ground[random(#ground)])
+                if not mountName then
+                    ns:EnsureMacro()
+                    return
+                end
+                body = mountName .. body
+            end
+            if broom or dragonriding or flying then
+                mountName = broom and broom.name or dragonriding and GetMountName(dragonriding[random(#dragonriding)]) or GetMountName(flying[random(#flying)])
+                if not mountName then
+                    ns:EnsureMacro()
+                    return
+                end
+                if broom then
+                    body = broom.name .. "; " .. body
+                elseif flyable and ground then
+                    if options.normalMountModifier ~= 1 then -- none
+                        body = "[swimming,mod:" .. modifiers[options.normalMountModifier] .. "][nomod:" .. modifiers[options.normalMountModifier] .. "] " .. mountName .. "; " .. body
+                    else
+                        body = "[] " .. mountName .. "; " .. body
+                    end
+                elseif ((inDragonIsles and haveDragonridingMounts) or ground) and options.normalMountModifier ~= 1 then -- none
+                    body = "[noswimming,mod:" .. modifiers[options.normalMountModifier] .. "] " .. mountName .. "; " .. body
+                else
+                    body = mountName .. body
+                end
+            end
+            if chauffeur and ground == nil and dragonriding == nil and flying == nil then
+                icon = "inv_misc_key_06"
+                mountName, _ = CMJ.GetMountInfoByID(chauffeur[1])
+                body = mountName .. body
+            end
         end
+        if swimming and travelForm == nil then
+            _, spellID = CMJ.GetMountInfoByID(swimming[random(#swimming)])
+            mountName, _ = GetSpellInfo(spellID)
+            if options.normalMountModifier ~= 1 then -- none
+                body = "[swimming,nomod:" .. modifiers[options.normalMountModifier] .. "] " .. mountName .. ((dragonriding or flying or ground or chauffeur) and "; " or "") .. body
+            else
+                body = "[swimming] " .. mountName .. ((dragonriding or flying or ground or chauffeur) and "; " or "") .. body
+            end
+        end
+        if vendor and options.vendorMountModifier ~= 1 then -- none
+            _, spellID = CMJ.GetMountInfoByID(vendor[random(#vendor)])
+            mountName, _ = GetSpellInfo(spellID)
+            body = "[mod:" .. modifiers[options.vendorMountModifier] .. "] " .. mountName .. ((dragonriding or flying or ground or chauffeur or swimming) and "; " or "") .. body
+        end
+        if passenger and options.passengerMountModifier ~= 1 then -- none
+            _, spellID = CMJ.GetMountInfoByID(passenger[random(#passenger)])
+            mountName, _ = GetSpellInfo(spellID)
+            body = "[mod:" .. modifiers[options.passengerMountModifier] .. "] " .. mountName .. ((dragonriding or flying or ground or chauffeur or swimming or vendor) and "; " or "") .. body
+        end
+        body = "#showtooltip " .. body
     end
-
-    -- Add the AddOn command to the end
-    body = body .. "\n/" .. ns.command
-
-    -- Edit the Macro if it exists
+    local numberOfMacros, _ = GetNumMacros()
     if GetMacroIndexByName(ns.name) > 0 then
         if body ~= RAV_macroBody then
             EditMacro(GetMacroIndexByName(ns.name), ns.name, icon, body)
             RAV_macroBody = body
         end
-    -- Otherwise, create a new Macro
-    else
+    elseif numberOfMacros < 120 then
         CreateMacro(ns.name, icon, body)
         RAV_macroBody = body
+    elseif not hasSeenNoSpaceMessage then
+        hasSeenNoSpaceMessage = true
+        ns:PrettyPrint(L.NoMacroSpace)
     end
-
-    ensuringMacro = false
 end
 
 function ns:AttachTooltipLabels()
