@@ -30,14 +30,14 @@ L.MacroTooltip = "When enabled, a macro called |cffffffff%s|r will be automatica
 L.Modifier = "Modifier"
 L.ModifierTooltip = "Choose which modifier key to use to call %s." -- type
 L.MountsTooltip = "When enabled, only %s marked as favorites will be summoned." -- type
-L.NoMacroSpace = "Unfortunately, you don't have enough global macro space for the macro to be created!"
+L.NoMacroSpace = "Unfortunately, you don't have enough space in General Macros for the macro to be created!"
 L.NormalModifierTooltip = L.ModifierTooltip:format(L.Alternate .. " " .. _G.MOUNTS) .. "|nWhere Dragonriding is possible, this alternates between Dragonriding and Flying mounts; otherwise, it alternates between Flying and Ground mounts. Additionally, when swimming, this will trigger a non-swimming mount to be summoned instead."
 L.NormalSwimming = "Expanded Swimming Mounts"
 L.NormalSwimmingTooltip = "When enabled, Swimming mounts will also count as Ground/Flying mounts."
 L.Passenger = "Passenger"
 L.PreferDragonRiding = "Prefer Dragonriding Mounts  |cffff0000NEW!|r"
 L.PreferDragonRidingTooltip = "When enabled, Dragonriding mounts will be used instead of Flying mounts in appropriate zones."
-L.Support = "Check out the Addon on |rGitHub|cffffffff, |rWoWInterface|cffffffff, or |rCurse|cffffffff for more info and support!"
+L.Support = "Check out the Addon on |rCurse|cffffffff, |rGitHub|cffffffff, or |rWoWInterface|cffffffff for more info and support!"
 L.TravelForm = "Use Shapeshift Forms"
 L.TravelFormTooltip = "When enabled, Class Shapeshift Forms, if available, will be utilised as a priority over Ground/Flying mounts."
 L.Update = "Thanks for updating to |cff%1$sversion %2$s|r!" -- ns.color, ns.version
@@ -64,7 +64,7 @@ if CURRENT_LOCALE == "deDE" then
     L.NoMacroSpace = "Leider hast du nicht genug globalen Makroplatz, um das Makro zu erstellen!"
     L.NoMounts = "Leider hast du keine Reittiere, die du zu diesem Zeitpunkt aufrufen kannst!"
     L.Passenger = "Passagiere"
-    L.Support = "Schau dir das Addon auf |rGitHub|cffffffff, |rWoWInterface|cffffffff, oder |rCurse|cffffffff für weitere Informationen und Unterstützung an!"
+    L.Support = "Schau dir das Addon auf |rCurse|cffffffff, |rGitHub|cffffffff, oder |rWoWInterface|cffffffff für weitere Informationen und Unterstützung an!"
     L.Update = "Danke für das Update auf |cff%1$sVersion %2$s|r!" -- ns.color, ns.version
     L.Version = "%s ist die aktuelle Version." -- ns.version
 end
@@ -110,7 +110,7 @@ if CURRENT_LOCALE == "zhCN" then
     L.NormalSwimming = "扩展游泳座骑"
     L.NormalSwimmingTooltip = "启用后，游泳座骑也会被当作地面或飞行座骑。"
     L.Passenger = "载人"
-    L.Support = "请至 |rGitHub|cffffffff、|rWoWInterface|cffffffff 或 |rCurse|cffffffff 获取更多信息与插件支持！"
+    L.Support = "请至 |rCurse|cffffffff、|rGitHub|cffffffff 或 |rWoWInterface|cffffffff 获取更多信息与插件支持！"
     L.TravelForm = "使用旅行形态"
     L.TravelFormTooltip = "启用此选项后，地面与飞行座骑将优先使用旅行行态。"
     L.Update = "感谢更新 |cff%1$sv%2$s|r！" -- ns.color, ns.version
@@ -139,7 +139,7 @@ if CURRENT_LOCALE == "zhTW" then
     L.NormalSwimming = "拓展游泳座騎"
     L.NormalSwimmingTooltip = "啟用後，游泳座騎也會被當作地面或飛行座騎。"
     L.Passenger = "載人"
-    L.Support = "請至 |rGitHub|cffffffff、|rWoWInterface|cffffffff 或 |rCurse|cffffffff 獲取插件的詳細資訊與支援！"
+    L.Support = "請至 |rCurse|cffffffff、|rGitHub|cffffffff 或 |rWoWInterface|cffffffff 獲取插件的詳細資訊與支援！"
     L.TravelForm = "使用旅行形態"
     L.TravelFormTooltip = "啟用此選項後，地面與飛行座騎將優先使用旅行行態。"
     L.Update = "感謝更新 |cff%1$sv%2$s|r！" -- ns.color, ns.version
