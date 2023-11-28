@@ -35,7 +35,7 @@ L.NormalModifierTooltip = L.ModifierTooltip:format(L.Alternate .. " " .. _G.MOUN
 L.NormalSwimming = "Expanded Swimming Mounts"
 L.NormalSwimmingTooltip = "When enabled, Swimming mounts will also count as Ground/Flying mounts."
 L.Passenger = "Passenger"
-L.PreferDragonRiding = "Prefer Dragonriding Mounts  |cffff0000NEW!|r"
+L.PreferDragonRiding = "Prefer Dragonriding Mounts"
 L.PreferDragonRidingTooltip = "When enabled, Dragonriding mounts will be used instead of Flying mounts in appropriate zones."
 L.Support = "Check out the Addon on |rCurse|cffffffff, |rGitHub|cffffffff, or |rWoWInterface|cffffffff for more info and support!"
 L.TravelForm = "Use Shapeshift Forms"
@@ -44,29 +44,46 @@ L.Update = "Thanks for updating to |cff%1$sversion %2$s|r!" -- ns.color, ns.vers
 L.UpdateFound = "Version %s is now available for download. Please update!" -- sentVersion
 L.Version = "%s is the current version." -- ns.version
 L.ZoneSpecific = "Zone-Specific"
-L.ZoneSpecificMountsTooltip = L.MountsTooltip:format(L.ZoneSpecific .. " " .. _G.MOUNTS) .. "|nThis includes Ahn'Qiraj, Vashj'ir, and The Maw."
+L.ZoneSpecificMountsTooltip = L.MountsTooltip:format(L.ZoneSpecific .. " " .. _G.MOUNTS)
 
 -- Check locale and assign appropriate
 local CURRENT_LOCALE = GetLocale()
 
 -- German
 if CURRENT_LOCALE == "deDE" then
+    L.AddonCompartmentTooltip1 = "|cff" .. ns.color .. "Links-Klick:|r Einstellungen öffnen"
+    L.AddonCompartmentTooltip2 = "|cff" .. ns.color .. "Mittelklick:|r Mount-Journal öffnen"
+    L.AddonCompartmentTooltip3 = "|cff" .. ns.color .. "Rechtsklick:|r Reittier beschwören"
+    L.Alternate = "Wechseln"
     L.Cloneable = "Klonbar"
+    L.CloneableTooltip = "Wenn diese Funktion aktiviert ist, kannst du die Reittiere von Spielern klonen, die du um dich herum siehst."
     L.CountHeading = "Gesammelte Daten:"
+    L.Dragonriding = "Drachenreiten"
     L.FavoritesHeading = "Typen, die Favoriten verwenden:"
+    L.FlexibleTooltip = "Wähle aus, wie Fliegende Reittiere, die wie Bodenreittiere aussehen, katalogisiert werden sollen."
     L.Force = "Mount Journal-Daten sind gesammelt, sortiert und einsatzbereit!"
     L.Ground = "Reittiere"
     L.Install = "Danke für die Installation von |cff%1$sVersion %2$s|r!" -- ns.color, ns.version
     L.Macro = "Automatisch Makro erstellen/verwalten"
     L.MacroTooltip = "Wenn diese Funktion aktiviert ist, wird automatisch ein Makro mit dem Namen |cffffffff%s|r erstellt und für Sie unter |cffffffffGeneral Macros|r verwaltet." -- ns.name
     L.Modifier = "Modifikator"
+    L.ModifierTooltip = "Wähle aus, welche Modifikatortaste du für den Aufruf von %s verwenden willst." -- type
     L.MountsTooltip = "Wenn diese Option aktiviert ist, werden nur %s, die als Favoriten markiert sind, aufgerufen." -- type
     L.NoMacroSpace = "Leider hast du nicht genug globalen Makroplatz, um das Makro zu erstellen!"
     L.NoMounts = "Leider hast du keine Reittiere, die du zu diesem Zeitpunkt aufrufen kannst!"
+    L.NormalModifierTooltip = L.ModifierTooltip:format(L.Alternate .. " " .. _G.MOUNTS) .. "|nWo Drachenreiten möglich ist, wechselt es zwischen Drachenreiten und fliegenden Reittieren; andernfalls wechselt es zwischen fliegenden und Boden-Reittieren. Wenn du schwimmst, wird stattdessen ein nicht schwimmendes Reittier beschworen."
+    L.NormalSwimming = "Erweiterte schwimmende Reittiere"
+    L.NormalSwimmingTooltip = "Wenn diese Funktion aktiviert ist, zählen schwimmende Reittiere auch als Boden-/Flugreittiere."
     L.Passenger = "Passagiere"
+    L.PreferDragonRiding = "Bevorzuge Drachenreit-Reittiere"
+    L.PreferDragonRidingTooltip = "Wenn diese Option aktiviert ist, werden in den entsprechenden Zonen Drachenreittiere anstelle von fliegenden Reittieren verwendet."
     L.Support = "Schau dir das Addon auf |rCurse|cffffffff, |rGitHub|cffffffff, oder |rWoWInterface|cffffffff für weitere Informationen und Unterstützung an!"
+    L.TravelForm = "Formen der Gestaltwandlung verwenden"
+    L.TravelFormTooltip = "Wenn diese Funktion aktiviert ist, werden Formen der Gestaltwandlung der Klasse, sofern vorhanden, vorrangig vor Boden-/Flug-Reittieren verwendet."
     L.Update = "Danke für das Update auf |cff%1$sVersion %2$s|r!" -- ns.color, ns.version
+    L.UpdateFound = "Version %s ist jetzt zum Download verfügbar. Bitte aktualisiere!" -- sentVersion
     L.Version = "%s ist die aktuelle Version." -- ns.version
+    L.ZoneSpecific = "Zonenspezifisch"
 end
 
 -- Spanish
