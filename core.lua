@@ -5,15 +5,19 @@ function ravMounts_OnLoad(self)
     self:RegisterEvent("PLAYER_LOGIN")
     self:RegisterEvent("ADDON_LOADED")
     self:RegisterEvent("ZONE_CHANGED_NEW_AREA")
-    self:RegisterEvent("ZONE_CHANGED")
-    self:RegisterEvent("ZONE_CHANGED_INDOORS")
     self:RegisterEvent("MOUNT_JOURNAL_USABILITY_CHANGED")
     self:RegisterEvent("MOUNT_JOURNAL_SEARCH_UPDATED")
     self:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
     self:RegisterEvent("UPDATE_SHAPESHIFT_FORMS")
     self:RegisterEvent("GROUP_ROSTER_UPDATE")
     self:RegisterEvent("CHAT_MSG_ADDON")
-    self:RegisterEvent("BAG_UPDATE")
+
+    C_Timer.After(3, function ()
+        if RAV_data and RAV_data.player and RAV_data.player.class == "DRUID" then
+            self:RegisterEvent("ZONE_CHANGED")
+            self:RegisterEvent("ZONE_CHANGED_INDOORS")
+        end
+    end)
 end
 
 function ravMounts_OnEvent(self, event, arg, ...)
@@ -26,7 +30,6 @@ function ravMounts_OnEvent(self, event, arg, ...)
                 ns:PrettyPrint(L.Install:format(ns.color, ns.version))
             elseif RAV_version ~= ns.version then
                 ns:PrettyPrint(L.Update:format(ns.color, ns.version))
-                print("Apologies once again to everyone for bearing with some Addon-breaking bugs recently. I have reverted the areas of code causing the issue and will test more thoroughly in the future. Thanks for your patience as I work through these issues.")
             end
             RAV_version = ns.version
         end
@@ -36,8 +39,15 @@ function ravMounts_OnEvent(self, event, arg, ...)
     elseif event == "ADDON_LOADED" and arg == "Blizzard_Collections" then
         ns:CreateOpenSettingsButton()
         self:UnregisterEvent("ADDON_LOADED")
-    elseif event == "ZONE_CHANGED_NEW_AREA" or event == "MOUNT_JOURNAL_USABILITY_CHANGED" or event == "MOUNT_JOURNAL_SEARCH_UPDATED" or event =="PLAYER_SPECIALIZATION_CHANGED" or event == "UPDATE_SHAPESHIFT_FORMS" or event == "ZONE_CHANGED" or event == "ZONE_CHANGED_INDOORS" then
+    elseif event == "ZONE_CHANGED_NEW_AREA" or event == "MOUNT_JOURNAL_USABILITY_CHANGED" or event == "MOUNT_JOURNAL_SEARCH_UPDATED" or event =="PLAYER_SPECIALIZATION_CHANGED" or event == "UPDATE_SHAPESHIFT_FORMS" then
         C_Timer.After(0, function()
+            travelFormCondition = (IsOutdoors() or IsSubmerged())
+            ns:MountListHandler()
+            ns:EnsureMacro()
+        end)
+    elseif (event == "ZONE_CHANGED" or event == "ZONE_CHANGED_INDOORS") and travelFormCondition ~= (IsOutdoors() or IsSubmerged()) then
+        C_Timer.After(0, function()
+            travelFormCondition = (IsOutdoors() or IsSubmerged())
             ns:MountListHandler()
             ns:EnsureMacro()
         end)
@@ -66,8 +76,6 @@ function ravMounts_OnEvent(self, event, arg, ...)
                 end
             end
         end
-    elseif event == "BAG_UPDATE" then
-        ns:MountListHandler()
     end
 end
 

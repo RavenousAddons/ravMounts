@@ -7,22 +7,13 @@ local mountTypes = ns.data.mountTypes
 local mountIDs = ns.data.mountIDs
 local mapIDs = ns.data.mapIDs
 
--- Retrieve Player information.
-local _, className = UnitClass("player")
-local faction, _ = UnitFactionGroup("player")
-
 -- Set up variables for mount types, conditions, etc.
 local flyable, cloneMountID, mapID, inAhnQiraj, inVashjir, inMaw, inDragonIsles, haveGroundMounts, haveFlyingMounts, havePassengerGroundMounts, havePassengerFlyingMounts, haveVendorMounts, haveSwimmingMounts, haveAhnQirajMounts, haveVashjirMounts, haveMawMounts, haveDragonridingMounts, haveChauffeurMounts, haveBroom, normalMountModifier, vendorMountModifier, passengerMountModifier
-local ensuredMacroTimeout = 0
 local hasSeenNoSpaceMessage = false
 local MountListHandlerTimeout = false
 
 -- Key Modifiers.
 local modifiers = {"none", "alt", "ctrl", "shift"}
-
--- Icon Replacement
-local tarecgosaMount, _ = GetSpellInfo(407555)
-local tarecgosaStaff = C_Item.GetItemNameByID(71086)
 
 -- Shoten API references.
 local CM = C_Map
@@ -80,6 +71,10 @@ end
 local function GetMountName(mountID)
     if not mountID then return nil end
 
+    if mountID == 1727 then
+        return C_Item.GetItemNameByID(71086)
+    end
+
     local _, spellID = CMJ.GetMountInfoByID(mountID)
     local mountName, _ = GetSpellInfo(spellID)
 
@@ -98,6 +93,10 @@ end
 local function GetCloneMountID()
     -- Simplify references
     local options = RAV_data.options
+
+    if options.clone == 1 or (not UnitIsPlayer("target") and not UnitIsPlayer("focus")) then
+        return false
+    end
 
     local clone = false
     if options.clone == 4 then -- both
@@ -167,23 +166,8 @@ end
 -- Summons a random mount from a given list of mounts.
 local function MountSummon(list)
     if not UnitAffectingCombat("player") and #list > 0 then
-        local iter = 10 -- "magic" number
-        local n = random(#list)
-        while not select(5, CMJ.GetMountInfoByID(list[n])) and iter > 0 do
-            n = random(#list)
-            iter = iter - 1
-        end
-        CMJ.SummonByID(list[n])
+        CMJ.SummonByID(list[random(#list)])
     end
-end
-
-local function GetRandomMountFromList(list)
-    local _, spellID = CMJ.GetMountInfoByID(list[random(#list)])
-    local mountName, _ = GetSpellInfo(spellID)
-    if mountName == tarecgosaMount then
-        return tarecgosaStaff
-    end
-    return mountName
 end
 
 ---
@@ -207,6 +191,17 @@ function ns:SetDefaultSettings()
     end
     if RAV_data.options == nil then
         RAV_data.options = {}
+    end
+    if RAV_data.mounts == nil then
+        RAV_data.mounts = {}
+        RAV.data.mounts.count = 0
+    end
+    if RAV_data.player == nil then
+        RAV_data.player = {}
+        local _, className = UnitClass("player")
+        RAV_data.player.class = className
+        local factionName, _ = UnitFactionGroup("player")
+        RAV_data.player.faction = factionName
     end
     for k, v in pairs(defaults) do
         RegisterDefaultOption(k, v)
@@ -238,150 +233,158 @@ end
 
 -- Builds a list of chosen mounts and sorts them into categories.
 function ns:MountListHandler()
-    -- Simplify references
-    local options = RAV_data.options
-
     -- Check that we have created the AddOn data object and that we're not
     -- awaiting the timeout
     if RAV_data == nil or MountListHandlerTimeout then
         return
     end
+
     -- If the above passes, set the timeout
     MountListHandlerTimeout = true
-    -- After 1 second, unset the timeout
+    -- Wait then unset the timeout
     C_Timer.After(1, function()
         MountListHandlerTimeout = false
     end)
 
+    -- Simplify references
+    local options = RAV_data.options
+
+    -- Cache the result of these functions
+    local hasGroundRiding = hasGroundRiding()
+    local hasFlyingRiding = hasFlyingRiding()
+
     -- Determine the Player's location as a Map ID
     mapID = CM.GetBestMapForUnit("player")
 
-    -- Build a list of chosen mounts
-    RAV_data.mounts = {}
-    RAV_data.mounts.dragonriding = {}
-    RAV_data.mounts.flying = {}
-    RAV_data.mounts.ground = {}
-    RAV_data.mounts.vendor = {}
-    RAV_data.mounts.passengerGround = {}
-    RAV_data.mounts.passengerFlying = {}
-    RAV_data.mounts.swimming = {}
-    RAV_data.mounts.ahnqiraj = {}
-    RAV_data.mounts.vashjir = {}
-    RAV_data.mounts.maw = {}
-    RAV_data.mounts.chauffeur = {}
-    RAV_data.mounts.travelForm = {}
-    RAV_data.mounts.broom = {}
     -- Nazjatar allows some swimming mounts to function as flying mounts
     inNazjatar = contains(mapIDs.nazjatar, mapID)
+
+    -- Build a list of chosen mounts
+    local dragonriding = {}
+    local flying = {}
+    local ground = {}
+    local vendor = {}
+    local passengerGround = {}
+    local passengerFlying = {}
+    local swimming = {}
+    local aquaticGround = {}
+    local aquaticFlying = {}
+    local ahnqiraj = {}
+    local vashjir = {}
+    local maw = {}
+    local chauffeur = {}
+    local travelForm = {}
+    local broom = {}
     -- Loop through the Mount Journal as a series of Mount IDs
     for _, mountID in pairs(CMJ.GetMountIDs()) do
         -- Grab data about the Mount
         local mountName, _, _, _, isUsable, _, isFavorite, _, mountFaction, _, isCollected = CMJ.GetMountInfoByID(mountID)
         local _, _, _, _, mountType = CMJ.GetMountInfoExtraByID(mountID)
         -- Set up some checks that return boolean values about the mount
-        local isDragonridingMount = contains(mountIDs.dragonriding, mountID)
-        local isFlyingMount = (contains(mountTypes.flying, mountType) and not isSwimmingMount) or (contains(mountTypes.flying, mountType) and isSwimmingMount and options.normalSwimmingMounts)
-        local isGroundMount = (contains(mountTypes.ground, mountType) and (not isSwimmingMount or mountType == 412)) or (contains(mountTypes.ground, mountType) and isSwimmingMount and options.normalSwimmingMounts)
         local isSwimmingMount = contains(mountTypes.swimming, mountType)
-        local isVendorMount = contains(mountIDs.vendor, mountID)
-        local isPassengerGroundMount = contains(mountIDs.passengerGround, mountID)
-        local isPassengerFlyingMount = contains(mountIDs.passengerFlying, mountID)
-        local isAhnQirajMount = contains(mountTypes.ahnqiraj, mountType)
-        local isVashjirMount = contains(mountTypes.vashjir, mountType)
-        local isMawMount = contains(mountIDs.maw, mountID)
+        local isSwimmingFlyingMount = contains(mountTypes.aquaticflying, mountType)
+        local isSwimmingGroundMount = contains(mountTypes.aquaticground, mountType)
+        local isFlyingMount = (contains(mountTypes.flying, mountType) and not isSwimmingMount) or (contains(mountTypes.flying, mountType) and isSwimmingMount and options.normalSwimmingMounts)
+        local isGroundMount = (contains(mountTypes.ground, mountType) and not isSwimmingMount) or (contains(mountTypes.ground, mountType) and isSwimmingMount and options.normalSwimmingMounts)
         local isChauffeurMount = contains(mountTypes.chauffeur, mountType)
-        local isFlexMount = contains(mountIDs.flex, mountID)
-        -- Cache the result of these functions
-        local hasGroundRiding = hasGroundRiding()
-        local hasFlyingRiding = hasFlyingRiding()
         -- Begin performing conditional checks against the mount information and
         -- the booleans created above.
         -- Check that the Player has both collected the Mount and that it's
         -- not unavailable to their faction. (0 = Horde & 1 = Alliance)
-        if isCollected and not (mountFaction == 0 and faction ~= "Horde") and not (mountFaction == 1 and faction ~= "Alliance") then
+        if isCollected and not (mountFaction == 0 and (RAV_data.player and RAV_data.player.faction ~= "Horde")) and not (mountFaction == 1 and (RAV_data.player and RAV_data.player.faction ~= "Alliance")) then
             -- Check that the Player has Ground mount training
             if hasGroundRiding then
                 -- Dragonriding Mount
-                if isDragonridingMount and (isFavorite or not options.normalMounts) then
-                    table.insert(RAV_data.mounts.dragonriding, mountID)
+                if contains(mountIDs.dragonriding, mountID) and (isFavorite or not options.normalMounts) then
+                    table.insert(dragonriding, mountID)
                 end
-                -- Flying Mount
-                if isFlyingMount and (isFavorite or not options.normalMounts) and not isVendorMount and not isPassengerFlyingMount and not isPassengerGroundMount then
-                    if isFlexMount then
-                        -- both or ground
+                -- Flying Mount (excl. Passenger & Vendor)
+                if (isFlyingMount or (isSwimmingFlyingMount and options.normalSwimmingMounts)) and (isFavorite or not options.normalMounts) and not contains(mountIDs.vendor, mountID) and not contains(mountIDs.passengerFlying, mountID) and not isPassengerGroundMount then
+                    if contains(mountIDs.flex, mountID) then
+                        -- Flex: both or ground
                         if options.flexMounts == 3 or options.flexMounts == 1 then
-                            table.insert(RAV_data.mounts.ground, mountID)
+                            table.insert(ground, mountID)
                         end
-                        -- both or flying
+                        -- Flex: both or flying
                         if hasFlyingRiding and options.flexMounts == 3 or options.flexMounts == 2 then
-                            table.insert(RAV_data.mounts.flying, mountID)
+                            table.insert(flying, mountID)
                         end
                     elseif hasFlyingRiding then
-                        table.insert(RAV_data.mounts.flying, mountID)
+                        table.insert(flying, mountID)
                     end
                 end
-                -- Ground Mount
-                if isGroundMount and (isFavorite or not options.normalMounts) and not isVendorMount and not isPassengerFlyingMount and not isPassengerGroundMount then
-                    table.insert(RAV_data.mounts.ground, mountID)
+                -- Ground Mount (excl. Passenger & Vendor)
+                if (isGroundMount or (isSwimmingGroundMount and options.normalSwimmingMounts)) and (isFavorite or not options.normalMounts) and not contains(mountIDs.vendor, mountID) and not contains(mountIDs.passengerFlying, mountID) and not contains(mountIDs.passengerGround, mountID) then
+                    table.insert(ground, mountID)
                 end
                 -- Vendor Mount
-                if isVendorMount and (isFavorite or not options.vendorMounts) then
-                    table.insert(RAV_data.mounts.vendor, mountID)
+                if contains(mountIDs.vendor, mountID) and (isFavorite or not options.vendorMounts) then
+                    table.insert(vendor, mountID)
                 end
                 -- Passenger Mount (Flying)
-                if hasFlyingRiding and isPassengerFlyingMount and (isFavorite or not options.passengerMounts) then
-                    table.insert(RAV_data.mounts.passengerFlying, mountID)
+                if hasFlyingRiding and contains(mountIDs.passengerFlying, mountID) and (isFavorite or not options.passengerMounts) then
+                    table.insert(passengerFlying, mountID)
                 end
                 -- Passenger Mount (Ground)
-                if isPassengerGroundMount and (isFavorite or not options.passengerMounts) then
-                    table.insert(RAV_data.mounts.passengerGround, mountID)
+                if contains(mountIDs.passengerGround, mountID) and (isFavorite or not options.passengerMounts) then
+                    table.insert(passengerGround, mountID)
                 end
                 -- Swimming Mount
                 if isSwimmingMount and (isFavorite or not options.swimmingMounts) then
-                    table.insert(RAV_data.mounts.swimming, mountID)
-                    if inNazjatar and not contains(mountIDs.noFlyingSwimming, mountID) then
-                        table.insert(RAV_data.mounts.flying, mountID)
+                    table.insert(swimming, mountID)
+                    if inNazjatar and (isSwimmingMount or isSwimmingFlyingMount) and not contains(mountIDs.noFlyingSwimming, mountID) then
+                        table.insert(flying, mountID)
                     end
                 end
+                -- Aquatic (Flying/Swimming) Mount
+                if isSwimmingFlyingMount and (isFavorite or not options.swimmingMounts) then
+                    table.insert(swimming, mountID)
+                    table.insert(aquaticFlying, mountID)
+                end
+                -- Aquatic (Ground/Swimming) Mount
+                if isSwimmingGroundMount and (isFavorite or not options.swimmingMounts) then
+                    table.insert(swimming, mountID)
+                    table.insert(aquaticGround, mountID)
+                end
                 -- Ahn'Qiraj (Zone-Specific)
-                if isAhnQirajMount and (isFavorite or not options.zoneSpecificMounts) then
-                    table.insert(RAV_data.mounts.ahnqiraj, mountID)
+                if contains(mountTypes.ahnqiraj, mountType) and (isFavorite or not options.zoneSpecificMounts) then
+                    table.insert(ahnqiraj, mountID)
                 end
                 -- Vashj'ir (Zone-Specific)
-                if isVashjirMount and (isFavorite or not options.zoneSpecificMounts) then
-                    table.insert(RAV_data.mounts.vashjir, mountID)
+                if contains(mountTypes.vashjir, mountType) and (isFavorite or not options.zoneSpecificMounts) then
+                    table.insert(vashjir, mountID)
                 end
                 -- The Maw (Zone-Specific)
-                if isMawMount and (isFavorite or not options.zoneSpecificMounts) then
-                    table.insert(RAV_data.mounts.maw, mountID)
+                if contains(mountIDs.maw, mountID) and (isFavorite or not options.zoneSpecificMounts) then
+                    table.insert(maw, mountID)
                 end
             end
             -- Chauffeur
             if isChauffeurMount then
-                table.insert(RAV_data.mounts.chauffeur, mountID)
+                table.insert(chauffeur, mountID)
             end
         end
     end
     -- Treat Passenger (Ground) Mounts as Ground Mounts if none are captured.
-    if hasGroundRiding and #RAV_data.mounts.ground == 0 and #RAV_data.mounts.passengerGround > 0 then
-        RAV_data.mounts.ground = RAV_data.mounts.passengerGround
+    if hasGroundRiding and #ground == 0 and #passengerGround > 0 then
+        ground = passengerGround
     end
     -- Treat Passenger (Flying) Mounts as Flying Mounts if none are captured.
-    if hasFlyingRiding and #RAV_data.mounts.flying == 0 and #RAV_data.mounts.passengerFlying > 0 then
-        RAV_data.mounts.flying = RAV_data.mounts.passengerFlying
+    if hasFlyingRiding and #flying == 0 and #passengerFlying > 0 then
+        flying = passengerFlying
     end
     -- Check for Druid forms
-    if className == "DRUID" then
+    if RAV_data.player and RAV_data.player.class == "DRUID" then
         if IsPlayerSpell(ns.data.travelForms["Travel Form"]) and (IsOutdoors() or IsSubmerged()) then
-            table.insert(RAV_data.mounts.travelForm, ns.data.travelForms["Travel Form"])
+            table.insert(travelForm, ns.data.travelForms["Travel Form"])
         elseif IsPlayerSpell(ns.data.travelForms["Cat Form"]) then
-            table.insert(RAV_data.mounts.travelForm, ns.data.travelForms["Cat Form"])
+            table.insert(travelForm, ns.data.travelForms["Cat Form"])
         end
     end
     -- Check for Shaman forms
-    if className == "SHAMAN" then
+    if RAV_data.player and RAV_data.player.class == "SHAMAN" then
         if IsPlayerSpell(ns.data.travelForms["Ghost Wolf"]) then
-            table.insert(RAV_data.mounts.travelForm, ns.data.travelForms["Ghost Wolf"])
+            table.insert(travelForm, ns.data.travelForms["Ghost Wolf"])
         end
     end
     -- Check if the Player has the Hallow's End broom in their inventory and
@@ -389,16 +392,40 @@ function ns:MountListHandler()
     local broomName, broomID = GetItemSpell(37011)
     local broomUsable, _ = IsUsableSpell(broomID)
     if (broomUsable) then
-        RAV_data.mounts.broom.name = broomName
+        broom.name = broomName
         for bag=0, NUM_BAG_SLOTS do
             for slot=0, C_Container.GetContainerNumSlots(bag) do
                 if 37011 == C_Container.GetContainerItemID(bag, slot) then
-                    RAV_data.mounts.broom.bag = bag
-                    RAV_data.mounts.broom.slot = slot
+                    broom.bag = bag
+                    broom.slot = slot
                 end
             end
         end
     end
+    -- Tidy up ground mount by removing Flying/Aquatic and Ground/Aquatic types
+    -- if others exist in Flying or Ground lists
+    if #flying == 0 and #aquaticFlying > 0 then
+        flying = aquaticFlying
+    end
+    if #ground == 0 and #aquaticGround > 1 then
+        ground = aquaticGround
+    end
+
+    -- Update the player cache
+    RAV_data.mounts.dragonriding = dragonriding
+    RAV_data.mounts.flying = flying
+    RAV_data.mounts.ground = ground
+    RAV_data.mounts.vendor = vendor
+    RAV_data.mounts.passengerGround = passengerGround
+    RAV_data.mounts.passengerFlying = passengerFlying
+    RAV_data.mounts.swimming = swimming
+    RAV_data.mounts.ahnqiraj = ahnqiraj
+    RAV_data.mounts.vashjir = vashjir
+    RAV_data.mounts.maw = maw
+    RAV_data.mounts.chauffeur = chauffeur
+    RAV_data.mounts.travelForm = travelForm
+    RAV_data.mounts.broom = broom
+    RAV_data.mounts.count = #dragonriding + #flying + #ground + #vendor + #passengerGround + #passengerFlying + #swimming + #ahnqiraj + #vashjir + #maw + #chauffeur + #travelForm + #broom
 end
 
 -- Summon a mount from a particular list based on world and/or Player conditions.
@@ -448,12 +475,13 @@ function ns:MountUpHandler(specificType)
     elseif IsMounted() then
         Dismount()
         UIErrorsFrame:Clear()
+        ns:MountListHandler()
     -- If in a vehicle, then exit the vehicle
     elseif UnitInVehicle("player") then
         VehicleExit()
         UIErrorsFrame:Clear()
     -- If in travel form, then cancel form
-    elseif options.travelForm and ((className == "DRUID" and GetShapeshiftForm() == 3) or (className == "SHAMAN" and GetShapeshiftForm() == 16)) then
+    elseif options.travelForm and ((RAV_data.player.class == "DRUID" and GetShapeshiftForm() == 3) or (RAV_data.player.class == "SHAMAN" and GetShapeshiftForm() == 16)) then
         CancelShapeshiftForm()
         UIErrorsFrame:Clear()
     -- Clone
@@ -517,7 +545,7 @@ function ns:EnsureMacro()
     local options = RAV_data.options
 
     -- Unable to create/modify the macro without data or whilst the Player is in combat
-    if not RAV_data or not options.macro or UnitAffectingCombat("player") then
+    if not RAV_data or not RAV_data.mounts.count or not options.macro or UnitAffectingCombat("player") then
         return
     end
 
@@ -536,12 +564,11 @@ function ns:EnsureMacro()
     local broom = (haveBroom and not inDragonIsles) and mounts.broom or nil
 
     -- This part is tricky because we build the macro backwards
-
     local body = "/" .. ns.command
-    if broom and className ~= "DRUID" then
+    if broom and RAV_data.player.class ~= "DRUID" then
         body = "/use [swimming,mod:" .. modifiers[options.normalMountModifier] .. "][nomod,nomounted] " .. broom.name .. "\n/stopmacro [swimming,mod:" .. modifiers[options.normalMountModifier] .. "][nomod,nomounted]\n" .. body
     end
-    if className == "DRUID" or className == "SHAMAN" then
+    if RAV_data.player and (RAV_data.player.class == "DRUID" or RAV_data.player.class == "SHAMAN") then
         body = "/cancelform\n" .. body
     end
     local mountName
@@ -625,12 +652,11 @@ function ns:EnsureMacro()
         end
         body = "#showtooltip " .. body
     end
+
     local numberOfMacros, _ = GetNumMacros()
     if GetMacroIndexByName(ns.name) > 0 then
-        if body ~= RAV_macroBody then
-            EditMacro(GetMacroIndexByName(ns.name), ns.name, icon, body)
-            RAV_macroBody = body
-        end
+        EditMacro(GetMacroIndexByName(ns.name), ns.name, icon, body)
+        RAV_macroBody = body
     elseif numberOfMacros < 120 then
         CreateMacro(ns.name, icon, body)
         RAV_macroBody = body

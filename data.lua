@@ -18,9 +18,11 @@ ns.data = {
         travelForm = true,
     },
     mountTypes = {
-        ground = {230, 398, 408, 412},
-        flying = {242, 247, 248, 407, 424},
-        swimming = {231, 254, 407, 412},
+        ground = {230, 398, 408},
+        flying = {242, 247, 248, 424},
+        aquaticground = {412},
+        aquaticflying = {407},
+        swimming = {231, 254},
         ahnqiraj = {241},
         vashjir = {232},
         chauffeur = {284},
@@ -155,6 +157,7 @@ ns.data = {
             2151, -- The Forbidden Reach
             2199, -- Time Rift (Thaldraszus)
             2200, -- Emerald Dream
+            2239, -- Amirdrassil
         },
     },
     partyMembers = 0,

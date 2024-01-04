@@ -31,7 +31,6 @@ L.Modifier = "Modifier"
 L.ModifierTooltip = "Choose which modifier key to use to call %s." -- type
 L.MountsTooltip = "When enabled, only %s marked as favorites will be summoned." -- type
 L.NoMacroSpace = "Unfortunately, you don't have enough space in General Macros for the macro to be created!"
-L.NormalModifierTooltip = L.ModifierTooltip:format(L.Alternate .. " " .. _G.MOUNTS) .. "|nWhere Dragonriding is possible, this alternates between Dragonriding and Flying mounts; otherwise, it alternates between Flying and Ground mounts. Additionally, when swimming, this will trigger a non-swimming mount to be summoned instead."
 L.NormalSwimming = "Expanded Swimming Mounts"
 L.NormalSwimmingTooltip = "When enabled, Swimming mounts will also count as Ground/Flying mounts."
 L.Passenger = "Passenger"
@@ -44,6 +43,7 @@ L.Update = "Thanks for updating to |cff%1$sversion %2$s|r!" -- ns.color, ns.vers
 L.UpdateFound = "Version %s is now available for download. Please update!" -- sentVersion
 L.Version = "%s is the current version." -- ns.version
 L.ZoneSpecific = "Zone-Specific"
+L.NormalModifierTooltip = L.ModifierTooltip:format(L.Alternate .. " " .. _G.MOUNTS) .. "|nWhere Dragonriding is possible, this alternates between Dragonriding and Flying mounts; otherwise, it alternates between Flying and Ground mounts. Additionally, when swimming, this will trigger a non-swimming mount to be summoned instead."
 L.ZoneSpecificMountsTooltip = L.MountsTooltip:format(L.ZoneSpecific .. " " .. _G.MOUNTS)
 
 -- Check locale and assign appropriate
@@ -71,7 +71,6 @@ if CURRENT_LOCALE == "deDE" then
     L.MountsTooltip = "Wenn diese Option aktiviert ist, werden nur %s, die als Favoriten markiert sind, aufgerufen." -- type
     L.NoMacroSpace = "Leider hast du nicht genug globalen Makroplatz, um das Makro zu erstellen!"
     L.NoMounts = "Leider hast du keine Reittiere, die du zu diesem Zeitpunkt aufrufen kannst!"
-    L.NormalModifierTooltip = L.ModifierTooltip:format(L.Alternate .. " " .. _G.MOUNTS) .. "|nWo Drachenreiten möglich ist, wechselt es zwischen Drachenreiten und fliegenden Reittieren; andernfalls wechselt es zwischen fliegenden und Boden-Reittieren. Wenn du schwimmst, wird stattdessen ein nicht schwimmendes Reittier beschworen."
     L.NormalSwimming = "Erweiterte schwimmende Reittiere"
     L.NormalSwimmingTooltip = "Wenn diese Funktion aktiviert ist, zählen schwimmende Reittiere auch als Boden-/Flugreittiere."
     L.Passenger = "Passagiere"
@@ -84,6 +83,7 @@ if CURRENT_LOCALE == "deDE" then
     L.UpdateFound = "Version %s ist jetzt zum Download verfügbar. Bitte aktualisiere!" -- sentVersion
     L.Version = "%s ist die aktuelle Version." -- ns.version
     L.ZoneSpecific = "Zonenspezifisch"
+    L.NormalModifierTooltip = L.ModifierTooltip:format(L.Alternate .. " " .. _G.MOUNTS) .. "|nWo Drachenreiten möglich ist, wechselt es zwischen Drachenreiten und fliegenden Reittieren; andernfalls wechselt es zwischen fliegenden und Boden-Reittieren. Wenn du schwimmst, wird stattdessen ein nicht schwimmendes Reittier beschworen."
 end
 
 -- Spanish
