@@ -8,7 +8,7 @@ local mountIDs = ns.data.mountIDs
 local mapIDs = ns.data.mapIDs
 
 -- Set up variables for mount types, conditions, etc.
-local flyable, cloneMountID, mapID, inAhnQiraj, inVashjir, inMaw, inDragonIsles, haveGroundMounts, haveFlyingMounts, havePassengerGroundMounts, havePassengerFlyingMounts, haveVendorMounts, haveSwimmingMounts, haveAhnQirajMounts, haveVashjirMounts, haveMawMounts, haveDragonridingMounts, haveChauffeurMounts, haveBroom, normalMountModifier, vendorMountModifier, passengerMountModifier
+local flyable, cloneMountID, mapID, inAhnQiraj, inVashjir, inMaw, haveGroundMounts, haveFlyingMounts, havePassengerGroundMounts, havePassengerFlyingMounts, haveVendorMounts, haveSwimmingMounts, haveAhnQirajMounts, haveVashjirMounts, haveMawMounts, haveDragonridingMounts, haveChauffeurMounts, haveBroom, normalMountModifier, vendorMountModifier, passengerMountModifier
 local hasSeenNoSpaceMessage = false
 local MountListHandlerTimeout = false
 
@@ -144,7 +144,6 @@ local function AssignVariables()
     inAhnQiraj = contains(mapIDs.ahnqiraj, mapID)
     inVashjir = contains(mapIDs.vashjir, mapID)
     inMaw = contains(mapIDs.maw, mapID)
-    inDragonIsles = contains(mapIDs.dragonisles, mapID)
     haveGroundMounts = next(RAV_data.mounts.ground) ~= nil and true or false
     haveDragonridingMounts = next(RAV_data.mounts.dragonriding) ~= nil and true or false
     haveFlyingMounts = next(RAV_data.mounts.flying) ~= nil and true or false
@@ -502,7 +501,7 @@ function ns:MountUpHandler(specificType)
     elseif haveSwimmingMounts and IsSwimming() and not normalMountModifier then
         MountSummon(mounts.swimming)
     -- Dragonriding
-    elseif inDragonIsles and haveDragonridingMounts then
+    elseif haveDragonridingMounts then
         -- normalMountModifier is implied by hitting IsSwimming() here
         if IsSwimming() then
             if options.preferDragonRiding or (not haveBroom and not haveFlyingMounts) then
@@ -553,7 +552,7 @@ function ns:EnsureMacro()
     AssignVariables()
 
     -- Prepare Mount lists based on conditions
-    local dragonriding = (inDragonIsles and haveDragonridingMounts) and mounts.dragonriding or nil
+    local dragonriding = haveDragonridingMounts and mounts.dragonriding or nil
     local flying = haveFlyingMounts and mounts.flying or nil
     local ground = (inAhnQiraj and haveAhnQirajMounts) and mounts.ahnqiraj or haveGroundMounts and mounts.ground or nil
     local vendor = haveVendorMounts and mounts.vendor or nil
@@ -561,7 +560,7 @@ function ns:EnsureMacro()
     local swimming = (inVashjir and haveVashjirMounts) and mounts.vashjir or haveSwimmingMounts and mounts.swimming or nil
     local chauffeur = haveChauffeurMounts and mounts.chauffeur or nil
     local travelForm = haveTravelForm and mounts.travelForm or nil
-    local broom = (haveBroom and not inDragonIsles) and mounts.broom or nil
+    local broom = haveBroom and mounts.broom or nil
 
     -- This part is tricky because we build the macro backwards
     local body = "/" .. ns.command
@@ -577,7 +576,7 @@ function ns:EnsureMacro()
         if (options.travelForm and travelForm) then
             local travelFormName, _ = GetSpellInfo(travelForm[1])
             if options.normalMountModifier ~= 1 then -- none
-                if inDragonIsles and haveDragonridingMounts and options.preferDragonRiding then
+                if haveDragonridingMounts and options.preferDragonRiding then
                     mountName = GetMountName(dragonriding[random(#dragonriding)])
                     body = "[mod:" .. modifiers[options.normalMountModifier] .. "] " .. travelFormName .. "; " .. mountName .. "\n" .. "/use [mod:" .. modifiers[options.normalMountModifier] .. "] " .. travelFormName .. "\n" .. "/stopmacro [mod:" .. modifiers[options.normalMountModifier] .. "]" .. body
                 else
@@ -598,7 +597,7 @@ function ns:EnsureMacro()
             end
         else
             if not broom and ground then
-                mountName = (inDragonIsles and haveDragonridingMounts) and (options.preferDragonRiding and GetMountName(flying[random(#flying)]) or GetMountName(dragonriding[random(#dragonriding)])) or GetMountName(ground[random(#ground)])
+                mountName = haveDragonridingMounts and (options.preferDragonRiding and GetMountName(flying[random(#flying)]) or GetMountName(dragonriding[random(#dragonriding)])) or GetMountName(ground[random(#ground)])
                 if not mountName then
                     ns:EnsureMacro()
                     return
@@ -619,7 +618,7 @@ function ns:EnsureMacro()
                     else
                         body = "[] " .. mountName .. "; " .. body
                     end
-                elseif ((inDragonIsles and haveDragonridingMounts) or ground) and options.normalMountModifier ~= 1 then -- none
+                elseif (haveDragonridingMounts or ground) and options.normalMountModifier ~= 1 then -- none
                     body = "[noswimming,mod:" .. modifiers[options.normalMountModifier] .. "] " .. mountName .. "; " .. body
                 else
                     body = mountName .. body
