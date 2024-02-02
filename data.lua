@@ -105,6 +105,7 @@ ns.data = {
             1426, -- Ascended Skymane
             1511, -- Wandering Arden Doe
             1577, -- Ash'adar, Harbinger of Dawn
+            1956, -- Fur-endship Fox
         },
         maw = {
             1304, -- Mawsworn Soulhunter

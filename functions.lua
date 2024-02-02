@@ -194,7 +194,7 @@ function ns:SetDefaultSettings()
     end
     if RAV_data.mounts == nil then
         RAV_data.mounts = {}
-        RAV.data.mounts.count = 0
+        RAV_data.mounts.count = 0
     end
     if RAV_data.player == nil then
         RAV_data.player = {}

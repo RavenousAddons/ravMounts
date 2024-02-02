@@ -1,5 +1,5 @@
 ## Interface: 100205
-## Version: 2.11.1
+## Version: 2.11.2
 
 ## Name: Ravenous Mounts
 ## Title: Ravenous |cff9eb8c9Mounts|r
