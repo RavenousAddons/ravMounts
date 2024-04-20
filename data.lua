@@ -121,6 +121,7 @@ ns.data = {
             1744, -- Grotto Netherwing Drake
             1792, -- Algarian Stormrider
             1830, -- Flourishing Whimsydrake
+            2090, -- Polly Roger
         },
     },
     mapIDs = {
