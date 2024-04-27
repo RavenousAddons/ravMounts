@@ -15,7 +15,7 @@ local MountListHandlerTimeout = false
 -- Key Modifiers.
 local modifiers = {"none", "alt", "ctrl", "shift"}
 
--- Shoten API references.
+-- Shorten API references.
 local CM = C_Map
 local CMJ = C_MountJournal
 

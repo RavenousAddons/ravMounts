@@ -1,7 +1,7 @@
 local ADDON_NAME, ns = ...
 local L = ns.L
 
--- Reference default values and data tables.
+-- Reference default values.
 local defaults = ns.data.defaults
 
 local function CreateCheckBox(category, variable, name, tooltip)
