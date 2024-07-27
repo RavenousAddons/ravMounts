@@ -1,5 +1,13 @@
 # Ravenous Mounts
 
+--------
+
+> [!WARNING]  
+> Development for this addon has unfortunately ceased.
+> I recommend you try out [LiteMount](https://www.curseforge.com/wow/addons/litemount) instead!
+
+--------
+
 [![Buy me a coffee](https://img.shields.io/badge/help%20out-Buy%20me%20a%20coffee-81b3a0)](https://www.buymeacoffee.com/waldenpond)
 
 > Now looking for translators! If you speak a language other than English and would like to help, I'd be honoured if you got in touch!
